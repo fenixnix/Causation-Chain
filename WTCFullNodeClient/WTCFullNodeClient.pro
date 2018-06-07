@@ -1,15 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-06-04T16:11:31
+# Project created by QtCreator 2018-06-07T10:08:00
 #
 #-------------------------------------------------
 
 QT       += core gui
-QT += network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = WTCFullNodeServer
+TARGET = WTCFullNodeClient
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -26,18 +25,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-    p2pfullnodenetwork.cpp \
-    nodeinfo.cpp \
-    subnet.cpp \
-    qipendpoint.cpp
+        mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
-    p2pfullnodenetwork.h \
-    nodeinfo.h \
-    subnet.h \
-    qipendpoint.h
+        mainwindow.h
 
 FORMS += \
         mainwindow.ui
