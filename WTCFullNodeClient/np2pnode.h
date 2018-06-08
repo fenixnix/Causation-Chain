@@ -28,6 +28,8 @@ public:
   void SendbyEndPoint(QString msg,QIPEndPoint endPoint);
   void SendbyID(QString msg, QString id);
 
+  bool CheckAlivebyID(QString id);
+
 signals:
 
 public slots:
@@ -38,6 +40,7 @@ private slots:
   void OnHeartbeat();
 
 private:
+  QTcpSocket* tcp;
   QUdpSocket* udp;
   QUdpSocket* udpNat;
   QIPEndPoint localEndPoint;

@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     np2pnode.cpp \
-    ../Src/qipendpoint.cpp
+    ../Src/qipendpoint.cpp \
+    ../Src/nodeinfo.cpp
 
 HEADERS += \
         mainwindow.h \
     np2pnode.h \
-    ../Src/qipendpoint.h
+    ../Src/qipendpoint.h \
+    ../Src/nodeinfo.h
 
 FORMS += \
         mainwindow.ui

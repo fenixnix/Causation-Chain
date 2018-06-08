@@ -2,6 +2,7 @@
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
+  id = QHostInfo::localHostName();
   udp = new QUdpSocket;
   udp->bind(8421,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
   QObject::connect(udp, &QUdpSocket::readyRead, this, &NP2PNode::OnUDP);
@@ -53,6 +54,26 @@ void NP2PNode::SendbyEndPoint(QString msg, QIPEndPoint endPoint)
   udpNat->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
 }
 
+void NP2PNode::SendbyID(QString msg, QString id)
+{
+  if(this->id == id){
+      return;
+    }
+  auto nodeInfo = p2pMemberList[id];
+  if(nodeInfo.nat.IP() == localEndPoint.IP()){
+      //LAN
+      SendbyEndPoint(msg, nodeInfo.loc);
+    }else{
+      //WAN
+      SendbyEndPoint(msg, nodeInfo.nat);
+    }
+}
+
+bool NP2PNode::CheckAlivebyID(QString id)
+{
+  return p2pMemberList[id].CheckAlive();
+}
+
 void NP2PNode::OnUDP()
 {
   while(udp->hasPendingDatagrams())
@@ -83,19 +104,22 @@ void NP2PNode::OnNat()
       udpNat->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
       natEndPoint.Init(QString::fromLatin1(datagram));
       qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
+      auto cmd = QString::fromLatin1(datagram).left(3);
     }
 }
 
 void NP2PNode::OnHeartbeat()
 {
-  foreach(auto member, p2pMemberList){
-      if(member.id!=id){
-          if(member.nat.IP() == natEndPoint.IP()){
-              //LAN P2P
-            }else{
-              //WAN P2P
-
-            }
+  qDebug()<<"Send HeartBeat";
+  QStringList deadList;
+  foreach(auto memberID, p2pMemberList.keys()){
+      SendbyID(id,memberID);
+      if(CheckAlivebyID(memberID)){
+          deadList.append(memberID);
         }
+    }
+  //Del Dead Peer;
+  foreach (auto d, deadList) {
+      p2pMemberList.remove(d);
     }
 }
