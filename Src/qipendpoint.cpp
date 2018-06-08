@@ -45,5 +45,5 @@ qint16 QIPEndPoint::Port()
 
 QString QIPEndPoint::ToString()
 {
-  return addr.toString().mid(7)+":"+QString::number(port);
+  return addr.toString()+":"+QString::number(port);
 }

@@ -15,6 +15,11 @@ void P2PFullNodeNetwork::BoardCast(SubNet net)
     }
 }
 
+QStringList P2PFullNodeNetwork::GetMainNetwrokNodes()
+{
+  return mainNetwork.GetMemberList().split(';');
+}
+
 void P2PFullNodeNetwork::OnNetinRequire()
 {
   while(udp->hasPendingDatagrams())
@@ -38,6 +43,7 @@ void P2PFullNodeNetwork::OnNetinRequire()
           mainNetwork.Enter(dataString);
           BoardCast(mainNetwork);
           //udp->writeDatagram(mainNetwork.GetMemberList().toLatin1(),senderIP,senderPort);
+          emit NewConnect();
         }else{
           //TODO: enter subnet
         }

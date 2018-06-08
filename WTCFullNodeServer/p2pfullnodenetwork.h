@@ -13,8 +13,9 @@ class P2PFullNodeNetwork : public QObject
 public:
   explicit P2PFullNodeNetwork(QObject *parent = nullptr);
   void BoardCast(SubNet net);
+  QStringList GetMainNetwrokNodes();
 signals:
-
+  void NewConnect();
 public slots:
 
 private slots:

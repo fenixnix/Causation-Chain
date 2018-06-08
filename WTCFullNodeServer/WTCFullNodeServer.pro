@@ -28,16 +28,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     p2pfullnodenetwork.cpp \
-    nodeinfo.cpp \
     subnet.cpp \
-    qipendpoint.cpp
+    ../Src/nodeinfo.cpp \
+    ../Src/qipendpoint.cpp
 
 HEADERS += \
         mainwindow.h \
     p2pfullnodenetwork.h \
-    nodeinfo.h \
     subnet.h \
-    qipendpoint.h
+    ../Src/nodeinfo.h \
+    ../Src/qipendpoint.h
 
 FORMS += \
         mainwindow.ui
