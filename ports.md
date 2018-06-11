@@ -1,0 +1,13 @@
+NAT server 8888 118.178.127.35
+PeerServer 9999 192.168.100.204
+
+Peers:
+192.168.100.201:8421	
+192.168.100.202:8421
+192.168.100.203:8421
+
+本地数据存储
+ID
+本地IP，Port
+NATServer EndPoint
+P2PServer EndPoint

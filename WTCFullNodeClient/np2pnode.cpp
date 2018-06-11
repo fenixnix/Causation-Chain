@@ -130,19 +130,24 @@ void NP2PNode::OnNat()
       quint16 senderPort;
       datagram.resize(udpNat->pendingDatagramSize());
       udpNat->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
-      qDebug()<<"Message: "<<QString(datagram);
-      auto cmd = QString::fromLatin1(datagram).left(3);
-      auto data = QString::fromLatin1(datagram).mid(3);
+      auto str = QString::fromLatin1(datagram);
+      auto cmd = str.left(3);
+      auto data = str.mid(3);
       if(cmd == "NAT"){
           natEndPoint.Init(data);
           qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
           RequireEnterP2PNetwork();
         }
+      if(cmd == "P2P"){
+          qDebug()<<"Rcv P2P:"+ data;
+          GetP2PList(data);
+        }
       if(cmd == "HB "){
+          qDebug()<<"HB ";
           p2pMemberList[data].HeartBeat();
         }
       if(cmd == "MSG"){
-
+          qDebug()<<"Message: "<<QString(datagram);
         }
     }
 }
@@ -161,4 +166,11 @@ void NP2PNode::OnHeartbeat()
   foreach (auto d, deadList) {
       p2pMemberList.remove(d);
     }
+}
+
+void NP2PNode::GetP2PList(QString data)
+{
+  auto datas = data.split(';');
+  NodeInfo info;
+  info
 }

@@ -48,6 +48,8 @@ private slots:
   void OnHeartbeat();
 
 private:
+  void GetP2PList(QString data);
+
   QUdpSocket* udpP2p;
   QUdpSocket* udpNat;
 

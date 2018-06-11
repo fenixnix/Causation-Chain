@@ -10,8 +10,11 @@ P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 void P2PFullNodeNetwork::BoardCast(SubNet net)
 {
   auto nodes = net.getMemberList();
+  auto msg = ("P2P"+net.GetMemberList()).toLatin1();
   foreach (auto n, nodes) {
-      udp->writeDatagram(net.GetMemberList().toLatin1(),n.nat.IP(),n.nat.Port());
+      //udp->writeDatagram(net.GetMemberList().toLatin1(),n.nat.IP(),n.nat.Port());
+      qDebug()<<__FUNCTION__<<n.loc.IP()<<n.loc.Port();
+      udp->writeDatagram(msg,n.loc.IP(),n.loc.Port());
     }
 }
 
@@ -41,7 +44,7 @@ void P2PFullNodeNetwork::OnNetinRequire()
       QString netID = datas[3];
       if(netID == QString("0")){
           mainNetwork.Enter(dataString);
-          //BoardCast(mainNetwork);
+          BoardCast(mainNetwork);
           //udp->writeDatagram(mainNetwork.GetMemberList().toLatin1(),senderIP,senderPort);
           emit NewConnect();
         }else{
