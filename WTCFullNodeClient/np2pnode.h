@@ -19,31 +19,38 @@ public:
   explicit NP2PNode(QObject *parent = nullptr);
   ~NP2PNode();
   QHostAddress GetLocalAddress();
-  void RequireNatIpEndPoint(QIPEndPoint endPoint);
 
+  void setID(QString id);
+  void BindLocalEndPoint(QIPEndPoint localEndPoint);
+  void BindP2PServer(QIPEndPoint p2pServer);
+  void RequireNAT(QIPEndPoint endPoint);
   void RequireEnterP2PNetwork();
 
-  void SelfTest();
+  void Query(QString msg);
 
   void SendbyEndPoint(QString msg,QIPEndPoint endPoint);
   void SendbyID(QString msg, QString id);
 
   bool CheckAlivebyID(QString id);
 
+  QIPEndPoint p2pServer;
+  QIPEndPoint natServer;
+
+  void SelfTest();
+
 signals:
 
 public slots:
 
 private slots:
-  void OnUDP();
+  void OnP2PServer();
   void OnNat();
   void OnHeartbeat();
 
 private:
-  QTcpSocket* tcp;
-  QUdpSocket* udp;
+  QUdpSocket* udpP2p;
   QUdpSocket* udpNat;
-  QIPEndPoint localEndPoint;
+
   QIPEndPoint natEndPoint;
 
   QString id;

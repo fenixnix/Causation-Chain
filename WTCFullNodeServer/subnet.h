@@ -3,7 +3,7 @@
 
 #include <QMap>
 #include <QString>
-#include "nodeinfo.h"
+#include "../src/nodeinfo.h"
 
 class SubNet
 {

@@ -3,7 +3,7 @@
 P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 {
   udp = new QUdpSocket;
-  udp->bind(portNetinRequire,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+  udp->bind(QHostAddress("192.168.100.204"),portNetinRequire,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
   connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetinRequire);
 }
 
@@ -37,17 +37,15 @@ void P2PFullNodeNetwork::OnNetinRequire()
       qDebug()<<msg;
 
       auto datas = dataString.split(',');
-      QString hash = datas[4];
+//      QString hash = datas[4];
       QString netID = datas[3];
       if(netID == QString("0")){
           mainNetwork.Enter(dataString);
-          BoardCast(mainNetwork);
+          //BoardCast(mainNetwork);
           //udp->writeDatagram(mainNetwork.GetMemberList().toLatin1(),senderIP,senderPort);
           emit NewConnect();
         }else{
           //TODO: enter subnet
         }
-
-
     }
 }

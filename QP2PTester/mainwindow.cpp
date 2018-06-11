@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   udp =new QUdpSocket;
-  udp->bind(10000,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+  udp->bind(8888,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
   connect(udp, &QUdpSocket::readyRead, this, &MainWindow::OnCUDP);
 }
 

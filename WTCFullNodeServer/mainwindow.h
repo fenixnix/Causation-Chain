@@ -21,6 +21,8 @@ private slots:
 
   void on_actionSelfTest_triggered();
 
+  void on_bindBtn_clicked();
+
 private:
   Ui::MainWindow *ui;
   P2PFullNodeNetwork fullNetwork;

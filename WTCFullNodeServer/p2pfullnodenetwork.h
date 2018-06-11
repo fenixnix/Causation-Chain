@@ -22,7 +22,7 @@ private slots:
   void OnNetinRequire();
 
 private:
-  quint16 portNetinRequire = 8421;
+  quint16 portNetinRequire = 9999;
   int life = 20;//sec
   SubNet mainNetwork;
   QMap<QString,SubNet> subNets;

@@ -3,10 +3,12 @@
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
   id = QHostInfo::localHostName();
-  udp = new QUdpSocket;
-  udp->bind(8421,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-  QObject::connect(udp, &QUdpSocket::readyRead, this, &NP2PNode::OnUDP);
+  p2pServer.Init("192.168.100.204",9999);
+
+  udpP2p = new QUdpSocket;
   udpNat = new QUdpSocket;
+  QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
+  QObject::connect(udpNat, &QUdpSocket::readyRead, this,&NP2PNode::OnNat);
 
   QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
   heartbeatTimer.start(HeartBeatInterval*1000);
@@ -14,18 +16,10 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 
 NP2PNode::~NP2PNode()
 {
-  udp->close();
+  udpP2p->close();
   udpNat->close();
-  delete udp;
+  delete udpP2p;
   delete udpNat;
-}
-
-void NP2PNode::RequireNatIpEndPoint(QIPEndPoint endPoint)
-{
-  udpNat->bind(endPoint.Port(),QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-  connect(udpNat, &QUdpSocket::readyRead, this,&NP2PNode::OnNat);
-  udpNat->writeDatagram(GetLocalAddress().toString().toLatin1(),
-                     endPoint.IP(),endPoint.Port());
 }
 
 QHostAddress NP2PNode::GetLocalAddress()
@@ -43,10 +37,50 @@ QHostAddress NP2PNode::GetLocalAddress()
   return addr;
 }
 
+void NP2PNode::setID(QString id)
+{
+  this->id = id;
+}
+
+void NP2PNode::BindLocalEndPoint(QIPEndPoint localEndPoint)
+{
+  udpNat->close();
+  udpNat->bind(localEndPoint.IP(),localEndPoint.Port(),
+               QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+  qDebug()<<udpNat->localAddress()<<udpNat->localPort();
+}
+
+void NP2PNode::BindP2PServer(QIPEndPoint p2pServer)
+{
+  udpP2p->close();
+  udpP2p->bind(p2pServer.IP(),p2pServer.Port(),
+               QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+}
+
+void NP2PNode::RequireNAT(QIPEndPoint endPoint)
+{
+  udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
+}
+
+void NP2PNode::RequireEnterP2PNetwork()
+{
+  QString msg = id + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
+      + "," + natEndPoint.ToString() + "," + "0";
+  Query(msg);
+}
+
+void NP2PNode::Query(QString msg)
+{
+  qDebug()<<"Send:"<<msg<<" To:"<<p2pServer.ToString();
+  udpP2p->writeDatagram(msg.toLatin1(),p2pServer.IP(),p2pServer.Port());
+}
+
 void NP2PNode::SelfTest()
 {
-  qDebug()<<GetLocalAddress();
-  RequireNatIpEndPoint(QIPEndPoint(QHostAddress("192.168.100.117"),8888));
+  //qDebug()<<GetLocalAddress();
+  BindLocalEndPoint(QIPEndPoint(QHostAddress("192.168.100.201"),8421));
+  BindP2PServer(QIPEndPoint(QHostAddress("192.168.100.201"),9999));
+  RequireNAT(QIPEndPoint(QHostAddress("118.178.127.35"),8888));
 }
 
 void NP2PNode::SendbyEndPoint(QString msg, QIPEndPoint endPoint)
@@ -60,7 +94,7 @@ void NP2PNode::SendbyID(QString msg, QString id)
       return;
     }
   auto nodeInfo = p2pMemberList[id];
-  if(nodeInfo.nat.IP() == localEndPoint.IP()){
+  if(nodeInfo.nat.IP() == udpNat->localAddress()){
       //LAN
       SendbyEndPoint(msg, nodeInfo.loc);
     }else{
@@ -74,22 +108,16 @@ bool NP2PNode::CheckAlivebyID(QString id)
   return p2pMemberList[id].CheckAlive();
 }
 
-void NP2PNode::OnUDP()
+void NP2PNode::OnP2PServer()
 {
-  while(udp->hasPendingDatagrams())
+  while(udpP2p->hasPendingDatagrams())
     {
       QByteArray datagram;
-      QHostAddress senderIP;
-      quint16 senderPort;
-      datagram.resize(udp->pendingDatagramSize());
-      udp->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
-
-      QString nat = senderIP.toString().mid(7) + ":" + QString::number(senderPort);
-      udp->writeDatagram(nat.toLatin1(),senderIP,senderPort);
-
+      datagram.resize(udpP2p->pendingDatagramSize());
+      udpP2p->readDatagram(datagram.data(), datagram.size());
       QString msg = "Rcv:"+ QString::fromLatin1(datagram) +
-          " From:"+ nat;
-      //cout<<msg.toStdString()<<endl;
+          " From P2PServer";
+      qDebug()<<msg;
     }
 }
 
@@ -102,9 +130,20 @@ void NP2PNode::OnNat()
       quint16 senderPort;
       datagram.resize(udpNat->pendingDatagramSize());
       udpNat->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
-      natEndPoint.Init(QString::fromLatin1(datagram));
-      qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
+      qDebug()<<"Message: "<<QString(datagram);
       auto cmd = QString::fromLatin1(datagram).left(3);
+      auto data = QString::fromLatin1(datagram).mid(3);
+      if(cmd == "NAT"){
+          natEndPoint.Init(data);
+          qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
+          RequireEnterP2PNetwork();
+        }
+      if(cmd == "HB "){
+          p2pMemberList[data].HeartBeat();
+        }
+      if(cmd == "MSG"){
+
+        }
     }
 }
 

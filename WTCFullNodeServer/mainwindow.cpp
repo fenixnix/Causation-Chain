@@ -31,3 +31,8 @@ void MainWindow::on_actionSelfTest_triggered()
       ui->listWidgetMainNetwork->insertItem(i,QString::number(i));
     }
 }
+
+void MainWindow::on_bindBtn_clicked()
+{
+
+}

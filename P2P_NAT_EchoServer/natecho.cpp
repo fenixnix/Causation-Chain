@@ -21,7 +21,8 @@ void NatEcho::OnUDP()
       udp->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
 
       QString nat = senderIP.toString().mid(7) + ":" + QString::number(senderPort);
-      udp->writeDatagram(nat.toLatin1(),senderIP,senderPort);
+      QString sendCmd = "NAT"+nat;
+      udp->writeDatagram(sendCmd.toLatin1(),senderIP,senderPort);
 
       QString msg = "Rcv:"+ QString::fromLatin1(datagram) +
           " From:"+ nat;

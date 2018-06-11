@@ -62,6 +62,7 @@
      <string>Test</string>
     </property>
     <addaction name="actionSelfTest"/>
+    <addaction name="actionDefault_File"/>
    </widget>
    <addaction name="menuTest"/>
   </widget>
@@ -77,6 +78,11 @@
   <action name="actionSelfTest">
    <property name="text">
     <string>SelfTest</string>
+   </property>
+  </action>
+  <action name="actionDefault_File">
+   <property name="text">
+    <string>Default config file</string>
    </property>
   </action>
  </widget>

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
 #include "np2pnode.h"
 
 namespace Ui {
@@ -18,6 +19,8 @@ public:
 
 private slots:
   void on_actionSelfTest_triggered();
+
+  void on_actionDefault_File_triggered();
 
 private:
   Ui::MainWindow *ui;
