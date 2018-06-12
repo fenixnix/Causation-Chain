@@ -154,10 +154,11 @@ void NP2PNode::OnNat()
 
 void NP2PNode::OnHeartbeat()
 {
-  qDebug()<<"Send HeartBeat";
+
   QStringList deadList;
   foreach(auto memberID, p2pMemberList.keys()){
       SendbyID(id,memberID);
+      qDebug()<<"Send HeartBeat to:"<<memberID;
       if(CheckAlivebyID(memberID)){
           deadList.append(memberID);
         }
@@ -171,6 +172,14 @@ void NP2PNode::OnHeartbeat()
 void NP2PNode::GetP2PList(QString data)
 {
   auto datas = data.split(';');
-  NodeInfo info;
-  info
+  foreach (auto d, datas) {
+      NodeInfo info;
+      info.SetData(d);
+      if(p2pMemberList.contains(info.id)){
+          p2pMemberList[info.id].HeartBeat();
+        }else{
+          p2pMemberList.insert(info.id,info);
+        }
+    }
+  emit RefreshP2PmemberList(p2pMemberList.keys());
 }

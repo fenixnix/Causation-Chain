@@ -39,6 +39,7 @@ public:
   void SelfTest();
 
 signals:
+  void RefreshP2PmemberList(QStringList list);
 
 public slots:
 

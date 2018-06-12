@@ -22,6 +22,8 @@ private slots:
 
   void on_actionDefault_File_triggered();
 
+  void on_RefreshMemberList(QStringList list);
+
 private:
   Ui::MainWindow *ui;
   NP2PNode node;

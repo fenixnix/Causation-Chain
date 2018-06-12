@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+  QObject::connect(&node,&NP2PNode::RefreshP2PmemberList,this,&MainWindow::on_RefreshMemberList);
 }
 
 MainWindow::~MainWindow()
@@ -36,4 +37,10 @@ void MainWindow::on_actionDefault_File_triggered()
   setting.setValue("Local","192.168.100.201:8421");
   setting.setValue("NATServer","118.178.127.35:8888");
   setting.setValue("P2PServer","192.168.100.204:9999");
+}
+
+void MainWindow::on_RefreshMemberList(QStringList list)
+{
+  ui->p2pListView->clear();
+  ui->p2pListView->addItems(list);
 }
