@@ -6,27 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>135</width>
-    <height>306</height>
+    <width>403</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QListWidget" name="p2pListView"/>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit"/>
-    </item>
-    <item>
-     <widget class="QPushButton" name="sendBtn">
-      <property name="text">
-       <string>Send</string>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="text">
+         <string>Hello</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="sendBtn">
+        <property name="text">
+         <string>Send</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="plainTextEdit"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -35,7 +46,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>135</width>
+     <width>403</width>
      <height>17</height>
     </rect>
    </property>

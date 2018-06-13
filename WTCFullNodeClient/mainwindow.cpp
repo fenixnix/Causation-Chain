@@ -6,7 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  QObject::connect(&node,&NP2PNode::RefreshP2PmemberList,this,&MainWindow::on_RefreshMemberList);
+  QObject::connect(&node,&NP2PNode::RefreshP2PmemberList,
+                   this,&MainWindow::on_RefreshMemberList);
+  QObject::connect(&node,&NP2PNode::RcvMsg,
+                   this,&MainWindow::on_RcvMessage);
 }
 
 MainWindow::~MainWindow()
@@ -17,8 +20,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionSelfTest_triggered()
 {
   QSettings setting("config",QSettings::IniFormat);
-  node.setID(setting.value("ID").toString());
-  qDebug()<<"ID:"<<setting.value("ID").toString();
+  auto id = setting.value("ID").toString();
+  node.setID(id);
+  this->setWindowTitle(id);
+  qDebug()<<"ID:"<<id;
 
   //node.SelfTest();
   QIPEndPoint local(setting.value("Local").toString());
@@ -43,4 +48,16 @@ void MainWindow::on_RefreshMemberList(QStringList list)
 {
   ui->p2pListView->clear();
   ui->p2pListView->addItems(list);
+}
+
+void MainWindow::on_RcvMessage(QString msg)
+{
+  ui->plainTextEdit->appendPlainText(msg);
+}
+
+void MainWindow::on_sendBtn_clicked()
+{
+  QString id = ui->p2pListView->currentIndex().data().toString();
+  qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
+  node.SendbyID("MSG"+ui->lineEdit->text(),id);
 }

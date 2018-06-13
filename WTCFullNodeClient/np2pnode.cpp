@@ -93,13 +93,17 @@ void NP2PNode::SendbyID(QString msg, QString id)
   if(this->id == id){
       return;
     }
+  auto data = msg;
   auto nodeInfo = p2pMemberList[id];
-  if(nodeInfo.nat.IP() == udpNat->localAddress()){
+  qDebug()<<nodeInfo.nat.IP().toString()<<natEndPoint.IP().toString();
+  if(nodeInfo.nat.IP() == natEndPoint.IP()){
       //LAN
-      SendbyEndPoint(msg, nodeInfo.loc);
+      qDebug()<<"LAN P2P";
+      SendbyEndPoint(data, nodeInfo.loc);
     }else{
       //WAN
-      SendbyEndPoint(msg, nodeInfo.nat);
+      qDebug()<<"WAN P2P";
+      SendbyEndPoint(data, nodeInfo.nat);
     }
 }
 
@@ -110,6 +114,7 @@ bool NP2PNode::CheckAlivebyID(QString id)
 
 void NP2PNode::OnP2PServer()
 {
+  qDebug()<<__FUNCTION__;
   while(udpP2p->hasPendingDatagrams())
     {
       QByteArray datagram;
@@ -131,6 +136,7 @@ void NP2PNode::OnNat()
       datagram.resize(udpNat->pendingDatagramSize());
       udpNat->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
       auto str = QString::fromLatin1(datagram);
+      qDebug()<<__FUNCTION__<<": "<<str;
       auto cmd = str.left(3);
       auto data = str.mid(3);
       if(cmd == "NAT"){
@@ -147,14 +153,14 @@ void NP2PNode::OnNat()
           p2pMemberList[data].HeartBeat();
         }
       if(cmd == "MSG"){
-          qDebug()<<"Message: "<<QString(datagram);
+          qDebug()<<"Message: "<<data;
+          emit RcvMsg(data);
         }
     }
 }
 
 void NP2PNode::OnHeartbeat()
 {
-
   QStringList deadList;
   foreach(auto memberID, p2pMemberList.keys()){
       SendbyID(id,memberID);

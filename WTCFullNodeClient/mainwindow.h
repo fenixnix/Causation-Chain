@@ -22,7 +22,10 @@ private slots:
 
   void on_actionDefault_File_triggered();
 
+  void on_sendBtn_clicked();
+
   void on_RefreshMemberList(QStringList list);
+  void on_RcvMessage(QString msg);
 
 private:
   Ui::MainWindow *ui;

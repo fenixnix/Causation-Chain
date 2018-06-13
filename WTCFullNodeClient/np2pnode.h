@@ -40,6 +40,7 @@ public:
 
 signals:
   void RefreshP2PmemberList(QStringList list);
+  void RcvMsg(QString msg);
 
 public slots:
 
