@@ -7,7 +7,7 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 
     udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
-    //QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
+    QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
     QObject::connect(udpNat, &QUdpSocket::readyRead, this,&NP2PNode::OnNat);
 
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
@@ -125,19 +125,28 @@ void NP2PNode::testHeartBeat()
 
 }
 
-//void NP2PNode::OnP2PServer()
-//{
-//  qDebug()<<__FUNCTION__;
-//  while(udpP2p->hasPendingDatagrams())
-//    {
-//      QByteArray datagram;
-//      datagram.resize(udpP2p->pendingDatagramSize());
-//      udpP2p->readDatagram(datagram.data(), datagram.size());
-//      QString msg = "Rcv:"+ QString::fromLatin1(datagram) +
-//          " From P2PServer";
-//      qDebug()<<msg;
-//    }
-//}
+void NP2PNode::OnP2PServer()
+{
+  qDebug()<<__FUNCTION__;
+  while(udpP2p->hasPendingDatagrams())
+    {
+      QByteArray datagram;
+      datagram.resize(udpP2p->pendingDatagramSize());
+      udpP2p->readDatagram(datagram.data(), datagram.size());
+      auto str = QString::fromLatin1(datagram);
+      QString msg = "Rcv:"+ str +
+          " From P2PServer";
+      qDebug()<<msg;
+      auto cmd = str.left(3);
+      auto data = str.mid(3);
+
+      if(cmd == "P2P"){
+          qDebug()<<"Rcv P2P:"+ data;
+          GetP2PList(data);
+      }
+
+    }
+}
 
 void NP2PNode::OnNat()
 {

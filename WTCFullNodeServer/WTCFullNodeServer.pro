@@ -27,17 +27,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    p2pfullnodenetwork.cpp \
-    subnet.cpp \
-    ../Src/nodeinfo.cpp \
-    ../Src/qipendpoint.cpp
+    ../src/p2pfullnodenetwork.cpp \
+    ../src/subnet.cpp \
+    ../src/nodeinfo.cpp \
+    ../src/qipendpoint.cpp
 
 HEADERS += \
         mainwindow.h \
-    p2pfullnodenetwork.h \
-    subnet.h \
-    ../Src/nodeinfo.h \
-    ../Src/qipendpoint.h
+    ../src/p2pfullnodenetwork.h \
+    ../src/subnet.h \
+    ../src/nodeinfo.h \
+    ../src/qipendpoint.h
 
 FORMS += \
         mainwindow.ui

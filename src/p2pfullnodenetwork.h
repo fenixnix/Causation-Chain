@@ -12,7 +12,7 @@ class P2PFullNodeNetwork : public QObject
   Q_OBJECT
 public:
   explicit P2PFullNodeNetwork(QObject *parent = nullptr);
-  void Init(QString address, int Port, int heartRate);
+  void Init(int Port, int heartRate);
   void BoardCast(SubNet net);
   QStringList GetMainNetwrokNodes();
 signals:
@@ -23,11 +23,13 @@ private slots:
   void OnNetinRequire();
 
 private:
-  quint16 portNetinRequire = 9999;
+  quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec
   SubNet mainNetwork;
   QMap<QString,SubNet> subNets;
+  QMap<QString,QIPEndPoint> peers;
   QUdpSocket* udp;
+  //TODO: timer heartbeat
 };
 
 #endif // P2PFULLNODENETWORK_H

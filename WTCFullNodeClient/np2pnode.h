@@ -46,7 +46,7 @@ signals:
 public slots:
 
 private slots:
-  //void OnP2PServer();
+  void OnP2PServer();
   void OnNat();
   void OnHeartbeat();
 
