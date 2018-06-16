@@ -24,6 +24,9 @@ QIPEndPoint::QIPEndPoint(QString ip, qint16 port)
 void QIPEndPoint::Init(QString endPoint)
 {
   auto pair = endPoint.split(':');
+  if(pair.size()<2){
+      return;
+  }
   Init(pair[0],pair[1].toInt());
 }
 

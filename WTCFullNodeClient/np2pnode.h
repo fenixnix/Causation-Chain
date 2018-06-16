@@ -36,6 +36,7 @@ public:
   QIPEndPoint p2pServer;
   QIPEndPoint natServer;
 
+  void testHeartBeat();
   void SelfTest();
 
 signals:
@@ -45,7 +46,7 @@ signals:
 public slots:
 
 private slots:
-  void OnP2PServer();
+  //void OnP2PServer();
   void OnNat();
   void OnHeartbeat();
 
