@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  fullNetwork.Init("127.0.0.1",8889,20);
+  fullNetwork.Init(8889,20);
   QObject::connect(&fullNetwork,&P2PFullNodeNetwork::NewConnect,this,&MainWindow::OnNewConnect);
 }
 

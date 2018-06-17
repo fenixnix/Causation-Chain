@@ -2,8 +2,8 @@
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
+    qDebug()<<getLocalIP();
     id = QHostInfo::localHostName();
-    p2pServer.Init("192.168.1.4",8889);
 
     udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
@@ -11,11 +11,11 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
     QObject::connect(udpNat, &QUdpSocket::readyRead, this,&NP2PNode::OnNat);
 
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
-    heartbeatTimer.start(HeartBeatInterval*1000);
 }
 
 NP2PNode::~NP2PNode()
 {
+    heartbeatTimer.stop();
     udpP2p->close();
     udpNat->close();
     delete udpP2p;
@@ -30,7 +30,6 @@ QHostAddress NP2PNode::GetLocalAddress()
     foreach(QHostAddress address, info.addresses())
     {
         if (address.protocol() == QAbstractSocket::IPv4Protocol){
-            //qDebug() << "IPv4 Address:" << address.toString();
             return address;
         }
     }
@@ -42,7 +41,7 @@ void NP2PNode::setID(QString id)
     this->id = id;
 }
 
-void NP2PNode::BindLocalEndPoint(QIPEndPoint localEndPoint)
+void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
 {
     udpNat->close();
     udpNat->bind(localEndPoint.IP(),localEndPoint.Port(),
@@ -50,16 +49,28 @@ void NP2PNode::BindLocalEndPoint(QIPEndPoint localEndPoint)
     qDebug()<<udpNat->localAddress()<<udpNat->localPort();
 }
 
-void NP2PNode::BindP2PServer(QIPEndPoint p2pServer)
+void NP2PNode::setP2PServer(QIPEndPoint server)
+{
+    this->p2pServer.Init(server.IP().toString(),server.Port());
+    bindP2PServer(QIPEndPoint(getLocalIP(),server.Port()));
+}
+
+void NP2PNode::bindP2PServer(QIPEndPoint p2pServer)
 {
     udpP2p->close();
     udpP2p->bind(p2pServer.IP(),p2pServer.Port(),
                  QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
-void NP2PNode::RequireNAT(QIPEndPoint endPoint)
+void NP2PNode::join(QIPEndPoint endPoint)
 {
     udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
+    heartbeatTimer.start(HeartBeatInterval*1000);
+}
+
+QStringList NP2PNode::memberList()
+{
+    return p2pMemberList.keys();
 }
 
 void NP2PNode::RequireEnterP2PNetwork()
@@ -75,20 +86,12 @@ void NP2PNode::Query(QString msg)
     udpP2p->writeDatagram(msg.toLatin1(),p2pServer.IP(),p2pServer.Port());
 }
 
-void NP2PNode::SelfTest()
-{
-    //qDebug()<<GetLocalAddress();
-    //  BindLocalEndPoint(QIPEndPoint(QHostAddress("192.168.100.201"),8421));
-    //  BindP2PServer(QIPEndPoint(QHostAddress("192.168.100.201"),9999));
-    //  RequireNAT(QIPEndPoint(QHostAddress("118.178.127.35"),8888));
-}
-
 void NP2PNode::SendbyEndPoint(QString msg, QIPEndPoint endPoint)
 {
     udpNat->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
 }
 
-void NP2PNode::SendbyID(QString msg, QString id)
+void NP2PNode::sendbyID(QString msg, QString id)
 {
     if(this->id == id){
         qDebug()<<"Can`t send to myself!"<<this->id<<id;
@@ -114,15 +117,21 @@ void NP2PNode::SendbyID(QString msg, QString id)
     }
 }
 
-bool NP2PNode::CheckAlivebyID(QString id)
+QHostAddress NP2PNode::getLocalIP()
 {
-    return p2pMemberList[id].CheckAlive();
+    auto hostName = QHostInfo::localHostName();
+    auto host = QHostInfo::fromName(hostName);
+    foreach(auto ip, host.addresses()){
+        if(ip.protocol() == QAbstractSocket::IPv4Protocol){
+            return ip;
+        }
+    }
+    return QHostAddress();
 }
 
-
-void NP2PNode::testHeartBeat()
+bool NP2PNode::checkAlivebyID(QString id)
 {
-
+    return p2pMemberList[id].CheckAlive();
 }
 
 void NP2PNode::OnP2PServer()
@@ -183,10 +192,12 @@ void NP2PNode::OnNat()
 
 void NP2PNode::OnHeartbeat()
 {
+    RequireEnterP2PNetwork();
+
     QStringList deadList;
     foreach(auto memberID, p2pMemberList.keys()){
-        SendbyID("HB " + id,memberID);
-        if(!CheckAlivebyID(memberID)){
+        sendbyID("HB " + id,memberID);
+        if(!checkAlivebyID(memberID)){
             deadList.append(memberID);
         }
     }
@@ -194,7 +205,7 @@ void NP2PNode::OnHeartbeat()
     foreach (auto d, deadList) {
         p2pMemberList.remove(d);
     }
-    emit RefreshP2PmemberList(p2pMemberList.keys());
+    emit P2PmemberListUpdate(p2pMemberList.keys());
 }
 
 void NP2PNode::GetP2PList(QString data)
@@ -212,5 +223,5 @@ void NP2PNode::GetP2PList(QString data)
             p2pMemberList.insert(info.id,info);
         }
     }
-    emit RefreshP2PmemberList(p2pMemberList.keys());
+    emit P2PmemberListUpdate(p2pMemberList.keys());
 }

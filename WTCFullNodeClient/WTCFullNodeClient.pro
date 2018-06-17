@@ -27,16 +27,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-    np2pnode.cpp \
-    ../Src/qipendpoint.cpp \
-    ../Src/nodeinfo.cpp
+        mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
-    np2pnode.h \
-    ../Src/qipendpoint.h \
-    ../Src/nodeinfo.h
+        mainwindow.h
 
 FORMS += \
         mainwindow.ui
+
+include("../p2psrc/NP2P.pri")

@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "../src/p2pfullnodenetwork.h"
+#include "p2pfullnodenetwork.h"
 
 int main(int argc, char *argv[])
 {

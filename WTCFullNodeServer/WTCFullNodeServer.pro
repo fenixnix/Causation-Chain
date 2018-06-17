@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT += network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,18 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-    ../src/p2pfullnodenetwork.cpp \
-    ../src/subnet.cpp \
-    ../src/nodeinfo.cpp \
-    ../src/qipendpoint.cpp
+        mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
-    ../src/p2pfullnodenetwork.h \
-    ../src/subnet.h \
-    ../src/nodeinfo.h \
-    ../src/qipendpoint.h
+        mainwindow.h
 
 FORMS += \
         mainwindow.ui
+
+include("../p2psrc/NP2P.pri")
