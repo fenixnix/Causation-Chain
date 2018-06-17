@@ -1,7 +1,9 @@
 #include "np2pnode.h"
+#include "ipclassify.h"
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
+    IPClassify ipc;
     qDebug()<<getLocalIP();
     id = QHostInfo::localHostName();
 
@@ -20,20 +22,6 @@ NP2PNode::~NP2PNode()
     udpNat->close();
     delete udpP2p;
     delete udpNat;
-}
-
-QHostAddress NP2PNode::GetLocalAddress()
-{
-    QHostAddress addr;
-    QString localHostName = QHostInfo::localHostName();
-    QHostInfo info = QHostInfo::fromName(localHostName);
-    foreach(QHostAddress address, info.addresses())
-    {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol){
-            return address;
-        }
-    }
-    return addr;
 }
 
 void NP2PNode::setID(QString id)
@@ -64,7 +52,13 @@ void NP2PNode::bindP2PServer(QIPEndPoint p2pServer)
 
 void NP2PNode::join(QIPEndPoint endPoint)
 {
-    udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
+    if(endPoint.IP() == getLocalIP()){
+        natEndPoint.Init(endPoint.IP,udpNat->localPort());
+        RequireEnterP2PNetwork();
+    }else{
+        udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
+    }
+
     heartbeatTimer.start(HeartBeatInterval*1000);
 }
 
@@ -112,8 +106,21 @@ void NP2PNode::sendbyID(QString msg, QString id)
         SendbyEndPoint(data, nodeInfo.loc);
     }else{
         //WAN
-        qDebug()<<"WAN P2P:"<<data<<" to:"<<nodeInfo.loc.ToString();
+        qDebug()<<"WAN P2P:"<<data<<" to:"<<nodeInfo.nat.ToString();
         SendbyEndPoint(data, nodeInfo.nat);
+    }
+}
+
+void NP2PNode::sendMsg(QString msg, QString id)
+{
+    sendbyID("MSG"+msg,id);
+}
+
+void NP2PNode::boardcastMsg(QString msg)
+{
+    auto ls = memberList();
+    foreach(auto m ,ls){
+        sendMsg(msg,m);
     }
 }
 
@@ -136,23 +143,23 @@ bool NP2PNode::checkAlivebyID(QString id)
 
 void NP2PNode::OnP2PServer()
 {
-  qDebug()<<__FUNCTION__;
-  while(udpP2p->hasPendingDatagrams())
+    qDebug()<<__FUNCTION__;
+    while(udpP2p->hasPendingDatagrams())
     {
-      QByteArray datagram;
-      datagram.resize(udpP2p->pendingDatagramSize());
-      udpP2p->readDatagram(datagram.data(), datagram.size());
-      auto str = QString::fromLatin1(datagram);
-      QString msg = "Rcv:"+ str +
-          " From P2PServer";
-      qDebug()<<msg;
-      auto cmd = str.left(3);
-      auto data = str.mid(3);
+        QByteArray datagram;
+        datagram.resize(udpP2p->pendingDatagramSize());
+        udpP2p->readDatagram(datagram.data(), datagram.size());
+        auto str = QString::fromLatin1(datagram);
+        QString msg = "Rcv:"+ str +
+                " From P2PServer";
+        qDebug()<<msg;
+        auto cmd = str.left(3);
+        auto data = str.mid(3);
 
-      if(cmd == "P2P"){
-          qDebug()<<"Rcv P2P:"+ data;
-          GetP2PList(data);
-      }
+        if(cmd == "P2P"){
+            qDebug()<<"Rcv P2P:"+ data;
+            GetP2PList(data);
+        }
 
     }
 }

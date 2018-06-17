@@ -58,5 +58,5 @@ void MainWindow::on_sendBtn_clicked()
 {
   QString id = ui->p2pListView->currentIndex().data().toString();
   qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
-  node.sendbyID("MSG"+ui->lineEdit->text(),id);
+  node.sendMsg(ui->lineEdit->text(),id);
 }

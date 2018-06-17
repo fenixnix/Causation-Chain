@@ -18,7 +18,6 @@ class NP2PNode : public QObject
 public:
     explicit NP2PNode(QObject *parent = nullptr);
     ~NP2PNode();
-    QHostAddress GetLocalAddress();
 
     void setID(QString id);
     void bindLocalEndPoint(QIPEndPoint localEndPoint);
@@ -29,6 +28,8 @@ public:
     QStringList memberList();
     bool checkAlivebyID(QString id);
     void sendbyID(QString msg, QString id);
+    void sendMsg(QString msg,QString id);
+    void boardcastMsg(QString msg);
 
     static QHostAddress getLocalIP();
 

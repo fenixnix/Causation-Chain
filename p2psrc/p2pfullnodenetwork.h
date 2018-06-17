@@ -2,6 +2,7 @@
 #define P2PFULLNODENETWORK_H
 
 #include <QtNetwork>
+#include <QTimer>
 #include <QObject>
 #include <QMap>
 #include <QDebug>
@@ -21,15 +22,19 @@ public slots:
 
 private slots:
   void OnNetinRequire();
+  void OnHeartbeat();
 
 private:
   quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec
+
   SubNet mainNetwork;
-  QMap<QString,SubNet> subNets;
   QMap<QString,QIPEndPoint> peers;
+
+  QMap<QString,SubNet> subNets;
   QUdpSocket* udp;
   //TODO: timer heartbeat
+  QTimer heartbeatTimer;
 };
 
 #endif // P2PFULLNODENETWORK_H

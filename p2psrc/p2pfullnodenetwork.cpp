@@ -3,13 +3,15 @@
 P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 {
     udp = new QUdpSocket;
-    connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetinRequire);
+    QObject::connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetinRequire);
+    QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat);
 }
 
 void P2PFullNodeNetwork::Init(int Port, int heartRate)
 {
     this->heartRate = heartRate;
     udp->bind(Port,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    heartbeatTimer.start(1000*heartRate);
 }
 
 void P2PFullNodeNetwork::BoardCast(SubNet net)
@@ -64,4 +66,9 @@ void P2PFullNodeNetwork::OnNetinRequire()
             //TODO: enter subnet
         }
     }
+}
+
+void P2PFullNodeNetwork::OnHeartbeat()
+{
+
 }
