@@ -28,7 +28,7 @@ private:
   quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec
 
-  NSubNet mainNetwork;
+  NSubNet mainNet;
   QMap<QString,QIPEndPoint> peers;
 
   QMap<QString,NSubNet> subNets;

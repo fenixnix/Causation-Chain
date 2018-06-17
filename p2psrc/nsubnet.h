@@ -14,9 +14,12 @@ public:
   void enter(QString data);
   bool has(QString id);
   bool isActive(QString id);
+  QStringList getDeadList();
   void heartbeat(QString id);
   NodeInfo get(QString id);
   void remove(QString id);
+  void remove(QStringList idList);
+  void removeDeadMemberAtNow();
   int GetSize();
   QString getMemberListString();
 

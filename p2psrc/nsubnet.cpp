@@ -26,6 +26,17 @@ bool NSubNet::isActive(QString id)
     return get(id).CheckAlive();
 }
 
+QStringList NSubNet::getDeadList()
+{
+    QStringList deadList;
+    foreach(auto memberID, memberList.keys()){
+        if(!isActive(memberID)){
+            deadList.append(memberID);
+        }
+    }
+    return deadList;
+}
+
 void NSubNet::heartbeat(QString id)
 {
     get(id).HeartBeat();
@@ -39,6 +50,18 @@ NodeInfo NSubNet::get(QString id)
 void NSubNet::remove(QString id)
 {
     memberList.remove(id);
+}
+
+void NSubNet::remove(QStringList idList)
+{
+    foreach(auto i, idList){
+        remove(i);
+    }
+}
+
+void NSubNet::removeDeadMemberAtNow()
+{
+    remove(getDeadList());
 }
 
 int NSubNet::GetSize()

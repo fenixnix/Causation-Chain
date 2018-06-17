@@ -11,6 +11,7 @@ void P2PFullNodeNetwork::Init(int Port, int heartRate)
 {
     this->heartRate = heartRate;
     udp->bind(Port,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    this->heartRate = heartRate;
     heartbeatTimer.start(1000*heartRate);
 }
 
@@ -30,7 +31,7 @@ void P2PFullNodeNetwork::BoardCast(NSubNet net)
 
 QStringList P2PFullNodeNetwork::GetMainNetwrokNodes()
 {
-    return mainNetwork.getMemberListString().split(';');
+    return mainNet.getMemberListString().split(';');
 }
 
 void P2PFullNodeNetwork::OnNetinRequire()
@@ -56,11 +57,11 @@ void P2PFullNodeNetwork::OnNetinRequire()
         }
         QString netID = datas[3];
         if(netID == QString("0")){
-            mainNetwork.enter(dataString);
+            mainNet.enter(dataString);
             peers.insert(QString(datas[0]),nat);
             qDebug()<<datas[0];
             qDebug()<<peers[QString(datas[0])].IP();
-            BoardCast(mainNetwork);
+            BoardCast(mainNet);
             emit NewConnect();
         }else{
             //TODO: enter subnet
@@ -70,5 +71,5 @@ void P2PFullNodeNetwork::OnNetinRequire()
 
 void P2PFullNodeNetwork::OnHeartbeat()
 {
-
+    mainNet.removeDeadMemberAtNow();
 }

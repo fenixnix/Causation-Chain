@@ -3,9 +3,6 @@
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
-    IPClassify ipc;
-    id = QHostInfo::localHostName();
-
     udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
     QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
@@ -190,18 +187,10 @@ void NP2PNode::OnNat()
 void NP2PNode::OnHeartbeat()
 {
     RequireEnterP2PNetwork();
-
-    QStringList deadList;
+    net.removeDeadMemberAtNow();
     foreach(auto memberID, memberList()){
         sendbyID("HB " + id,memberID);
-        if(!net.isActive(memberID)){
-            deadList.append(memberID);
-        }
     }
-    foreach (auto d, deadList) {
-        net.remove(d);
-    }
-
     emit P2PmemberListUpdate(memberList());
 }
 
