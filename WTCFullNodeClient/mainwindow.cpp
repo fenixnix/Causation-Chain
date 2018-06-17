@@ -2,61 +2,62 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent),
-  ui(new Ui::MainWindow)
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
-  ui->setupUi(this);
-  QObject::connect(&node,&NP2PNode::P2PmemberListUpdate,
-                   this,&MainWindow::on_RefreshMemberList);
-  QObject::connect(&node,&NP2PNode::RcvMsg,
-                   this,&MainWindow::on_RcvMessage);
+    qDebug()<<NP2PNode::getLocalIP();
+    ui->setupUi(this);
+    QObject::connect(&node,&NP2PNode::P2PmemberListUpdate,
+                     this,&MainWindow::on_RefreshMemberList);
+    QObject::connect(&node,&NP2PNode::RcvMsg,
+                     this,&MainWindow::on_RcvMessage);
 }
 
 MainWindow::~MainWindow()
 {
-  delete ui;
+    delete ui;
 }
 
 void MainWindow::on_actionSelfTest_triggered()
 {
-  QSettings setting("config",QSettings::IniFormat);
-  auto id = setting.value("ID").toString();
-  node.setID(id);
-  this->setWindowTitle(id);
-  qDebug()<<"ID:"<<id;
+    QSettings setting("config",QSettings::IniFormat);
+    auto id = setting.value("ID").toString();
+    node.setID(id);
+    this->setWindowTitle(id);
+    qDebug()<<"ID:"<<id;
 
-  QIPEndPoint local(setting.value("Local").toString());
-  QIPEndPoint nat(setting.value("NATServer").toString());
-  QIPEndPoint p2p(setting.value("P2PServer").toString());
+    QIPEndPoint local(setting.value("Local").toString());
+    QIPEndPoint nat(setting.value("NATServer").toString());
+    QIPEndPoint p2p(setting.value("P2PServer").toString());
 
-  node.bindLocalEndPoint(QIPEndPoint(NP2PNode::getLocalIP(),local.Port()));
-  node.setP2PServer(p2p);
-  node.join(nat);
+    node.bindLocalEndPoint(QIPEndPoint(local.IP(),local.Port()));
+    node.setP2PServer(p2p);
+    node.join(nat);
 }
 
 void MainWindow::on_actionDefault_File_triggered()
 {
-  QSettings setting("config",QSettings::IniFormat);
-  setting.setValue("ID","User");
-  setting.setValue("Local","127.0.0.1:8421");
-  setting.setValue("NATServer","118.178.127.35:8888");
-  setting.setValue("P2PServer","118.178.127.35:8889");
+    QSettings setting("config",QSettings::IniFormat);
+    setting.setValue("ID","User");
+    setting.setValue("Local","127.0.0.1:8421");
+    setting.setValue("NATServer","118.178.127.35:8888");
+    setting.setValue("P2PServer","118.178.127.35:8889");
 }
 
 void MainWindow::on_RefreshMemberList(QStringList list)
 {
-  ui->p2pListView->clear();
-  ui->p2pListView->addItems(list);
+    ui->p2pListView->clear();
+    ui->p2pListView->addItems(list);
 }
 
 void MainWindow::on_RcvMessage(QString msg)
 {
-  ui->plainTextEdit->appendPlainText(msg);
+    ui->plainTextEdit->appendPlainText(msg);
 }
 
 void MainWindow::on_sendBtn_clicked()
 {
-  QString id = ui->p2pListView->currentIndex().data().toString();
-  qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
-  node.sendMsg(ui->lineEdit->text(),id);
+    QString id = ui->p2pListView->currentIndex().data().toString();
+    qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
+    node.sendMsg(ui->lineEdit->text(),id);
 }

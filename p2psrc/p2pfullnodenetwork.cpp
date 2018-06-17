@@ -14,10 +14,10 @@ void P2PFullNodeNetwork::Init(int Port, int heartRate)
     heartbeatTimer.start(1000*heartRate);
 }
 
-void P2PFullNodeNetwork::BoardCast(SubNet net)
+void P2PFullNodeNetwork::BoardCast(NSubNet net)
 {
     auto nodes = net.getMemberList();
-    auto msg = ("P2P"+net.GetMemberList()).toLatin1();
+    auto msg = ("P2P"+net.getMemberListString()).toLatin1();
     foreach (auto n, nodes) {
         auto endPoint = &peers[n.id];
         auto ret = udp->writeDatagram(msg,endPoint->IP(),endPoint->Port());
@@ -30,7 +30,7 @@ void P2PFullNodeNetwork::BoardCast(SubNet net)
 
 QStringList P2PFullNodeNetwork::GetMainNetwrokNodes()
 {
-    return mainNetwork.GetMemberList().split(';');
+    return mainNetwork.getMemberListString().split(';');
 }
 
 void P2PFullNodeNetwork::OnNetinRequire()
@@ -56,7 +56,7 @@ void P2PFullNodeNetwork::OnNetinRequire()
         }
         QString netID = datas[3];
         if(netID == QString("0")){
-            mainNetwork.Enter(dataString);
+            mainNetwork.enter(dataString);
             peers.insert(QString(datas[0]),nat);
             qDebug()<<datas[0];
             qDebug()<<peers[QString(datas[0])].IP();

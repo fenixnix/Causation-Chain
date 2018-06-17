@@ -5,16 +5,21 @@
 #include <QString>
 #include "nodeinfo.h"
 
-class SubNet
+class NSubNet
 {
 public:
-  SubNet();
+  NSubNet();
   QString ID;//SubNet ID
 
-  void Enter(QString data);
-  void Remove(QString id);
+  void enter(QString data);
+  bool has(QString id);
+  bool isActive(QString id);
+  void heartbeat(QString id);
+  NodeInfo get(QString id);
+  void remove(QString id);
   int GetSize();
-  QString GetMemberList();
+  QString getMemberListString();
+
 
   QMap<QString, NodeInfo> getMemberList() const;
 

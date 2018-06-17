@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QMap>
 #include <QDebug>
-#include "subnet.h"
+#include "nsubnet.h"
 
 class P2PFullNodeNetwork : public QObject
 {
@@ -14,7 +14,7 @@ class P2PFullNodeNetwork : public QObject
 public:
   explicit P2PFullNodeNetwork(QObject *parent = nullptr);
   void Init(int Port, int heartRate);
-  void BoardCast(SubNet net);
+  void BoardCast(NSubNet net);
   QStringList GetMainNetwrokNodes();
 signals:
   void NewConnect();
@@ -28,10 +28,10 @@ private:
   quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec
 
-  SubNet mainNetwork;
+  NSubNet mainNetwork;
   QMap<QString,QIPEndPoint> peers;
 
-  QMap<QString,SubNet> subNets;
+  QMap<QString,NSubNet> subNets;
   QUdpSocket* udp;
   //TODO: timer heartbeat
   QTimer heartbeatTimer;

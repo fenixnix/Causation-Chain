@@ -4,7 +4,6 @@
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
     IPClassify ipc;
-    qDebug()<<getLocalIP();
     id = QHostInfo::localHostName();
 
     udpP2p = new QUdpSocket;
@@ -40,7 +39,7 @@ void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
 void NP2PNode::setP2PServer(QIPEndPoint server)
 {
     this->p2pServer.Init(server.IP().toString(),server.Port());
-    bindP2PServer(QIPEndPoint(getLocalIP(),server.Port()));
+    bindP2PServer(QIPEndPoint(udpNat->localAddress(),server.Port()));
 }
 
 void NP2PNode::bindP2PServer(QIPEndPoint p2pServer)
@@ -52,8 +51,8 @@ void NP2PNode::bindP2PServer(QIPEndPoint p2pServer)
 
 void NP2PNode::join(QIPEndPoint endPoint)
 {
-    if(endPoint.IP() == getLocalIP()){
-        natEndPoint.Init(endPoint.IP,udpNat->localPort());
+    if(endPoint.IP() == udpNat->localAddress()){
+        natEndPoint.Init(endPoint.IP().toString(),udpNat->localPort());
         RequireEnterP2PNetwork();
     }else{
         udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
@@ -64,7 +63,7 @@ void NP2PNode::join(QIPEndPoint endPoint)
 
 QStringList NP2PNode::memberList()
 {
-    return p2pMemberList.keys();
+    return net.getMemberList().keys();
 }
 
 void NP2PNode::RequireEnterP2PNetwork()
@@ -91,15 +90,15 @@ void NP2PNode::sendbyID(QString msg, QString id)
         qDebug()<<"Can`t send to myself!"<<this->id<<id;
         return;
     }
-    if(!p2pMemberList.contains(id)){
-        qDebug()<<p2pMemberList.keys();
-        qDebug()<<id<< "not finded";
+
+    if(!net.has(id)){
+        qDebug()<<id<<" not in net";
         return;
     }
 
     auto data = msg;
-    auto nodeInfo = p2pMemberList[id];
-    qDebug()<<nodeInfo.nat.IP().toString()<<natEndPoint.IP().toString();
+    auto nodeInfo = net.get(id);
+
     if(nodeInfo.nat.IP() == natEndPoint.IP()){
         //LAN
         qDebug()<<"LAN P2P:"<<data<<" to:"<<nodeInfo.loc.ToString();
@@ -128,17 +127,13 @@ QHostAddress NP2PNode::getLocalIP()
 {
     auto hostName = QHostInfo::localHostName();
     auto host = QHostInfo::fromName(hostName);
+    qDebug()<<host.addresses();
     foreach(auto ip, host.addresses()){
         if(ip.protocol() == QAbstractSocket::IPv4Protocol){
             return ip;
         }
     }
     return QHostAddress();
-}
-
-bool NP2PNode::checkAlivebyID(QString id)
-{
-    return p2pMemberList[id].CheckAlive();
 }
 
 void NP2PNode::OnP2PServer()
@@ -160,7 +155,6 @@ void NP2PNode::OnP2PServer()
             qDebug()<<"Rcv P2P:"+ data;
             GetP2PList(data);
         }
-
     }
 }
 
@@ -182,13 +176,9 @@ void NP2PNode::OnNat()
             qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
             RequireEnterP2PNetwork();
         }
-        if(cmd == "P2P"){
-            qDebug()<<"Rcv P2P:"+ data;
-            GetP2PList(data);
-        }
         if(cmd == "HB "){
             qDebug()<<"HB from:"<<data;
-            p2pMemberList[data].HeartBeat();
+            net.heartbeat(data);
         }
         if(cmd == "MSG"){
             qDebug()<<"Message: "<<data;
@@ -202,17 +192,17 @@ void NP2PNode::OnHeartbeat()
     RequireEnterP2PNetwork();
 
     QStringList deadList;
-    foreach(auto memberID, p2pMemberList.keys()){
+    foreach(auto memberID, memberList()){
         sendbyID("HB " + id,memberID);
-        if(!checkAlivebyID(memberID)){
+        if(!net.isActive(memberID)){
             deadList.append(memberID);
         }
     }
-    //Del Dead Peer;
     foreach (auto d, deadList) {
-        p2pMemberList.remove(d);
+        net.remove(d);
     }
-    emit P2PmemberListUpdate(p2pMemberList.keys());
+
+    emit P2PmemberListUpdate(memberList());
 }
 
 void NP2PNode::GetP2PList(QString data)
@@ -224,11 +214,7 @@ void NP2PNode::GetP2PList(QString data)
         if(info.id == this->id){
             continue;
         }
-        if(p2pMemberList.contains(info.id)){
-            p2pMemberList[info.id].HeartBeat();
-        }else{
-            p2pMemberList.insert(info.id,info);
-        }
+        net.enter(d);
     }
-    emit P2PmemberListUpdate(p2pMemberList.keys());
+    emit P2PmemberListUpdate(memberList());
 }

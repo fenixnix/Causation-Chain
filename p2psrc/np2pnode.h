@@ -1,4 +1,4 @@
-#ifndef NP2PNODE_H
+﻿#ifndef NP2PNODE_H
 #define NP2PNODE_H
 
 #include <QtCore>
@@ -9,6 +9,7 @@
 #include <QMap>
 #include "qipendpoint.h"
 #include "nodeinfo.h"
+#include "nsubnet.h"
 
 #define HeartBeatInterval 10
 
@@ -26,7 +27,7 @@ public:
     void join(QIPEndPoint endPoint);
 
     QStringList memberList();
-    bool checkAlivebyID(QString id);
+    //bool checkAlivebyID(QString id);
     void sendbyID(QString msg, QString id);
     void sendMsg(QString msg,QString id);
     void boardcastMsg(QString msg);
@@ -56,8 +57,7 @@ private:
     QIPEndPoint natEndPoint;
 
     QString id;
-    QMap<QString,NodeInfo> p2pMemberList;
-
+    NSubNet net;
     QTimer heartbeatTimer;
 };
 
