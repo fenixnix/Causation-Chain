@@ -63,17 +63,17 @@ QStringList NP2PNode::memberList()
     return net.getMemberList().keys();
 }
 
+void NP2PNode::Query(QString msg)
+{
+    qDebug()<<"Send:"<<msg<<" To:"<<p2pServer.ToString();
+    udpP2p->writeDatagram(msg.toLatin1(),p2pServer.IP(),p2pServer.Port());
+}
+
 void NP2PNode::RequireEnterP2PNetwork()
 {
     QString msg = id + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
             + "," + natEndPoint.ToString() + "," + "0";
     Query(msg);
-}
-
-void NP2PNode::Query(QString msg)
-{
-    qDebug()<<"Send:"<<msg<<" To:"<<p2pServer.ToString();
-    udpP2p->writeDatagram(msg.toLatin1(),p2pServer.IP(),p2pServer.Port());
 }
 
 void NP2PNode::SendbyEndPoint(QString msg, QIPEndPoint endPoint)

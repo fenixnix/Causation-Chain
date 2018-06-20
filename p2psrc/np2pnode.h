@@ -44,10 +44,10 @@ private slots:
     void OnHeartbeat();
 
 private:
+    void Query(QString msg);
     void RequireEnterP2PNetwork();
     void GetP2PList(QString data);
     void SendbyEndPoint(QString msg,QIPEndPoint endPoint);
-    void Query(QString msg);
 
     QUdpSocket* udpP2p;
     QUdpSocket* udpNat;

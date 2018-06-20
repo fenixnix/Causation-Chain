@@ -14,10 +14,11 @@ class P2PFullNodeNetwork : public QObject
 public:
   explicit P2PFullNodeNetwork(QObject *parent = nullptr);
   void Init(int Port, int heartRate);
+  void EnterMain(QString data,QIPEndPoint nat);
   void BoardCast(NSubNet net);
   QStringList GetMainNetwrokNodes();
 signals:
-  void NewConnect();
+  void UpdateMemberList();
 public slots:
 
 private slots:

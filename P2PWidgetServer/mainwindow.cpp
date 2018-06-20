@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   fullNetwork.Init(8889,20);
-  QObject::connect(&fullNetwork,&P2PFullNodeNetwork::NewConnect,this,&MainWindow::OnNewConnect);
+  QObject::connect(&fullNetwork,&P2PFullNodeNetwork::UpdateMemberList,this,&MainWindow::OnNewConnect);
 }
 
 MainWindow::~MainWindow()
@@ -24,4 +24,13 @@ void MainWindow::OnNewConnect()
       ui->listWidgetMainNetwork->insertItem(index,node);
       index++;
     }
+}
+
+int i = 0;
+void MainWindow::on_actionAdd_random_member_triggered()
+{
+    QString id = "Nix" +QString::number(i);
+    QString msg = id + ",1.1.1.1:100,2.2.2.2:200,0";
+    fullNetwork.EnterMain(msg,QIPEndPoint());
+    i++;
 }

@@ -1,0 +1,6 @@
+#include "nconsensusu.h"
+
+NConsensus::NConsensus()
+{
+
+}

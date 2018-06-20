@@ -36,6 +36,7 @@
     <property name="title">
      <string>Test</string>
     </property>
+    <addaction name="actionAdd_random_member"/>
    </widget>
    <addaction name="menuTest"/>
   </widget>
@@ -48,6 +49,11 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAdd_random_member">
+   <property name="text">
+    <string>Add random member</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

@@ -15,6 +15,20 @@ void P2PFullNodeNetwork::Init(int Port, int heartRate)
     heartbeatTimer.start(1000*heartRate);
 }
 
+void P2PFullNodeNetwork::EnterMain(QString data, QIPEndPoint nat)
+{
+    auto datas = data.split(',');
+    if(datas.size()<4){
+        return;
+    }
+    mainNet.enter(data);
+    peers.insert(QString(datas[0]),nat);
+    qDebug()<<datas[0];
+    qDebug()<<peers[QString(datas[0])].IP();
+    BoardCast(mainNet);
+    emit UpdateMemberList();
+}
+
 void P2PFullNodeNetwork::BoardCast(NSubNet net)
 {
     auto nodes = net.getMemberList();
@@ -55,14 +69,14 @@ void P2PFullNodeNetwork::OnNetinRequire()
         if(datas.size()<4){
             continue;
         }
-        QString netID = datas[3];
-        if(netID == QString("0")){
-            mainNet.enter(dataString);
-            peers.insert(QString(datas[0]),nat);
-            qDebug()<<datas[0];
-            qDebug()<<peers[QString(datas[0])].IP();
-            BoardCast(mainNet);
-            emit NewConnect();
+        if(datas[3] == QString("0")){//main net
+            EnterMain(dataString,nat);
+//            mainNet.enter(dataString);
+//            peers.insert(QString(datas[0]),nat);
+//            qDebug()<<datas[0];
+//            qDebug()<<peers[QString(datas[0])].IP();
+//            BoardCast(mainNet);
+//            emit UpdateMemberList();
         }else{
             //TODO: enter subnet
         }
@@ -71,5 +85,17 @@ void P2PFullNodeNetwork::OnNetinRequire()
 
 void P2PFullNodeNetwork::OnHeartbeat()
 {
+    qDebug()<<__FUNCTION__;
     mainNet.removeDeadMemberAtNow();
+    QStringList deadList;
+    foreach(auto p, peers.keys()){
+        if(!mainNet.has(p)){
+            deadList.append(p);
+        }
+    }
+    foreach(auto d, deadList){
+        qDebug()<<"dead"<<d;
+        peers.remove(d);
+    }
+    emit UpdateMemberList();
 }

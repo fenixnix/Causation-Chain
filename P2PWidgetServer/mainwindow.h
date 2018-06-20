@@ -19,6 +19,8 @@ public:
 private slots:
   void OnNewConnect();
 
+  void on_actionAdd_random_member_triggered();
+
 private:
   Ui::MainWindow *ui;
   P2PFullNodeNetwork fullNetwork;
