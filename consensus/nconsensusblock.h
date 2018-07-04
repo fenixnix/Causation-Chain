@@ -6,6 +6,7 @@
 class NConsensusBlock
 {
 public:
+  NConsensusBlock();
   NConsensusBlock(QString hash, QString data);
   void AddMember(QString id);
   int Size();

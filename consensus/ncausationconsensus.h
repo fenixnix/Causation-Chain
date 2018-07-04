@@ -3,9 +3,11 @@
 
 #include <QObject>
 #include <QList>
+#include <QtNetwork>
 #include "ncausechain.h"
 #include "nresultchain.h"
 #include "nemcc.h"
+#include "nclientinterface.h"
 
 class NCausationConsensus : public QObject
 {
@@ -16,19 +18,18 @@ public:
 signals:
 
 public slots:
-    void RcvCauseFromGame(QString data);
-    void RcvResultFromGame(QString data, quint64 timeStamp);
+    void RcvCauseFromUserClient(QString data);
+    void RcvResultFromUserClient(QString data);
 
     void RcvCauseFromCCN(QString sData);
     void RcvResultFromCCN(QString sData);
 
 private:
-    void SendCauseToGame(quint64 timeStamp, QString data);
+    void SendCauseToUserClient(quint64 timeStamp, QString data);
+    void SendResultToUserClient(quint64 timeStamp,QString data);
 
     void BroadcastCauseToCCN(QString data);
     void BroadcastResultToCCN(QString data);
-
-    void SendResultToGame(quint64 timeStamp,QString data);
 
     QString SignData(QString data, quint64 timeStamp);
 
@@ -38,6 +39,7 @@ private:
     NEmcc emcc;
     NCauseChain causeChain;
     NResultChain resultChain;
+    NClientInterface interface;
 };
 
 #endif // CAUSATIONCONSENSUS_H

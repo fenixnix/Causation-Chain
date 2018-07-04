@@ -1,6 +1,7 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import P2P 1.0
+import QtGraphicalEffects 1.0
 
 Page {
     id: page
@@ -44,4 +45,6 @@ Page {
         font.family: "Times New Roman"
         font.pixelSize: 12
     }
+
+
 }

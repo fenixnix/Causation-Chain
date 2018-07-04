@@ -36,7 +36,7 @@ public:
 
 signals:
     void P2PmemberListUpdate(QStringList list);
-    void RcvMsg(QString msg);
+    void RcvMsg(QString msg);//need Sender id
 
 private slots:
     void OnP2PServer();

@@ -7,6 +7,7 @@
 class NConsensus
 {
 public:
+  NConsensus();
   void Add(NResult result);
   int maxSize();
   QString data();

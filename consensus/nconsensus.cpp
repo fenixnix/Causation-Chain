@@ -8,7 +8,7 @@ NConsensus::NConsensus()
 void NConsensus::Add(NResult result)
 {
   if(!consensus.contains(result.dataHash)){
-      NConsensusBlock block(result.dataHash,data);
+      NConsensusBlock block(result.dataHash, result.data);
       block.AddMember(result.id);
       consensus.insert(result.dataHash,block);
     }else{

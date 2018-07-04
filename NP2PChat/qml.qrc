@@ -5,5 +5,8 @@
         <file>Page2Form.ui.qml</file>
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>Original_bug.png</file>
+        <file>Original_butterfly.png</file>
+        <file>Origin.png</file>
     </qresource>
 </RCC>

@@ -4,20 +4,26 @@
 
 NCausationConsensus::NCausationConsensus(QObject *parent) : QObject(parent)
 {
-
+  QObject::connect(&interface, &NClientInterface::RcvCause, this, &NCausationConsensus::RcvCauseFromUserClient);
+  QObject::connect(&interface, &NClientInterface::RcvResult, this, &NCausationConsensus::RcvResultFromUserClient);
 }
 
-void NCausationConsensus::RcvCauseFromGame(QString data)
+void NCausationConsensus::RcvCauseFromUserClient(QString data)
 {
   quint64 timeStamp = QDateTime::currentMSecsSinceEpoch();
-  SendCauseToGame(timeStamp, data);
+  SendCauseToUserClient(timeStamp, data);
   QString msg = SignData(data,timeStamp);
   BroadcastCauseToCCN(msg);
 }
 
-void NCausationConsensus::RcvResultFromGame(QString data,quint64 timeStamp)
+void NCausationConsensus::RcvResultFromUserClient(QString data)
 {
-  QString msg = SignData(data,timeStamp);
+  QStringList pair = data.split("+");
+  if(pair.size()!=2){
+      qDebug()<<"error rcv msg!!!";
+      return;
+    }
+  QString msg = SignData(pair[0],pair[1].toInt());
   BroadcastCauseToCCN(msg);
 }
 
@@ -40,12 +46,19 @@ void NCausationConsensus::RcvCauseFromCCN(QString sData)
   cause.data = sDatas[2];
   causeChain.Add(cause.timeStamp, cause);
 
-  SendCauseToGame(cause.timeStamp, cause.data);
+  SendCauseToUserClient(cause.timeStamp, cause.data);
 }
 
-void NCausationConsensus::SendCauseToGame(quint64 timeStamp, QString data)
+void NCausationConsensus::SendCauseToUserClient(quint64 timeStamp, QString data)
 {
-  //TODO: UDP2Game
+  //TODO: Send timeStamp + cause data to UserClient
+  interface.SendCause(QString::number(timeStamp) + "+" + data);
+}
+
+void NCausationConsensus::SendResultToUserClient(quint64 timeStamp,QString data)
+{
+  //TODO: Send timeStamp + result data to UserClient
+  interface.SendResult(QString::number(timeStamp) + "+" + data);
 }
 
 void NCausationConsensus::RcvResultFromCCN(QString sData)
@@ -70,18 +83,13 @@ void NCausationConsensus::RcvResultFromCCN(QString sData)
   resultChain.Add(result.timeStamp, result);
 
   if(resultChain.consensusSize(result.timeStamp)>=netCapacity){
-      SendResultToGame(result.timeStamp, resultChain.consensusData(result.timeStamp));
+      SendResultToUserClient(result.timeStamp, resultChain.consensusData(result.timeStamp));
     }
 }
 
 void NCausationConsensus::BroadcastCauseToCCN(QString data)
 {
   //TODO: UDP2CCN
-}
-
-void NCausationConsensus::SendResultToGame(quint64 timeStamp,QString data)
-{
-  //TODO: UDP2Game
 }
 
 QString NCausationConsensus::SignData(QString data, quint64 timeStamp)

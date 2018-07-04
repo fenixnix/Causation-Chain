@@ -1,5 +1,10 @@
 #include "nconsensusblock.h"
 
+NConsensusBlock::NConsensusBlock()
+{
+
+}
+
 NConsensusBlock::NConsensusBlock(QString hash, QString data)
 {
   datahash = hash;

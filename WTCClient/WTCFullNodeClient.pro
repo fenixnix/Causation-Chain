@@ -32,9 +32,12 @@ SOURCES += \
 HEADERS += \
         mainwindow.h
 
+
 FORMS += \
         mainwindow.ui
 
 include("../p2psrc/NP2P.pri")
 include("../consensus/NConsensus.pri")
-include("../Crypto/EmccSDK/nemcc/nemcc.pri")
+include("../Crypto/EmccSDK/nemcc/NEmcc.pri")
+include("../ClientInterface/ClientInterface.pri")
+include("../NetSync/NetSync.pri")
