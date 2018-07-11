@@ -33,6 +33,7 @@ public:
     void boardcastMsg(QString msg);
 
     static QHostAddress getLocalIP();
+    static QString getLocalIP2();
 
 signals:
     void P2PmemberListUpdate(QStringList list);

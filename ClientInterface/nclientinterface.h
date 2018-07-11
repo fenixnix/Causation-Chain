@@ -3,6 +3,10 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include <ncausationconsensus.h>
+#include <ncryptop2p.h>
+
+#define StartPort 8890
 
 class NClientInterface : public QObject
 {
@@ -23,12 +27,15 @@ public slots:
   void OnRcvResult();
 
 private:
-  int toCCausePort = 8890;
-  int toCResultPort = 8891;
-  int fromCCausePort = 8892;
-  int fromCResultPort = 8893;
+  int fromCCausePort;
+  int toCCausePort;
+  int fromCResultPort;
+  int toCResultPort;
   QUdpSocket udpCause;
   QUdpSocket udpResult;
+
+  NCryptoP2P p2p;
+  NCausationConsensus consensus;
 };
 
 #endif // NCLIENTINTERFACE_H

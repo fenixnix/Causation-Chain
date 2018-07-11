@@ -8,8 +8,13 @@ class NCauseChain
 {
 public:
   NCauseChain();
-  void Add(quint64 time, NCause cause);
+  bool Add(NCause cause);
   QMap<quint64,NCause> causes;
+  quint64 lastTimeStamp = 0;
+
+  QString Print();
+
+  static QString SelfTest();
 };
 
 #endif // NCAUSECHAIN_H

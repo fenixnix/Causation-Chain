@@ -9,7 +9,9 @@ HEADERS += \
     $$PWD/p2pfullnodenetwork.h \
     $$PWD/qipendpoint.h \
     $$PWD/ipclassify.h \
-    $$PWD/nsubnet.h
+    $$PWD/nsubnet.h \
+    $$PWD/ncryptop2p.h \
+    $$PWD/np2ppublicnetwork.h
 
 SOURCES += \
     $$PWD/nodeinfo.cpp \
@@ -17,4 +19,6 @@ SOURCES += \
     $$PWD/p2pfullnodenetwork.cpp \
     $$PWD/qipendpoint.cpp \
     $$PWD/ipclassify.cpp \
-    $$PWD/nsubnet.cpp
+    $$PWD/nsubnet.cpp \
+    $$PWD/ncryptop2p.cpp \
+    $$PWD/np2ppublicnetwork.cpp

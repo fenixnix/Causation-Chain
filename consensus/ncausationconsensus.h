@@ -6,8 +6,6 @@
 #include <QtNetwork>
 #include "ncausechain.h"
 #include "nresultchain.h"
-#include "nemcc.h"
-#include "nclientinterface.h"
 
 class NCausationConsensus : public QObject
 {
@@ -16,30 +14,33 @@ public:
     explicit NCausationConsensus(QObject *parent = nullptr);
 
 signals:
+    void ReachConsensus(quint64 timeStamp, QString resData);
 
 public slots:
-    void RcvCauseFromUserClient(QString data);
-    void RcvResultFromUserClient(QString data);
+    void RcvCause(quint64 timeStamp, QString id, QString data);
+    //void RcvCauseFromLocal(QString id, QString data);
+    //void RcvCauseFromCCN(QString id, QString sData);
+    void RcvResult(quint64 timeStamp, QString id, QString data);
 
-    void RcvCauseFromCCN(QString sData);
-    void RcvResultFromCCN(QString sData);
+    //void RcvResultFromLocal(QString data);
+    //void RcvResultFromCCN(QString sData);
+
+    static QString SelfTest();
 
 private:
-    void SendCauseToUserClient(quint64 timeStamp, QString data);
-    void SendResultToUserClient(quint64 timeStamp,QString data);
+    void SendCauseToLocal(quint64 timeStamp, QString data);
+    void SendResultToLocal(quint64 timeStamp,QString data);
 
     void BroadcastCauseToCCN(QString data);
     void BroadcastResultToCCN(QString data);
 
-    QString SignData(QString data, quint64 timeStamp);
+    //QString SignData(QString data, quint64 timeStamp);
 
     int timeStep = 100;//ms
     int netCapacity = 7;//totel member in net
 
-    NEmcc emcc;
     NCauseChain causeChain;
     NResultChain resultChain;
-    NClientInterface interface;
 };
 
 #endif // CAUSATIONCONSENSUS_H

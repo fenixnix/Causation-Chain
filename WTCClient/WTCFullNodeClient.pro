@@ -6,7 +6,7 @@
 
 QT       += core gui network
 
-CONFIG += console
+#CONFIG += console
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,8 +36,9 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-include("../p2psrc/NP2P.pri")
-include("../consensus/NConsensus.pri")
 include("../Crypto/EmccSDK/nemcc/NEmcc.pri")
-include("../ClientInterface/ClientInterface.pri")
+include("../p2psrc/NP2P.pri")
 include("../NetSync/NetSync.pri")
+include("../consensus/NConsensus.pri")
+include("../ClientInterface/ClientInterface.pri")
+

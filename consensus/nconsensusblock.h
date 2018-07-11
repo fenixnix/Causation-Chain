@@ -6,13 +6,15 @@
 class NConsensusBlock
 {
 public:
-  NConsensusBlock();
-  NConsensusBlock(QString hash, QString data);
-  void AddMember(QString id);
-  int Size();
-  QString datahash;
-  QString data;
-  QList<QString> members;
+    NConsensusBlock();
+    NConsensusBlock(QByteArray hash, QString data);
+    void AddMember(QString id);
+    int Size();
+    QByteArray datahash;
+    QString data;
+    QList<QString> members;
+
+    QString Print();
 };
 
 #endif // NCONSENSUSBLOCK_H

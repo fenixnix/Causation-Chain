@@ -11,9 +11,12 @@ public:
   void Add(NResult result);
   int maxSize();
   QString data();
+
+  QString Print();
+
 private:
-  QString maxSizeHash;
-  QMap<QString,NConsensusBlock> consensus;
+  QByteArray maxSizeHash;
+  QMap<QByteArray,NConsensusBlock> consensus;
 };
 
 #endif // NCONSENSUS_H

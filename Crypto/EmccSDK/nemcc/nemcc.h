@@ -11,14 +11,20 @@ public:
     QString Sign(QString data);
     static bool VerifyMsg(QString pubKey, QString msg, QString sign);
 
+    void SetPriKey(QString key);
+    void SetPubKey(QString key);
+
     QString privateKeyString;
     QString publicKeyString;
     QString address;
+    QString ethAddr;
     QByteArray priKey;
     QByteArray pubKey;
 
-    static QString calcAddress(QByteArray pub);
-    static QString calcAddress(QString pub);
+    static bool CheckEthAddr(QString addr);
+    static QString CalcAddr(QByteArray pub);
+    static QString CalcAddr(QString pub);
+    static QString CalcETHAddr(QString pub);
 
 private:
     static QByteArray RIPEMD_160(QByteArray in);

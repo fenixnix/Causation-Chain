@@ -9,8 +9,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     QObject::connect(&node,&NP2PNode::P2PmemberListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
+
+
     QObject::connect(&node,&NP2PNode::RcvMsg,
                      this,&MainWindow::on_RcvMessage);
+
+    //ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
+    //ui->plainTextEdit->appendPlainText(NCryptoP2P::SelfTest());
+    //NCryptoP2P::SelfTest();
+//    QObject::connect(&sync,&NetSync::UpdatePeerList,
+//                     this,&MainWindow::on_RefreshMemberList);
+
+    //sync.Init();
 }
 
 MainWindow::~MainWindow()

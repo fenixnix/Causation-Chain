@@ -1,6 +1,7 @@
 include("./emcc.pri")
 
-INCLUDEPATH += $$PWD/ \
+INCLUDEPATH += \
+    $$PWD/
 
 HEADERS += \
     $$PWD/nemcc.h

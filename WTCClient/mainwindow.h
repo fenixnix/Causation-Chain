@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSettings>
 #include "np2pnode.h"
+#include "ncryptop2p.h"
+#include "netsync.h"
 #include "ncausationconsensus.h"
 
 namespace Ui {
@@ -28,6 +30,7 @@ private slots:
 private:
   Ui::MainWindow *ui;
   NP2PNode node;
+  //NetSync sync;
   NCausationConsensus consensus;
 };
 
