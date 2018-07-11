@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "np2ppublicnetwork.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -21,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //                     this,&MainWindow::on_RefreshMemberList);
 
     //sync.Init();
+    NP2PPublicNetwork::SelfTest();
 }
 
 MainWindow::~MainWindow()

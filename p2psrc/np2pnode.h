@@ -50,6 +50,9 @@ private:
     void GetP2PList(QString data);
     void SendbyEndPoint(QString msg,QIPEndPoint endPoint);
 
+    void Ping(QByteArray addr);
+    void Pong(QByteArray addr);
+
     QUdpSocket* udpP2p;
     QUdpSocket* udpNat;
 

@@ -22,6 +22,7 @@ public:
   QDateTime netInTime;
   QDateTime lastHeatbeatTime;
 
+  int peerLag = 0;
   int lifeCycle = 20;
 };
 

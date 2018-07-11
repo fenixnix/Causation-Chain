@@ -195,6 +195,15 @@ void NP2PNode::OnNat()
             //qDebug()<<"Message: "<<data;
             emit RcvMsg(data);
         }
+
+        if(cmd == "PIN"){
+            //qDebug()<<"Message: "<<data;
+
+        }
+
+        if(cmd == "PON"){
+
+        }
     }
 }
 

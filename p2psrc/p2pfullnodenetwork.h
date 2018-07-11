@@ -4,7 +4,7 @@
 #include <QtNetwork>
 #include <QTimer>
 #include <QObject>
-#include <QMap>
+#include <QHash>
 #include <QDebug>
 #include "nsubnet.h"
 
@@ -30,9 +30,9 @@ private:
   int heartRate = 20;//sec
 
   NSubNet mainNet;
-  QMap<QString,QIPEndPoint> peers;
+  QHash<QString,QIPEndPoint> peers;
 
-  QMap<QString,NSubNet> subNets;
+  QHash<QString,NSubNet> subNets;
   QUdpSocket* udp;
   //TODO: timer heartbeat
   QTimer heartbeatTimer;
