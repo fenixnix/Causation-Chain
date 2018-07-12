@@ -179,12 +179,21 @@ void NP2PNode::OnP2PServer()
         QString msg = "Rcv:"+ str +
                 " From P2PServer";
         //qDebug()<<__FUNCTION__<<msg;
+        if(str.size()<3){
+            continue;
+        }
         auto cmd = str.left(3);
         auto data = str.mid(3);
 
         if(cmd == "P2P"){
             //qDebug()<<"Rcv P2P:"+ data;
             GetP2PList(data);
+        }
+
+        if(cmd == "ALL"){
+            //qDebug()<<"Rcv P2P:"+ data;
+            //GetP2PList(data);
+            //TODO: sync all net list
         }
     }
 }

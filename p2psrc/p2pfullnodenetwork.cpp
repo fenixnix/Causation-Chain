@@ -65,12 +65,12 @@ void P2PFullNodeNetwork::OnNetRequire()
         auto cmd = dataString.left(CMDSIZE);
         auto data = dataString.mid(CMDSIZE);
 
-        if(cmd == "JOIN"){
+        if(cmd == "P2P"){
             EnterMain(data,nat);
         }
 
-        if(cmd == "ALLP"){
-            QString msg = getAllPeerAddrsString().join(";");//TODO:getTotelList
+        if(cmd == "ALL"){
+            QString msg = "ALL"+getAllPeerAddrsString().join(";");//TODO:getTotelList
             udpSend(nat,msg);
         }
     }
@@ -94,7 +94,7 @@ void P2PFullNodeNetwork::OnHeartbeat()
 void P2PFullNodeNetwork::OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg)
 {
     auto ep = peers[addr];
-    udpSend(ep,msg);
+    udpSend(ep,"P2P" + msg);
 }
 
 qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)

@@ -23,7 +23,6 @@ public:
   int GetSize();
   QString getMemberListString();
 
-
   QMap<QString, NodeInfo> getMemberList() const;
 
 private:
