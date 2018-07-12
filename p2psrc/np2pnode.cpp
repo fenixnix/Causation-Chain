@@ -214,7 +214,7 @@ void NP2PNode::OnHeartbeat()
     foreach(auto memberID, memberList()){
         sendbyID("HB " + id,memberID);
     }
-    emit P2PmemberListUpdate(memberList());
+    emit P2PNeighbourListUpdate(memberList());
 }
 
 void NP2PNode::GetP2PList(QString data)
@@ -229,5 +229,5 @@ void NP2PNode::GetP2PList(QString data)
         //        }
         net.enter(d);
     }
-    emit P2PmemberListUpdate(memberList());
+    emit P2PNeighbourListUpdate(memberList());
 }

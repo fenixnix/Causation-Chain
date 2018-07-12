@@ -3,7 +3,7 @@
 P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 {
     udp = new QUdpSocket;
-    QObject::connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetinRequire);
+    QObject::connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetRequire);
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat);
 }
 
@@ -32,14 +32,11 @@ void P2PFullNodeNetwork::EnterMain(QString data, QIPEndPoint nat)
 void P2PFullNodeNetwork::BoardCast(NSubNet net)
 {
     auto nodes = net.getMemberList();
-    auto msg = ("P2P"+net.getMemberListString()).toLatin1();
+    auto msg = "P2P"+net.getMemberListString();
     foreach (auto n, nodes) {
-        auto endPoint = &peers[n.id];
-        auto ret = udp->writeDatagram(msg,endPoint->IP(),endPoint->Port());
-        if(ret==-1){
-            qDebug()<<udp->errorString();
-        }
-        qDebug()<<__FUNCTION__<<n.id<<endPoint->IP()<<endPoint->Port();
+        auto endPoint = &peers[n.getId()];
+        udpSend(*endPoint,msg);
+        qDebug()<<__FUNCTION__<<n.getId()<<endPoint->IP()<<endPoint->Port();
     }
 }
 
@@ -48,7 +45,7 @@ QStringList P2PFullNodeNetwork::GetMainNetwrokNodes()
     return mainNet.getMemberListString().split(';');
 }
 
-void P2PFullNodeNetwork::OnNetinRequire()
+void P2PFullNodeNetwork::OnNetRequire()
 {
     while(udp->hasPendingDatagrams())
     {
@@ -71,12 +68,12 @@ void P2PFullNodeNetwork::OnNetinRequire()
         }
         if(datas[3] == QString("0")){//main net
             EnterMain(dataString,nat);
-//            mainNet.enter(dataString);
-//            peers.insert(QString(datas[0]),nat);
-//            qDebug()<<datas[0];
-//            qDebug()<<peers[QString(datas[0])].IP();
-//            BoardCast(mainNet);
-//            emit UpdateMemberList();
+            //            mainNet.enter(dataString);
+            //            peers.insert(QString(datas[0]),nat);
+            //            qDebug()<<datas[0];
+            //            qDebug()<<peers[QString(datas[0])].IP();
+            //            BoardCast(mainNet);
+            //            emit UpdateMemberList();
         }else{
             //TODO: enter subnet
         }
@@ -98,4 +95,13 @@ void P2PFullNodeNetwork::OnHeartbeat()
         peers.remove(d);
     }
     emit UpdateMemberList();
+}
+
+qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)
+{
+    auto ret = udp->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
+    if(ret==-1){
+        qDebug()<<udp->errorString();
+    }
+    return ret;
 }

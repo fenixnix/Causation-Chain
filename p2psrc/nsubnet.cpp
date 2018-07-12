@@ -9,11 +9,11 @@ void NSubNet::enter(QString data)
 {
   NodeInfo info;
   info.SetData(data);
-  if(memberList.contains(info.id)){
-      memberList[info.id].HeartBeat();
+  if(memberList.contains(info.getId())){
+      memberList[info.getId()].HeartBeat();
       return;
     }
-  memberList.insert(info.id,info);
+  memberList.insert(info.getId(),info);
 }
 
 bool NSubNet::has(QString id)

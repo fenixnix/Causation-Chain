@@ -36,7 +36,8 @@ public:
     static QString getLocalIP2();
 
 signals:
-    void P2PmemberListUpdate(QStringList list);
+    void P2PNeighbourListUpdate(QStringList list);
+    void RcvP2PAllAddress(QStringList list);
     void RcvMsg(QString msg);//need Sender id
 
 private slots:

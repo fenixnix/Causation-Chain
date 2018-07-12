@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "np2ppublicnetwork.h"
+#include "np2pringnet.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     qDebug()<<NP2PNode::getLocalIP();
     ui->setupUi(this);
-    QObject::connect(&node,&NP2PNode::P2PmemberListUpdate,
+    QObject::connect(&node,&NP2PNode::P2PNeighbourListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
 
 
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //                     this,&MainWindow::on_RefreshMemberList);
 
     //sync.Init();
-    NP2PPublicNetwork::SelfTest();
+    NP2PRingNet::SelfTest();
 }
 
 MainWindow::~MainWindow()

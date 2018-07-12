@@ -8,22 +8,30 @@
 class NodeInfo
 {
 public:
-  NodeInfo();
-  void SetData(QString data);
-  void HeartBeat();
-  bool CheckAlive();
-  QString ToString();
+    NodeInfo();
+    NodeInfo(QString id, QIPEndPoint loc, QIPEndPoint nat);
+    void SetData(QString data);
+    void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
+    void HeartBeat();
+    bool CheckAlive();
+    QString ToString();
 
-  QString id;//blockchain address;
 
-  QIPEndPoint loc;
-  QIPEndPoint nat;
+    QByteArray addr;
 
-  QDateTime netInTime;
-  QDateTime lastHeatbeatTime;
+    QIPEndPoint loc;
+    QIPEndPoint nat;
 
-  int peerLag = 0;
-  int lifeCycle = 20;
+    QDateTime netInTime;
+    QDateTime lastHeatbeatTime;
+
+    int peerLag = 0;
+    int lifeCycle = 20;
+    QString getId() const;
+    void setId(const QString &value);
+
+private:
+    QString id;//blockchain address;
 };
 
 #endif // NODEINFO_H
