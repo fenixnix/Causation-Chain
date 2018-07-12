@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     qDebug()<<NP2PNode::getLocalIP();
     ui->setupUi(this);
-    QObject::connect(&node,&NP2PNode::P2PNeighbourListUpdate,
+    QObject::connect(&node,&NP2PNode::neighbourListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
 
 
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //                     this,&MainWindow::on_RefreshMemberList);
 
     //sync.Init();
-    NP2PRingNet::SelfTest();
+    //NP2PRingNet::SelfTest();
 }
 
 MainWindow::~MainWindow()

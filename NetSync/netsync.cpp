@@ -3,7 +3,7 @@
 
 NetSync::NetSync(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2p,&NP2PNode::P2PNeighbourListUpdate,this,&NetSync::PeerListUpdate);
+    QObject::connect(&p2p,&NP2PNode::neighbourListUpdate,this,&NetSync::PeerListUpdate);
     Init();
 }
 
@@ -42,12 +42,12 @@ void NetSync::Init()
 
 QStringList NetSync::RequirePeerList()
 {
-    return CheckEthAddrList(p2p.memberList());
+    return CheckEthAddrList(p2p.neighbourList());
 }
 
 bool NetSync::PeerIsExist(QString peerAddress)
 {
-    return p2p.memberList().contains(peerAddress);
+    return p2p.neighbourList().contains(peerAddress);
 }
 
 void NetSync::BroadcastBlockChainLevel(QString id, QString level)
@@ -133,7 +133,8 @@ void NetSync::PeerListUpdate(QStringList list)
     foreach(auto l, list){
         prevAllPeerList.removeAll(l);
     }
-    emit UpdatePeerList(CheckEthAddrList(list),prevAllPeerList);
+    //TODO:
+    //emit UpdatePeerList(CheckEthAddrList(list),prevAllPeerList);
     prevAllPeerList = list;
 }
 

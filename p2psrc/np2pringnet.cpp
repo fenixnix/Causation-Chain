@@ -33,7 +33,7 @@ void NP2PRingNet::broadcastNeighberPeersList()
         auto ip = peerInfoHashMap[*itr].nat;
         auto neighboursData = getPeersNeighbourList(itr);
         qDebug()<<__FUNCTION__<<ip.ToString()<<neighboursData;
-        emit Send(ip,neighboursData);
+        emit Send(*itr,ip,neighboursData);
         if(!peerInfoHashMap[*itr].CheckAlive()){
             deadPeers.append(*itr);
         }

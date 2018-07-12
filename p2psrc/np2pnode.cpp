@@ -6,7 +6,7 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
     udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
     QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
-    QObject::connect(udpNat, &QUdpSocket::readyRead, this,&NP2PNode::OnNat);
+    QObject::connect(udpNat, &QUdpSocket::readyRead, this, &NP2PNode::OnNat);
 
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
 }
@@ -22,7 +22,7 @@ NP2PNode::~NP2PNode()
 
 void NP2PNode::setID(QString id)
 {
-    this->id = id;
+    this->localAddress = id;
 }
 
 void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
@@ -50,40 +50,51 @@ void NP2PNode::join(QIPEndPoint endPoint)
 {
     if(endPoint.IP() == udpNat->localAddress()){
         natEndPoint.Init(endPoint.IP().toString(),udpNat->localPort());
-        RequireEnterP2PNetwork();
+        RequireJoin();
     }else{
-        udpNat->writeDatagram(id.toLatin1(),endPoint.IP(),endPoint.Port());
+        udpNatSend(endPoint, localAddress);
     }
 
     heartbeatTimer.start(HeartBeatInterval*1000);
 }
 
-QStringList NP2PNode::memberList()
+QStringList NP2PNode::neighbourList()
 {
     return net.getMemberList().keys();
 }
 
 void NP2PNode::Query(QString msg)
 {
-    //qDebug()<<"Send:"<<msg<<" To:"<<p2pServer.ToString();
-    udpP2p->writeDatagram(msg.toLatin1(),p2pServer.IP(),p2pServer.Port());
+    udpSend(p2pServer,msg);
 }
 
-void NP2PNode::RequireEnterP2PNetwork()
+void NP2PNode::RequireJoin()
 {
-    QString msg = id + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
+    QString msg = localAddress + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
             + "," + natEndPoint.ToString() + "," + "0";
+//    QString msg = "JOIN" + localAddress + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
+//            + "," + natEndPoint.ToString() + "," + "0";
     Query(msg);
 }
 
-void NP2PNode::SendbyEndPoint(QString msg, QIPEndPoint endPoint)
+void NP2PNode::RequireAllPeersList()
 {
-    udpNat->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
+    QString msg = "ALLP";
+    Query(msg);
+}
+
+qint64 NP2PNode::udpNatSend(QIPEndPoint endPoint, QString msg)
+{
+    auto ret = udpNat->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
+    if(ret==-1){
+        qDebug()<<udpNat->errorString();
+    }
+    return ret;
 }
 
 void NP2PNode::sendbyID(QString msg, QString id)
 {
-    if(this->id == id){
+    if(this->localAddress == id){
         //qDebug()<<"Can`t send to myself!"<<this->id<<id;
         return;
     }
@@ -99,11 +110,11 @@ void NP2PNode::sendbyID(QString msg, QString id)
     if(nodeInfo.nat.IP() == natEndPoint.IP()){
         //LAN
         //qDebug()<<"LAN P2P:"<<data<<" to:"<<nodeInfo.loc.ToString();
-        SendbyEndPoint(data, nodeInfo.loc);
+        udpNatSend(nodeInfo.loc, data);
     }else{
         //WAN
         //qDebug()<<"WAN P2P:"<<data<<" to:"<<nodeInfo.nat.ToString();
-        SendbyEndPoint(data, nodeInfo.nat);
+        udpNatSend(nodeInfo.nat, data);
     }
 }
 
@@ -114,10 +125,19 @@ void NP2PNode::sendMsg(QString msg, QString id)
 
 void NP2PNode::boardcastMsg(QString msg)
 {
-    auto ls = memberList();
+    auto ls = neighbourList();
     foreach(auto m ,ls){
         sendMsg(msg,m);
     }
+}
+
+qint64 NP2PNode::udpSend(QIPEndPoint endPoint, QString msg)
+{
+    auto ret = udpP2p->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
+    if(ret==-1){
+        qDebug()<<udpP2p->errorString();
+    }
+    return ret;
 }
 
 QHostAddress NP2PNode::getLocalIP()
@@ -185,7 +205,7 @@ void NP2PNode::OnNat()
         if(cmd == "NAT"){
             natEndPoint.Init(data);
             //qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
-            RequireEnterP2PNetwork();
+            RequireJoin();
         }
         if(cmd == "HB "){
             //qDebug()<<"HB from:"<<data;
@@ -209,12 +229,12 @@ void NP2PNode::OnNat()
 
 void NP2PNode::OnHeartbeat()
 {
-    RequireEnterP2PNetwork();
+    RequireJoin();
     net.removeDeadMemberAtNow();
-    foreach(auto memberID, memberList()){
-        sendbyID("HB " + id,memberID);
+    foreach(auto memberID, neighbourList()){
+        sendbyID("HB " + localAddress,memberID);
     }
-    emit P2PNeighbourListUpdate(memberList());
+    emit neighbourListUpdate(neighbourList());
 }
 
 void NP2PNode::GetP2PList(QString data)
@@ -224,10 +244,10 @@ void NP2PNode::GetP2PList(QString data)
         NodeInfo info;
         info.SetData(d);
         //skip myself
-        //        if(info.id == this->id){
-        //            continue;
-        //        }
+        if(info.getId() == this->localAddress){
+            continue;
+        }
         net.enter(d);
     }
-    emit P2PNeighbourListUpdate(memberList());
+    emit neighbourListUpdate(neighbourList());
 }

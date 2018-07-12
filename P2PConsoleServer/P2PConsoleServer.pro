@@ -20,3 +20,4 @@ SOURCES += \
 HEADERS +=
 
 include("../p2psrc/NP2P.pri")
+include("../Crypto/EmccSDK/nemcc/NEmcc.pri")

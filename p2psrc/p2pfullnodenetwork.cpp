@@ -5,6 +5,8 @@ P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
     udp = new QUdpSocket;
     QObject::connect(udp, &QUdpSocket::readyRead, this,&P2PFullNodeNetwork::OnNetRequire);
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat);
+
+    QObject::connect(&ringNet, &NP2PRingNet::Send, this, &P2PFullNodeNetwork::OnBroadcast);
 }
 
 void P2PFullNodeNetwork::Init(int Port, int heartRate)
@@ -18,31 +20,29 @@ void P2PFullNodeNetwork::Init(int Port, int heartRate)
 void P2PFullNodeNetwork::EnterMain(QString data, QIPEndPoint nat)
 {
     auto datas = data.split(',');
-    if(datas.size()<4){
+    if(datas.size()<3){
         return;
     }
-    mainNet.enter(data);
-    peers.insert(QString(datas[0]),nat);
-    qDebug()<<datas[0];
-    qDebug()<<peers[QString(datas[0])].IP();
-    BoardCast(mainNet);
-    emit UpdateMemberList();
+
+    NodeInfo info;
+    info.SetData(data);
+    ringNet.peerJoinCall(info);
+    peers.insert(info.addr,nat);
 }
 
-void P2PFullNodeNetwork::BoardCast(NSubNet net)
+QByteArrayList P2PFullNodeNetwork::getAllPeerAddrs()
 {
-    auto nodes = net.getMemberList();
-    auto msg = "P2P"+net.getMemberListString();
-    foreach (auto n, nodes) {
-        auto endPoint = &peers[n.getId()];
-        udpSend(*endPoint,msg);
-        qDebug()<<__FUNCTION__<<n.getId()<<endPoint->IP()<<endPoint->Port();
+    return ringNet.getAllAddress();
+}
+
+QStringList P2PFullNodeNetwork::getAllPeerAddrsString()
+{
+    auto brl = getAllPeerAddrs();
+    QStringList list;
+    foreach(auto p, brl){
+        list.append(QString(p.toHex()));
     }
-}
-
-QStringList P2PFullNodeNetwork::GetMainNetwrokNodes()
-{
-    return mainNet.getMemberListString().split(';');
+    return list;
 }
 
 void P2PFullNodeNetwork::OnNetRequire()
@@ -61,21 +61,17 @@ void P2PFullNodeNetwork::OnNetRequire()
         QString msg = "Rcv:"+ dataString + " From:"+ nat.ToString();
         qDebug()<<msg;
 
-        auto datas = dataString.split(',');
-        //      QString hash = datas[4];
-        if(datas.size()<4){
-            continue;
+        if(dataString.size()<CMDSIZE) continue;
+        auto cmd = dataString.left(CMDSIZE);
+        auto data = dataString.mid(CMDSIZE);
+
+        if(cmd == "JOIN"){
+            EnterMain(data,nat);
         }
-        if(datas[3] == QString("0")){//main net
-            EnterMain(dataString,nat);
-            //            mainNet.enter(dataString);
-            //            peers.insert(QString(datas[0]),nat);
-            //            qDebug()<<datas[0];
-            //            qDebug()<<peers[QString(datas[0])].IP();
-            //            BoardCast(mainNet);
-            //            emit UpdateMemberList();
-        }else{
-            //TODO: enter subnet
+
+        if(cmd == "ALLP"){
+            QString msg = getAllPeerAddrsString().join(";");//TODO:getTotelList
+            udpSend(nat,msg);
         }
     }
 }
@@ -83,18 +79,22 @@ void P2PFullNodeNetwork::OnNetRequire()
 void P2PFullNodeNetwork::OnHeartbeat()
 {
     qDebug()<<__FUNCTION__;
-    mainNet.removeDeadMemberAtNow();
-    QStringList deadList;
+    ringNet.update();
+    QByteArrayList deadList;
     foreach(auto p, peers.keys()){
-        if(!mainNet.has(p)){
+        if(!ringNet.getAllAddress().contains(p)){
             deadList.append(p);
         }
     }
     foreach(auto d, deadList){
-        qDebug()<<"dead"<<d;
         peers.remove(d);
     }
-    emit UpdateMemberList();
+}
+
+void P2PFullNodeNetwork::OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg)
+{
+    auto ep = peers[addr];
+    udpSend(ep,msg);
 }
 
 qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)

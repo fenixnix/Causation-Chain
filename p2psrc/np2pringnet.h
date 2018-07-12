@@ -21,7 +21,7 @@ public:
     static void SelfTest();
 
 signals:
-    void Send(QIPEndPoint endPoint, QString msg);
+    void Send(QByteArray addr, QIPEndPoint endPoint, QString msg);
 
 public slots:
 

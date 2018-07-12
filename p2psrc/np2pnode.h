@@ -20,23 +20,28 @@ public:
     explicit NP2PNode(QObject *parent = nullptr);
     ~NP2PNode();
 
-    void setID(QString id);
+    void setID(QString localAddress);
     void bindLocalEndPoint(QIPEndPoint localEndPoint);
     void setP2PServer(QIPEndPoint server);
     void bindP2PServer(QIPEndPoint p2pServerRcv);
     void join(QIPEndPoint endPoint);
 
-    QStringList memberList();
+    QStringList neighbourList();
     //bool checkAlivebyID(QString id);
-    void sendbyID(QString msg, QString id);
-    void sendMsg(QString msg,QString id);
+    qint64 udpSend(QIPEndPoint endPoint, QString msg);
+    qint64 udpNatSend(QIPEndPoint endPoint, QString msg);
+    void sendbyID(QString msg, QString localAddress);
+    void sendMsg(QString msg,QString localAddress);
     void boardcastMsg(QString msg);
+
+    void RequireJoin();
+    void RequireAllPeersList();
 
     static QHostAddress getLocalIP();
     static QString getLocalIP2();
 
 signals:
-    void P2PNeighbourListUpdate(QStringList list);
+    void neighbourListUpdate(QStringList list);
     void RcvP2PAllAddress(QStringList list);
     void RcvMsg(QString msg);//need Sender id
 
@@ -47,9 +52,7 @@ private slots:
 
 private:
     void Query(QString msg);
-    void RequireEnterP2PNetwork();
     void GetP2PList(QString data);
-    void SendbyEndPoint(QString msg,QIPEndPoint endPoint);
 
     void Ping(QByteArray addr);
     void Pong(QByteArray addr);
@@ -61,7 +64,7 @@ private:
     QIPEndPoint p2pServer;
     QIPEndPoint natEndPoint;
 
-    QString id;
+    QString localAddress;
     NSubNet net;
     QTimer heartbeatTimer;
 };

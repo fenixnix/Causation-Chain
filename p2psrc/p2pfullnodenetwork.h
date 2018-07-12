@@ -7,6 +7,9 @@
 #include <QHash>
 #include <QDebug>
 #include "nsubnet.h"
+#include "np2pringnet.h"
+
+#define CMDSIZE 4
 
 class P2PFullNodeNetwork : public QObject
 {
@@ -14,7 +17,8 @@ class P2PFullNodeNetwork : public QObject
 public:
   explicit P2PFullNodeNetwork(QObject *parent = nullptr);
   void Init(int Port, int heartRate);
-  QStringList GetMainNetwrokNodes();
+  QByteArrayList getAllPeerAddrs();
+  QStringList getAllPeerAddrsString();
 
 signals:
   void UpdateMemberList();
@@ -24,17 +28,16 @@ public slots:
 private slots:
   void OnNetRequire();
   void OnHeartbeat();
+  void OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg);
 
 private:
   void EnterMain(QString data,QIPEndPoint nat);
-  void BoardCast(NSubNet net);
 
   quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec
 
-  NSubNet mainNet;
-  QHash<QString,QIPEndPoint> peers;
-  //QHash<QString,NSubNet> subNets;
+  NP2PRingNet ringNet;
+  QHash<QByteArray, QIPEndPoint> peers;
 
   QUdpSocket* udp;
   qint64 udpSend(QIPEndPoint endPoint, QString msg);
