@@ -19,12 +19,12 @@ public:
 
 signals:
     void doUpdatePeerList(QStringList list, QStringList deadList, QStringList newComerList);
-    void doOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data);
+    void doOnnRequire(QString contractID, QString addr, QString cmd, QString data);
 
     void doRcvBlockChainLevel(QString contractID, QString nodeAddress, QString level);
     void doRcvBlockChainDataRequire(QString contractID, QString nodeAddress, QString start, QString end);
     void doRcvBlockChainData(QString contractID, QString nodeAddress, QString data);
-    void doRcvRequire(QString contractID, QByteArray addr, QString data);
+    void doRcvRequire(QString contractID, QString addr, QString data);
 
 public slots:
     void onGetBossAddr(QByteArrayList bossList);
