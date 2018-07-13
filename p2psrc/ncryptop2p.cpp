@@ -25,7 +25,7 @@ void NCryptoP2P::Init()
 QString NCryptoP2P::sendByID(QString id, QString msg)
 {
     auto dMsg = Dsa(msg);
-    p2p.sendbyID(dMsg,id);
+    p2p.sendbyAddr(dMsg,id);
     return dMsg;
 }
 

@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>403</width>
-     <height>17</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
@@ -56,6 +56,8 @@
     </property>
     <addaction name="actionSelfTest"/>
     <addaction name="actionDefault_File"/>
+    <addaction name="actionRequire_All"/>
+    <addaction name="actionRequire_NAT"/>
    </widget>
    <addaction name="menuTest"/>
   </widget>
@@ -76,6 +78,16 @@
   <action name="actionDefault_File">
    <property name="text">
     <string>Default config file</string>
+   </property>
+  </action>
+  <action name="actionRequire_All">
+   <property name="text">
+    <string>Require All</string>
+   </property>
+  </action>
+  <action name="actionRequire_NAT">
+   <property name="text">
+    <string>Require NAT</string>
    </property>
   </action>
  </widget>

@@ -26,6 +26,11 @@ QByteArrayList NP2PRingNet::getAllAddress()
     return peerInfoHashMap.keys();
 }
 
+NodeInfo NP2PRingNet::getNodeInfo(QByteArray addr)
+{
+    return peerInfoHashMap[addr];
+}
+
 void NP2PRingNet::broadcastNeighberPeersList()
 {
     auto itr = peerAddrList.begin();

@@ -6,11 +6,15 @@
 #include <QObject>
 #include <QHash>
 #include <QDebug>
+#include "messageprotocol.h"
 #include "nsubnet.h"
 #include "np2pringnet.h"
 
-#define CMDSIZE 4
+<<<<<<< HEAD
+=======
+#define CMDSIZE 3
 
+>>>>>>> 9cf25cb903b74fc3218052e8e137f6e1e7743fcb
 class P2PFullNodeNetwork : public QObject
 {
   Q_OBJECT
@@ -32,6 +36,7 @@ private slots:
 
 private:
   void EnterMain(QString data,QIPEndPoint nat);
+  QStringList getNodeInfoListbyAddr(QString data);
 
   quint16 portNetinRequire = 8889;
   int heartRate = 20;//sec

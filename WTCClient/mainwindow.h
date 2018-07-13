@@ -27,6 +27,10 @@ private slots:
   void on_RefreshMemberList(QStringList list);
   void on_RcvMessage(QString msg);
 
+  void on_actionRequire_All_triggered();
+
+  void on_actionRequire_NAT_triggered();
+
 private:
   Ui::MainWindow *ui;
   NP2PNode node;

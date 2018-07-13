@@ -17,6 +17,7 @@ public:
     void update();
 
     QByteArrayList getAllAddress();
+    NodeInfo getNodeInfo(QByteArray addr);
 
     static void SelfTest();
 

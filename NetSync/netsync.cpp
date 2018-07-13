@@ -3,7 +3,7 @@
 
 NetSync::NetSync(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2p,&NP2PNode::neighbourListUpdate,this,&NetSync::PeerListUpdate);
+    QObject::connect(&p2p,&NP2PNode::neighbourListUpdate,this,&NetSync::PeerListUpdate,Qt::QueuedConnection);
     Init();
 }
 
@@ -50,7 +50,7 @@ bool NetSync::PeerIsExist(QString peerAddress)
     return p2p.neighbourList().contains(peerAddress);
 }
 
-void NetSync::BroadcastBlockChainLevel(QString id, QString level)
+void NetSync::onBroadcastBlockChainLevel(QString id, QString level)
 {
     QJsonObject obj;
     obj.insert("ID",id);
@@ -63,7 +63,7 @@ void NetSync::BroadcastBlockChainLevel(QString id, QString level)
     //return signedMsg;
 }
 
-void NetSync::RequireBlockChainData(QString id, QString nodeAddress, QString start, QString end)
+void NetSync::onRequireBlockChainData(QString id, QString nodeAddress, QString start, QString end)
 {
     QJsonObject obj;
     obj.insert("ID",id);
@@ -73,11 +73,11 @@ void NetSync::RequireBlockChainData(QString id, QString nodeAddress, QString sta
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendbyID(signedMsg,nodeAddress);
+    p2p.sendMsg(signedMsg,nodeAddress);
     //return signedMsg;
 }
 
-void NetSync::SendBlockChainData(QString id, QString nodeAddress, QString data)
+void NetSync::onSendBlockChainData(QString id, QString nodeAddress, QString data)
 {
     QJsonObject obj;
     obj.insert("ID",id);
@@ -86,7 +86,7 @@ void NetSync::SendBlockChainData(QString id, QString nodeAddress, QString data)
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendbyID(signedMsg,nodeAddress);
+    p2p.sendMsg(signedMsg,nodeAddress);
     //return signedMsg;
 }
 
@@ -97,7 +97,24 @@ void NetSync::SelfTest()
 //    auto msg2 = SendBlockChainData("ONN","NodeAddress2","BlockChainData");
 //    RcvP2pMsg(msg0);
 //    RcvP2pMsg(msg1);
-//    RcvP2pMsg(msg2);
+    //    RcvP2pMsg(msg2);
+}
+
+void NetSync::onGetBossAddr(QByteArrayList bossList)
+{
+    p2p.RequireNatbyAddr(bossList);
+}
+
+void NetSync::onSendRequire(QString id, QByteArray addr, QString data)
+{
+    QJsonObject obj;
+    obj.insert("ID",id);
+    obj.insert("Addr",ecDsa.ethAddr);
+    obj.insert("Require",data);
+    QJsonDocument jdom(obj);
+    QString msg = QString(jdom.toJson());
+    QString signedMsg = setUpSignedMsg(msg);
+    p2p.sendMsg(signedMsg,addr);
 }
 
 void NetSync::RcvP2pMsg(QString signedMsg)
@@ -115,26 +132,37 @@ void NetSync::RcvP2pMsg(QString signedMsg)
     QString addr = obj["Addr"].toString();
     QString contractID = obj["ID"].toString();
     if(obj.contains("Level")){
-        emit RcvBlockChainLevel(contractID,addr,obj["Level"].toString());
+        emit doRcvBlockChainLevel(contractID,addr,obj["Level"].toString());
         //qDebug()<<"Rcv:Level"<<contractID<<addr<<obj["Level"].toString();
     }
     if(obj.contains("Start")){
-        emit RcvBlockChainDataRequire(contractID,addr,obj["Start"].toString(),obj["End"].toString());
+        emit doRcvBlockChainDataRequire(contractID,addr,obj["Start"].toString(),obj["End"].toString());
         //qDebug()<<"Rcv:Require"<<contractID<<addr<<obj["Start"].toString()<<obj["End"].toString();
     }
     if(obj.contains("Data")){
-        emit RcvBlockChainData(contractID,addr,obj["Data"].toString());
+        emit doRcvBlockChainData(contractID,addr,obj["Data"].toString());
+        //qDebug()<<"Rcv:Data"<<contractID<<addr<<obj["Data"].toString();
+    }
+    if(obj.contains("Require")){
+        emit doRcvRequire(contractID,addr,obj["Require"].toString());
         //qDebug()<<"Rcv:Data"<<contractID<<addr<<obj["Data"].toString();
     }
 }
 
 void NetSync::PeerListUpdate(QStringList list)
 {
+    QStringList newComerList;
+    foreach (auto l, list) {
+        if(!prevAllPeerList.contains(l)){
+            newComerList.append(l);
+        }
+    }
+
     foreach(auto l, list){
         prevAllPeerList.removeAll(l);
     }
-    //TODO:
-    //emit UpdatePeerList(CheckEthAddrList(list),prevAllPeerList);
+
+    emit doUpdatePeerList(CheckEthAddrList(list),prevAllPeerList,newComerList);
     prevAllPeerList = list;
 }
 

@@ -7,6 +7,7 @@
 #include <QtNetwork>
 #include <QDebug>
 #include <QMap>
+#include "messageprotocol.h"
 #include "qipendpoint.h"
 #include "nodeinfo.h"
 #include "nsubnet.h"
@@ -30,12 +31,13 @@ public:
     //bool checkAlivebyID(QString id);
     qint64 udpSend(QIPEndPoint endPoint, QString msg);
     qint64 udpNatSend(QIPEndPoint endPoint, QString msg);
-    void sendbyID(QString msg, QString localAddress);
+    void sendbyAddr(QString msg, QString localAddress);
     void sendMsg(QString msg,QString localAddress);
     void boardcastMsg(QString msg);
 
     void RequireJoin();
     void RequireAllPeersList();
+    void RequireNatbyAddr(QByteArrayList addrs);
 
     static QHostAddress getLocalIP();
     static QString getLocalIP2();
@@ -53,6 +55,8 @@ private slots:
 private:
     void Query(QString msg);
     void GetP2PList(QString data);
+    void GetAllAddr(QString data);
+    void GetNatbyAddr(QString data);
 
     void Ping(QByteArray addr);
     void Pong(QByteArray addr);

@@ -74,3 +74,18 @@ void MainWindow::on_sendBtn_clicked()
     qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
     node.sendMsg(ui->lineEdit->text(),id);
 }
+
+void MainWindow::on_actionRequire_All_triggered()
+{
+    node.RequireAllPeersList();
+}
+
+void MainWindow::on_actionRequire_NAT_triggered()
+{
+    QString addr1 = "1a8e521036b453cbf3e108ae6e1a6487cae1063d";
+    QString addr2 = "3ee5c7f4482682c06332590dd344cb4273dfa6b7";
+    QByteArrayList list;
+    list.append(QByteArray::fromHex(addr1.toLatin1()));
+    list.append(QByteArray::fromHex(addr2.toLatin1()));
+    node.RequireNatbyAddr(list);
+}

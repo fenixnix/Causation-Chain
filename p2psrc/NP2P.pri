@@ -11,7 +11,8 @@ HEADERS += \
     $$PWD/ipclassify.h \
     $$PWD/nsubnet.h \
     $$PWD/ncryptop2p.h \
-    $$PWD/np2pringnet.h
+    $$PWD/np2pringnet.h \
+    $$PWD/messageprotocol.h
 
 SOURCES += \
     $$PWD/nodeinfo.cpp \
@@ -21,4 +22,5 @@ SOURCES += \
     $$PWD/ipclassify.cpp \
     $$PWD/nsubnet.cpp \
     $$PWD/ncryptop2p.cpp \
-    $$PWD/np2pringnet.cpp
+    $$PWD/np2pringnet.cpp \
+    $$PWD/messageprotocol.cpp
