@@ -105,6 +105,19 @@ void NetSync::onGetBossAddr(QByteArrayList bossList)
     p2p.RequireNatbyAddr(bossList);
 }
 
+void NetSync::onOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data)
+{
+    QJsonObject obj;
+    obj.insert("ID",contractID);
+    obj.insert("Addr",ecDsa.ethAddr);
+    obj.insert("CMD",cmd);
+    obj.insert("Data",data);
+    QJsonDocument jdom(obj);
+    QString msg = QString(jdom.toJson());
+    QString signedMsg = setUpSignedMsg(msg);
+    p2p.sendMsg(signedMsg,addr);
+}
+
 void NetSync::onSendRequire(QString id, QByteArray addr, QString data)
 {
     QJsonObject obj;
@@ -146,6 +159,10 @@ void NetSync::RcvP2pMsg(QString signedMsg)
     if(obj.contains("Require")){
         emit doRcvRequire(contractID,addr,obj["Require"].toString());
         //qDebug()<<"Rcv:Data"<<contractID<<addr<<obj["Data"].toString();
+    }
+
+    if(obj.contains("CMD")){
+        emit doOnnRequire(contractID,addr,obj["CMD"].toString(),obj["Data"].toString());
     }
 }
 
