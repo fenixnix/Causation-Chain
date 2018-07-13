@@ -186,7 +186,6 @@ void NP2PNode::OnP2PServer()
     {
         QByteArray datagram;
         datagram.resize(udpP2p->pendingDatagramSize());
-<<<<<<< HEAD
         auto ret = udpP2p->readDatagram(datagram.data(), datagram.size());
         if(ret==-1){
             qDebug()<<udpP2p->errorString();
@@ -209,28 +208,6 @@ void NP2PNode::OnP2PServer()
         if(cmd == "IPLS"){
             qDebug()<<"Rcv NAT by Addr:" + mp.getData();
             GetNatbyAddr(mp.getData());
-=======
-        udpP2p->readDatagram(datagram.data(), datagram.size());
-        auto str = QString::fromLatin1(datagram);
-        QString msg = "Rcv:"+ str +
-                " From P2PServer";
-        //qDebug()<<__FUNCTION__<<msg;
-        if(str.size()<3){
-            continue;
-        }
-        auto cmd = str.left(3);
-        auto data = str.mid(3);
-
-        if(cmd == "P2P"){
-            //qDebug()<<"Rcv P2P:"+ data;
-            GetP2PList(data);
->>>>>>> 9cf25cb903b74fc3218052e8e137f6e1e7743fcb
-        }
-
-        if(cmd == "ALL"){
-            //qDebug()<<"Rcv P2P:"+ data;
-            //GetP2PList(data);
-            //TODO: sync all net list
         }
     }
 }

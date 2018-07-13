@@ -10,11 +10,6 @@
 #include "nsubnet.h"
 #include "np2pringnet.h"
 
-<<<<<<< HEAD
-=======
-#define CMDSIZE 3
-
->>>>>>> 9cf25cb903b74fc3218052e8e137f6e1e7743fcb
 class P2PFullNodeNetwork : public QObject
 {
   Q_OBJECT

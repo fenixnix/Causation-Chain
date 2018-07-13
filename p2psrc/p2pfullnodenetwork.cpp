@@ -84,7 +84,6 @@ void P2PFullNodeNetwork::OnNetRequire()
             EnterMain(mp.getData(),nat);
         }
 
-<<<<<<< HEAD
         if(cmd == "IPLS"){//addrs nodeinfo list
             QString msg = "IPLS"+getNodeInfoListbyAddr(mp.getData()).join(";");//TODO:getTotelList
             udpSend(nat,msg);
@@ -92,14 +91,6 @@ void P2PFullNodeNetwork::OnNetRequire()
 
         if(cmd == "ALL "){//all addrs list
             QString msg = "ALL "+getAllPeerAddrsString().join(";");//TODO:getTotelList
-=======
-        if(cmd == "P2P"){
-            EnterMain(data,nat);
-        }
-
-        if(cmd == "ALL"){
-            QString msg = "ALL"+getAllPeerAddrsString().join(";");//TODO:getTotelList
->>>>>>> 9cf25cb903b74fc3218052e8e137f6e1e7743fcb
             udpSend(nat,msg);
         }
     }
@@ -123,11 +114,7 @@ void P2PFullNodeNetwork::OnHeartbeat()
 void P2PFullNodeNetwork::OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg)
 {
     auto ep = peers[addr];
-<<<<<<< HEAD
     udpSend(ep,"P2PN" + msg);
-=======
-    udpSend(ep,"P2P" + msg);
->>>>>>> 9cf25cb903b74fc3218052e8e137f6e1e7743fcb
 }
 
 qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)
