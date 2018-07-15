@@ -135,7 +135,7 @@ void NP2PNode::sendMsg(QString msg, QString id)
     sendbyAddr("MSG "+msg,id);
 }
 
-void NP2PNode::boardcastMsg(QString msg)
+void NP2PNode::broadcastMsg(QString msg)
 {
     auto ls = neighbourList();
     foreach(auto m ,ls){

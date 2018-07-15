@@ -59,7 +59,7 @@ void NetSync::onBroadcastBlockChainLevel(QString id, QString level)
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.boardcastMsg(signedMsg);
+    p2p.broadcastMsg(signedMsg);
     //return signedMsg;
 }
 
@@ -116,6 +116,19 @@ void NetSync::onOnnRequire(QString contractID, QByteArray addr, QString cmd, QSt
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
     p2p.sendMsg(signedMsg,addr);
+}
+
+void NetSync::onOnnBroadcast(QString contractID, QString cmd, QString data)
+{
+    QJsonObject obj;
+    obj.insert("ID",contractID);
+    obj.insert("Addr",ecDsa.ethAddr);
+    obj.insert("CMD",cmd);
+    obj.insert("Data",data);
+    QJsonDocument jdom(obj);
+    QString msg = QString(jdom.toJson());
+    QString signedMsg = setUpSignedMsg(msg);
+    p2p.broadcastMsg(signedMsg);
 }
 
 void NetSync::onSendRequire(QString id, QByteArray addr, QString data)

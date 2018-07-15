@@ -31,7 +31,7 @@ QString NCryptoP2P::sendByID(QString id, QString msg)
 
 void NCryptoP2P::boardcastMsg(QString msg)
 {
-    p2p.boardcastMsg(Dsa(msg));
+    p2p.broadcastMsg(Dsa(msg));
 }
 
 void NCryptoP2P::SelfTest()

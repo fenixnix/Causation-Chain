@@ -45,7 +45,7 @@ int NResultChain::lastSize()
 
 QString NResultChain::lastData()
 {
-    return consensusSize(timeChain.last());
+    return consensusData(timeChain.last());
 }
 
 QString NResultChain::Print()

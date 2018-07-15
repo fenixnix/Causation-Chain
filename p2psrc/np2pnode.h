@@ -33,7 +33,7 @@ public:
     qint64 udpNatSend(QIPEndPoint endPoint, QString msg);
     void sendbyAddr(QString msg, QString localAddress);
     void sendMsg(QString msg,QString localAddress);
-    void boardcastMsg(QString msg);
+    void broadcastMsg(QString msg);
 
     void RequireJoin();
     void RequireAllPeersList();
