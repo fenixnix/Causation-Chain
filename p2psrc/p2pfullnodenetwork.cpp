@@ -3,10 +3,10 @@
 P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 {
     udp = new QUdpSocket;
-    QObject::connect(udp, &QUdpSocket::readyRead, this, &P2PFullNodeNetwork::OnNetRequire);
-    QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat);
+    QObject::connect(udp, &QUdpSocket::readyRead, this, &P2PFullNodeNetwork::OnNetRequire,Qt::QueuedConnection);
+    QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat,Qt::QueuedConnection);
 
-    QObject::connect(&ringNet, &NP2PRingNet::Send, this, &P2PFullNodeNetwork::OnBroadcast);
+    QObject::connect(&ringNet, &NP2PRingNet::Send, this, &P2PFullNodeNetwork::OnBroadcast,Qt::QueuedConnection);
 }
 
 void P2PFullNodeNetwork::Init(int Port, int heartRate)

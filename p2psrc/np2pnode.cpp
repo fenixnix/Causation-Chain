@@ -6,10 +6,10 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
     udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
-    QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
-    QObject::connect(udpNat, &QUdpSocket::readyRead, this, &NP2PNode::OnNat);
+    QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer,Qt::QueuedConnection);
+    QObject::connect(udpNat, &QUdpSocket::readyRead, this, &NP2PNode::OnNat,Qt::QueuedConnection);
 
-    QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
+    QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat,Qt::QueuedConnection);
 }
 
 NP2PNode::~NP2PNode()

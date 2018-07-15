@@ -12,15 +12,17 @@ public:
     explicit NetSync(QObject *parent = nullptr);
     void Init(QString priKey, QString pubKey);
     void Init();
-    bool PeerIsExist(QString peerAddress);
+    bool PeerIsNeighbour(QString peerAddress);
     QStringList RequirePeerList();
 
     void SelfTest();
 
 signals:
     void doUpdatePeerList(QStringList list, QStringList deadList, QStringList newComerList);
+    void doPeerState(QByteArrayList livePeers);
     void doOnnRequire(QString contractID, QString addr, QString cmd, QString data);
 
+    //Deprecated Functions
     void doRcvBlockChainLevel(QString contractID, QString nodeAddress, QString level);
     void doRcvBlockChainDataRequire(QString contractID, QString nodeAddress, QString start, QString end);
     void doRcvBlockChainData(QString contractID, QString nodeAddress, QString data);
@@ -28,10 +30,11 @@ signals:
 
 public slots:
     void onGetBossAddr(QByteArrayList bossList);//implement by routing
-
+    void onQueuePeerStatebyAddr(QByteArrayList peerList);
     void onOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data);
     void onOnnBroadcast(QString contractID, QString cmd, QString data);
 
+    //Deprecated Functions
     void onBroadcastBlockChainLevel(QString contractID, QString level);
     void onSendRequire(QString contractID, QByteArray addr, QString data);
     void onRequireBlockChainData(QString contractID, QString nodeAddress, QString start, QString end);

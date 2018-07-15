@@ -31,7 +31,7 @@ void NetSync::Init(QString priKey, QString pubKey)
     p2p.setP2PServer(p2pA);
     p2p.join(nat);
 
-    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NetSync::RcvP2pMsg);
+    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NetSync::RcvP2pMsg,Qt::QueuedConnection);
 }
 
 void NetSync::Init()
@@ -45,7 +45,7 @@ QStringList NetSync::RequirePeerList()
     return CheckEthAddrList(p2p.neighbourList());
 }
 
-bool NetSync::PeerIsExist(QString peerAddress)
+bool NetSync::PeerIsNeighbour(QString peerAddress)
 {
     return p2p.neighbourList().contains(peerAddress);
 }

@@ -3,7 +3,7 @@
 
 NCryptoP2P::NCryptoP2P(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NCryptoP2P::rcvP2PMsg);
+    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NCryptoP2P::rcvP2PMsg,Qt::QueuedConnection);
 }
 
 void NCryptoP2P::Init()
