@@ -21,7 +21,6 @@ public slots:
     //void RcvCauseFromLocal(QString id, QString data);
     //void RcvCauseFromCCN(QString id, QString sData);
     void RcvResult(quint64 timeStamp, QString id, QString data);
-
     //void RcvResultFromLocal(QString data);
     //void RcvResultFromCCN(QString sData);
 

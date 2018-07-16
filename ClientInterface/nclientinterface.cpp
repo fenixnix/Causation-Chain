@@ -8,8 +8,8 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     toCResultPort = StartPort + 3;
     p2p.Init();
 
-    QObject::connect(&udpCause,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvCause);
-    QObject::connect(&udpResult,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvResult);
+    QObject::connect(&udpCause,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvCause,Qt::QueuedConnection);
+    QObject::connect(&udpResult,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvResult,Qt::QueuedConnection);
     udpCause.bind(fromCCausePort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     udpResult.bind(fromCResultPort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
@@ -38,9 +38,13 @@ void NClientInterface::OnRcvCause()
     {
         QByteArray datagram;
         datagram.resize(udpCause.pendingDatagramSize());
-        udpCause.readDatagram(datagram.data(), datagram.size());
+        auto res = udpCause.readDatagram(datagram.data(), datagram.size());
+        if(res == -1){
+            qDebug()<<udpCause.errorString();
+            continue;
+        }
         auto msg = QString::fromLatin1(datagram);
-        qDebug()<<msg;
+        qDebug()<<__FUNCTION__<<msg;
         emit RcvCause(msg);
     }
 }
@@ -51,8 +55,16 @@ void NClientInterface::OnRcvResult()
     {
         QByteArray datagram;
         datagram.resize(udpResult.pendingDatagramSize());
-        udpResult.readDatagram(datagram.data(), datagram.size());
+        auto res = udpResult.readDatagram(datagram.data(), datagram.size());
+        if(res == -1){
+            qDebug()<<udpResult.errorString();
+            continue;
+        }
         auto msg = QString::fromLatin1(datagram);
+        qDebug()<<__FUNCTION__<<msg;
         emit RcvResult(msg);
+        auto hash = QCryptographicHash::hash(msg.toLatin1(),QCryptographicHash::Keccak_256);
+        qDebug()<<__FUNCTION__<<QString(hash.toHex());
+        emit RcvResultHash(hash);
     }
 }

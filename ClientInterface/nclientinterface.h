@@ -21,6 +21,7 @@ public:
 signals:
   void RcvCause(QString cause);
   void RcvResult(QString result);
+  void RcvResultHash(QByteArray resultHash);
 
 public slots:
   void OnRcvCause();
