@@ -29,6 +29,11 @@ QString NCryptoP2P::sendByID(QString id, QString msg)
     return dMsg;
 }
 
+QString NCryptoP2P::localAddr()
+{
+    return emcc.address;
+}
+
 void NCryptoP2P::boardcastMsg(QString msg)
 {
     p2p.broadcastMsg(Dsa(msg));

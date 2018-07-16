@@ -40,7 +40,7 @@ void NetSync::Init()
     Init(ecDsa.privateKeyString,ecDsa.publicKeyString);
 }
 
-QStringList NetSync::RequirePeerList()
+QStringList NetSync::neighbourPeerList()
 {
     return CheckEthAddrList(p2p.neighbourList());
 }
@@ -103,6 +103,11 @@ void NetSync::SelfTest()
 void NetSync::onGetBossAddr(QByteArrayList bossList)
 {
     p2p.RequireNatbyAddr(bossList);
+}
+
+void NetSync::onQueuePeerStatebyAddr(QByteArrayList peerList)
+{
+    //TODO:Ask for Peer State from P2P server
 }
 
 void NetSync::onOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data)

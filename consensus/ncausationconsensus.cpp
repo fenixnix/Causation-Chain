@@ -20,6 +20,14 @@ void NCausationConsensus::RcvResult(quint64 timeStamp, QString id, QString data)
     }
 }
 
+void NCausationConsensus::RcvResultHash(quint64 timeStamp, QString id, QByteArray hash)
+{
+    resultChain.Add(NResult(timeStamp, id, hash));
+    if(resultChain.consensusSize(timeStamp)>=netCapacity){
+        emit ReachConsensus(timeStamp, resultChain.consensusData(timeStamp));
+    }
+}
+
 //void NCausationConsensus::RcvCauseFromLocal(QString id, QString data)
 //{
 //  quint64 timeStamp = QDateTime::currentMSecsSinceEpoch();

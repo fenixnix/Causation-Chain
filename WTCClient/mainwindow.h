@@ -6,7 +6,6 @@
 #include "np2pnode.h"
 #include "ncryptop2p.h"
 #include "netsync.h"
-#include "ncausationconsensus.h"
 
 namespace Ui {
   class MainWindow;
@@ -35,7 +34,6 @@ private:
   Ui::MainWindow *ui;
   NP2PNode node;
   //NetSync sync;
-  NCausationConsensus consensus;
 };
 
 #endif // MAINWINDOW_H

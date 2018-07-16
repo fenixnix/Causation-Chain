@@ -2,69 +2,42 @@
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
-    fromCCausePort = StartPort;
-    toCCausePort = StartPort + 1;
-    fromCResultPort = StartPort + 2;
-    toCResultPort = StartPort + 3;
-    p2p.Init();
-
-    QObject::connect(&udpCause,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvCause,Qt::QueuedConnection);
-    QObject::connect(&udpResult,&QUdpSocket::readyRead,this,&NClientInterface::OnRcvResult,Qt::QueuedConnection);
-    udpCause.bind(fromCCausePort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-    udpResult.bind(fromCResultPort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    SetPort(StartPort);
+    //p2p.Init();
+    QObject::connect(&ipcCause,&UdpIPC::Rcv,this,&NClientInterface::OnRcvLocalCause,Qt::QueuedConnection);
+    QObject::connect(&ipcResult,&UdpIPC::Rcv,this,&NClientInterface::OnRcvLocalResult,Qt::QueuedConnection);
 }
 
 void NClientInterface::SetPort(int port)
 {
-    fromCCausePort = port;
-    toCCausePort = port + 1;
-    fromCResultPort = port + 2;
-    toCResultPort = port + 3;
+    ipcCause.SetPort(port);
+    ipcResult.SetPort(port+2);
 }
 
 void NClientInterface::SendCause(QString cause)
 {
-    udpCause.writeDatagram(cause.toLatin1(),QHostAddress::LocalHost,toCCausePort);
+    ipcCause.Send(cause);
 }
 
 void NClientInterface::SendResult(QString result)
 {
-    udpResult.writeDatagram(result.toLatin1(),QHostAddress::LocalHost,toCResultPort);
+    ipcResult.Send(result);
 }
 
-void NClientInterface::OnRcvCause()
+void NClientInterface::OnRcvLocalCause(QString msg)
 {
-    while(udpCause.hasPendingDatagrams())
-    {
-        QByteArray datagram;
-        datagram.resize(udpCause.pendingDatagramSize());
-        auto res = udpCause.readDatagram(datagram.data(), datagram.size());
-        if(res == -1){
-            qDebug()<<udpCause.errorString();
-            continue;
-        }
-        auto msg = QString::fromLatin1(datagram);
-        qDebug()<<__FUNCTION__<<msg;
-        emit RcvCause(msg);
-    }
+    qDebug()<<__FUNCTION__<<msg;
+    QJsonObject obj = QJsonDocument::fromJson(msg.toLatin1());
+    quint64 ts = obj["ts"].toDouble();
+    quint64 data = obj["data"].toString();
+    consensus.RcvCause(ts,p2p.localAddr(),data);
 }
 
-void NClientInterface::OnRcvResult()
+void NClientInterface::OnRcvLocalResult(QString msg)
 {
-    while(udpResult.hasPendingDatagrams())
-    {
-        QByteArray datagram;
-        datagram.resize(udpResult.pendingDatagramSize());
-        auto res = udpResult.readDatagram(datagram.data(), datagram.size());
-        if(res == -1){
-            qDebug()<<udpResult.errorString();
-            continue;
-        }
-        auto msg = QString::fromLatin1(datagram);
-        qDebug()<<__FUNCTION__<<msg;
-        emit RcvResult(msg);
-        auto hash = QCryptographicHash::hash(msg.toLatin1(),QCryptographicHash::Keccak_256);
-        qDebug()<<__FUNCTION__<<QString(hash.toHex());
-        emit RcvResultHash(hash);
-    }
+    qDebug()<<__FUNCTION__<<msg;
+    QJsonObject obj = QJsonDocument::fromJson(msg.toLatin1());
+    quint64 ts = obj["ts"].toDouble();
+    quint64 data = obj["data"].toString();
+    consensus.RcvResult(ts,p2p.localAddr(),data);
 }
