@@ -13,7 +13,7 @@ public:
     void Init(QString priKey, QString pubKey);
     void Init();
     bool PeerIsNeighbour(QString peerAddress);
-    QStringList RequirePeerList();
+    QStringList neighbourPeerList();
 
     void SelfTest();
 

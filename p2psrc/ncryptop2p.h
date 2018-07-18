@@ -14,6 +14,7 @@ public:
     void Init();
 
     QString sendByID(QString id, QString msg);
+    QString localAddr();
     void boardcastMsg(QString msg);
 
     static void SelfTest();

@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(&node,&NP2PNode::neighbourListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
 
-
     QObject::connect(&node,&NP2PNode::RcvMsg,
                      this,&MainWindow::on_RcvMessage);
 

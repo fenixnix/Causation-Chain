@@ -10,6 +10,7 @@ public:
   NResult();
   NResult(QString json);
   NResult(quint64 ts, QString id, QString data);
+  NResult(quint64 ts, QString id, QByteArray dataHash);
   NResult(quint64 ts, QString id, QString pubKey, QString data);
   NResult(quint64 ts);
 
