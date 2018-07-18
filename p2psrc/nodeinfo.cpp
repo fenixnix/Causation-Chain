@@ -39,15 +39,15 @@ void NodeInfo::Ping()
 
 void NodeInfo::Pong()
 {
-    ping = steady_clock::now().time_since_epoch().count() - pingTime.time_since_epoch().count();
+    duration<__int64,std::nano> difT = steady_clock::now() - pingTime;
+    ping = difT.count();
     qDebug()<<"ping:"<<id<<(float)ping/1000000.0f<<"ms";
 }
 
 bool NodeInfo::CheckAlive()
 {
-    auto t = steady_clock::now().time_since_epoch().count()
-            - pingTime.time_since_epoch().count();
-    int sec = t/1000000000;
+    duration<__int64,std::nano> difT = steady_clock::now() - pingTime;
+    int sec = difT.count() /1000000000;
     return sec<=lifeCycle;
 }
 
