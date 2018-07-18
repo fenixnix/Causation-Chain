@@ -8,7 +8,7 @@ NP2PRingNet::NP2PRingNet(QObject *parent) : QObject(parent)
 void NP2PRingNet::peerJoinCall(NodeInfo peerInfo)
 {
     if(peerInfoHashMap.contains(peerInfo.addr)){
-        peerInfoHashMap[peerInfo.addr].HeartBeat();
+        peerInfoHashMap[peerInfo.addr].Ping();
         return;
     }
     peerAddrList.append(peerInfo.addr);

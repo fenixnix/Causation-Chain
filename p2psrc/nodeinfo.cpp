@@ -31,13 +31,6 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
     this->nat = nat;
 }
 
-void NodeInfo::HeartBeat()
-{
-    //qDebug()<<__FUNCTION__<<lastHeatbeatTime.toString();
-    pingTime = steady_clock::now();
-    //qDebug()<<__FUNCTION__<<1<<lastHeatbeatTime.toString();
-}
-
 void NodeInfo::Ping()
 {
     pingTime = steady_clock::now();

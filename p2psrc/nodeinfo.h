@@ -15,7 +15,6 @@ public:
     void SetData(QString data);
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 
-    void HeartBeat();
     void Ping();
     void Pong();
     bool CheckAlive();
@@ -26,12 +25,12 @@ public:
     QIPEndPoint loc;
     QIPEndPoint nat;
 
-    steady_clock::time_point netInTime;
-
     int ping = 0;//nano sec
     int lifeCycle = 20;//sec
     QString getId() const;
     void setId(const QString &value);
+
+    steady_clock::time_point netInTime;
 
 private:
     QString id;//blockchain address;

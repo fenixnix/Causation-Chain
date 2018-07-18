@@ -7,13 +7,13 @@ NSubNet::NSubNet()
 
 void NSubNet::enter(QString data)
 {
-  NodeInfo info;
-  info.SetData(data);
-  if(memberList.contains(info.getId())){
-      memberList[info.getId()].HeartBeat();
-      return;
+    NodeInfo info;
+    info.SetData(data);
+    if(memberList.contains(info.getId())){
+        memberList[info.getId()].Ping();
+        return;
     }
-  memberList.insert(info.getId(),info);
+    memberList.insert(info.getId(),info);
 }
 
 bool NSubNet::has(QString id)
@@ -35,11 +35,6 @@ QStringList NSubNet::getDeadList()
         }
     }
     return deadList;
-}
-
-void NSubNet::heartbeat(QString id)
-{
-    memberList[id].HeartBeat();
 }
 
 void NSubNet::ping(QString id)
@@ -76,19 +71,19 @@ void NSubNet::removeDeadMemberAtNow()
 
 int NSubNet::GetSize()
 {
-  return memberList.size();
+    return memberList.size();
 }
 
 QString NSubNet::getMemberListString()
 {
-  QStringList datas;
-  foreach(auto n, memberList){
-      datas.append(n.ToString());
+    QStringList datas;
+    foreach(auto n, memberList){
+        datas.append(n.ToString());
     }
-  return datas.join(';');
+    return datas.join(';');
 }
 
 QMap<QString, NodeInfo> NSubNet::getMemberList() const
 {
-  return memberList;
+    return memberList;
 }

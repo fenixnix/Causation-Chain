@@ -245,7 +245,6 @@ void NP2PNode::OnNat()
 
         if(cmd == "PING"){
             //qDebug()<<"Ping from:"<<mp.getData();
-            net.heartbeat(mp.getData());
             sendbyAddr("PONG"+localAddress,mp.getData());
         }
 
