@@ -2,7 +2,7 @@
 
 NodeInfo::NodeInfo()
 {
-
+    pingTime = steady_clock::now();
 }
 
 NodeInfo::NodeInfo(QString id, QIPEndPoint loc, QIPEndPoint nat)
@@ -19,8 +19,8 @@ void NodeInfo::SetData(QString data)
     setId(datas[0]);
     loc.Init(datas[1]);
     nat.Init(datas[2]);
-    netInTime = QDateTime::currentDateTime();
-    lastHeatbeatTime = netInTime;
+    netInTime = steady_clock::now();
+    pingTime = netInTime;
 }
 
 void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
@@ -34,15 +34,28 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 void NodeInfo::HeartBeat()
 {
     //qDebug()<<__FUNCTION__<<lastHeatbeatTime.toString();
-    lastHeatbeatTime = QDateTime::currentDateTime();
+    pingTime = steady_clock::now();
     //qDebug()<<__FUNCTION__<<1<<lastHeatbeatTime.toString();
+}
+
+void NodeInfo::Ping()
+{
+    pingTime = steady_clock::now();
+    //qDebug()<<"ping"<<id<<pingTime;
+}
+
+void NodeInfo::Pong()
+{
+    ping = steady_clock::now().time_since_epoch().count() - pingTime.time_since_epoch().count();
+    qDebug()<<"ping:"<<id<<(float)ping/1000000.0f<<"ms";
 }
 
 bool NodeInfo::CheckAlive()
 {
-    auto t = lastHeatbeatTime.secsTo(QDateTime::currentDateTime());
-    //qDebug()<<__FUNCTION__<<t<<lastHeatbeatTime.toString();
-    return t<=lifeCycle;
+    auto t = steady_clock::now().time_since_epoch().count()
+            - pingTime.time_since_epoch().count();
+    int sec = t/1000000000;
+    return sec<=lifeCycle;
 }
 
 QString NodeInfo::ToString()

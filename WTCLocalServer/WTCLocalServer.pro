@@ -1,16 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-06-07T10:08:00
+# Project created by QtCreator 2018-07-16T10:47:13
 #
 #-------------------------------------------------
 
-QT       += core gui network
-
-#CONFIG += console
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = WTCFullNodeClient
+TARGET = WTCLocalServer
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -27,16 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        wtcmainwindow.cpp
 
 HEADERS += \
-        mainwindow.h
-
+        wtcmainwindow.h
 
 FORMS += \
-        mainwindow.ui
+        wtcmainwindow.ui
 
+include("../ClientInterface/ClientInterface.pri")
+include("../consensus/NConsensus.pri")
 include("../Crypto/EmccSDK/nemcc/nemcc.pri")
 include("../p2psrc/NP2P.pri")
-include("../NetSync/NetSync.pri")
-

@@ -16,6 +16,8 @@ public:
   bool isActive(QString id);
   QStringList getDeadList();
   void heartbeat(QString id);
+  void ping(QString id);
+  void pong(QString id);
   NodeInfo get(QString id);
   void remove(QString id);
   void remove(QStringList idList);

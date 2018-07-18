@@ -58,8 +58,8 @@ private:
     void GetAllAddr(QString data);
     void GetNatbyAddr(QString data);
 
-    void Ping(QByteArray addr);
-    void Pong(QByteArray addr);
+    void Ping(QString addr);
+    void Pong(QString addr);
 
     QUdpSocket* udpP2p;
     QUdpSocket* udpNat;

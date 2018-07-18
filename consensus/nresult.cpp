@@ -18,6 +18,13 @@ NResult::NResult(quint64 ts, QString id, QString data)
     setData(data);
 }
 
+NResult::NResult(quint64 ts, QString id, QByteArray dataHash)
+{
+    this->timeStamp = ts;
+    this->id = id;
+    this->dataHash = dataHash;
+}
+
 NResult::NResult(quint64 ts, QString id, QString pubKey, QString data)
 {
     this->timeStamp = ts;

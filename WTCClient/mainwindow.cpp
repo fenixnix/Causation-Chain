@@ -3,6 +3,12 @@
 
 #include "np2pringnet.h"
 
+#include <chrono>
+#include <iostream>
+
+using namespace std::chrono;
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     QObject::connect(&node,&NP2PNode::neighbourListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
-
 
     QObject::connect(&node,&NP2PNode::RcvMsg,
                      this,&MainWindow::on_RcvMessage);

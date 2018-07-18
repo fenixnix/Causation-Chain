@@ -21,6 +21,7 @@ public slots:
     //void RcvCauseFromLocal(QString id, QString data);
     //void RcvCauseFromCCN(QString id, QString sData);
     void RcvResult(quint64 timeStamp, QString id, QString data);
+    void RcvResultHash(quint64 timeStamp, QString id, QByteArray hash);
     //void RcvResultFromLocal(QString data);
     //void RcvResultFromCCN(QString sData);
 
@@ -28,15 +29,13 @@ public slots:
 
 private:
     void SendCauseToLocal(quint64 timeStamp, QString data);
-    void SendResultToLocal(quint64 timeStamp,QString data);
-
-    void BroadcastCauseToCCN(QString data);
-    void BroadcastResultToCCN(QString data);
-
+    //void SendResultToLocal(quint64 timeStamp,QString data);
+    //void BroadcastCauseToCCN(QString data);
+    //void BroadcastResultToCCN(QString data);
     //QString SignData(QString data, quint64 timeStamp);
 
     int timeStep = 100;//ms
-    int netCapacity = 7;//totel member in net
+    int netCapacity = 3;//totel member in net
 
     NCauseChain causeChain;
     NResultChain resultChain;

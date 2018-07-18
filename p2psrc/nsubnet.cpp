@@ -39,7 +39,17 @@ QStringList NSubNet::getDeadList()
 
 void NSubNet::heartbeat(QString id)
 {
-    get(id).HeartBeat();
+    memberList[id].HeartBeat();
+}
+
+void NSubNet::ping(QString id)
+{
+    memberList[id].Ping();
+}
+
+void NSubNet::pong(QString id)
+{
+    memberList[id].Pong();
 }
 
 NodeInfo NSubNet::get(QString id)
