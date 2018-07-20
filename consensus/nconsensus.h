@@ -11,7 +11,6 @@ public:
   void Add(NResult result);
   int maxSize();
   QString data();
-
   QString Print();
 
 private:

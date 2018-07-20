@@ -2,8 +2,9 @@
 #define NCLIENTINTERFACE_H
 
 #include <QObject>
-#include <ncausationconsensus.h>
-#include <ncryptop2p.h>
+#include "ncausationconsensus.h"
+#include "ncmdpacker.h"
+#include "ncryptop2p.h"
 #include "udpipc.h"
 #include "ntimesync.h"
 
@@ -16,9 +17,6 @@ public:
   explicit NClientInterface(QObject *parent = nullptr);
   void SetPort(int port);
 
-//  void SendCause(QString cause);
-//  void SendResult(QString result);//?
-
 signals:
   void RcvCause(QString cause);
   void RcvResult(QString result);
@@ -27,16 +25,19 @@ signals:
 public slots:
   void OnTick(int frameNo);
   void OnRcvLocal(QString msg);
-  void OnRcvNetCause(quint64 frame, QString addr, QString data);
-  void OnRcvNetResult(quint64 frame, QString addr, QString data);
+  void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
 
 private slots:
   void OnCauseTimeOut();
 
 private:
-  void BroadcastCause(QString addr, QString causeString);
+  void BroadcastCause();
   void RcvLocalCause(QString data);
   void RcvLocalResult(QString data);
+
+  void RcvNetCause(quint64 frame, QString addr, QString data);
+  void RcvNetCausePack(quint64 frame, QString addr, QString data);
+  void RcvNetResult(quint64 frame, QString addr, QString data);
 
   QList<QString> articipators;
 
@@ -44,6 +45,7 @@ private:
 
   UdpIPC ipc;
   NCryptoP2P p2p;
+  NCmdPacker packer;
   NCausationConsensus consensus;
   NTimeSync timeSync;
 };

@@ -7,24 +7,24 @@ NCausationConsensus::NCausationConsensus(QObject *parent) : QObject(parent)
 
 }
 
-void NCausationConsensus::RcvCause(quint64 timeStamp, QString id, QString data)
+void NCausationConsensus::RcvCause(quint64 frame, QString id, QString data)
 {
-    causeChain.Add(NCause(timeStamp, id, data));
+    causeChain.Add(NCause(frame, id, data));
 }
 
-void NCausationConsensus::RcvResult(quint64 timeStamp, QString id, QString data)
+void NCausationConsensus::RcvResult(quint64 frame, QString id, QString data)
 {
-    resultChain.Add(NResult(timeStamp, id, data));
-    if(resultChain.consensusSize(timeStamp)>=netCapacity){
-        emit ReachConsensus(timeStamp, resultChain.consensusData(timeStamp));
+    resultChain.Add(NResult(frame, id, data));
+    if(resultChain.consensusSize(frame)>=netCapacity){
+        emit ReachResultConsensus(frame, resultChain.consensusData(frame));
     }
 }
 
-void NCausationConsensus::RcvResultHash(quint64 timeStamp, QString id, QByteArray hash)
+void NCausationConsensus::RcvResultHash(quint64 frame, QString id, QByteArray hash)
 {
-    resultChain.Add(NResult(timeStamp, id, hash));
-    if(resultChain.consensusSize(timeStamp)>=netCapacity){
-        emit ReachConsensus(timeStamp, resultChain.consensusData(timeStamp));
+    resultChain.Add(NResult(frame, id, hash));
+    if(resultChain.consensusSize(frame)>=netCapacity){
+        emit ReachResultConsensus(frame, resultChain.consensusData(frame));
     }
 }
 

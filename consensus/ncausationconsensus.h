@@ -14,25 +14,17 @@ public:
     explicit NCausationConsensus(QObject *parent = nullptr);
 
 signals:
-    void ReachConsensus(quint64 timeStamp, QString resData);
+    void ReachCauseConsensus(quint64 frame, QString cauData);
+    void ReachResultConsensus(quint64 frame, QString resData);
 
 public slots:
-    void RcvCause(quint64 timeStamp, QString id, QString data);
-    //void RcvCauseFromLocal(QString id, QString data);
-    //void RcvCauseFromCCN(QString id, QString sData);
-    void RcvResult(quint64 timeStamp, QString id, QString data);
-    void RcvResultHash(quint64 timeStamp, QString id, QByteArray hash);
-    //void RcvResultFromLocal(QString data);
-    //void RcvResultFromCCN(QString sData);
-
+    void RcvCause(quint64 frame, QString id, QString data);
+    void RcvResult(quint64 frame, QString id, QString data);
+    void RcvResultHash(quint64 frame, QString id, QByteArray hash);
     static QString SelfTest();
 
 private:
     void SendCauseToLocal(quint64 timeStamp, QString data);
-    //void SendResultToLocal(quint64 timeStamp,QString data);
-    //void BroadcastCauseToCCN(QString data);
-    //void BroadcastResultToCCN(QString data);
-    //QString SignData(QString data, quint64 timeStamp);
 
     int timeStep = 100;//ms
     int netCapacity = 3;//totel member in net
