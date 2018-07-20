@@ -1,15 +1,15 @@
 #ifndef NRESULTCHAIN_H
 #define NRESULTCHAIN_H
 
-#include "nresult.h"
+#include "nconsensusmetadata.h"
 #include "nconsensus.h"
 #include <QMap>
 
-class NResultChain
+class NConsensusChain
 {
 public:
-  NResultChain();
-  void Add(NResult res);
+  NConsensusChain();
+  void Add(NConsensusMetadata res);
   int consensusSize(quint64 time);
   QString consensusData(quint64 time);
   int lastSize();

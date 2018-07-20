@@ -3,19 +3,15 @@ INCLUDEPATH += \
 
 HEADERS += \
 SOURCES += \
-    $$PWD/ncausechain.h \
     $$PWD/ncausationconsensus.h \
-    $$PWD/nresultchain.h \
-    $$PWD/ncause.h \
-    $$PWD/nresult.h \
     $$PWD/nconsensus.h \
-    $$PWD/nconsensusblock.h
+    $$PWD/nconsensusmetadata.h \
+    $$PWD/nconsensusunit.h \
+    $$PWD/nconsensuschain.h
 
 SOURCES += \
-    $$PWD/ncausechain.cpp \
     $$PWD/ncausationconsensus.cpp \
-    $$PWD/nresultchain.cpp \
-    $$PWD/ncause.cpp \
-    $$PWD/nresult.cpp \
     $$PWD/nconsensus.cpp \
-    $$PWD/nconsensusblock.cpp
+    $$PWD/nconsensusmetadata.cpp \
+    $$PWD/nconsensusunit.cpp \
+    $$PWD/nconsensuschain.cpp

@@ -1,29 +1,29 @@
-#include "nconsensusblock.h"
+#include "nconsensusunit.h"
 
-NConsensusBlock::NConsensusBlock()
+NConsensusUnit::NConsensusUnit()
 {
 
 }
 
-NConsensusBlock::NConsensusBlock(QByteArray hash, QString data)
+NConsensusUnit::NConsensusUnit(QByteArray hash, QString data)
 {
     datahash = hash;
     this->data = data;
 }
 
-void NConsensusBlock::AddMember(QString id)
+void NConsensusUnit::AddMember(QString id)
 {
     if(!members.contains(id)){
         members.append(id);
     }
 }
 
-int NConsensusBlock::Size()
+int NConsensusUnit::Size()
 {
     return members.size();
 }
 
-QString NConsensusBlock::Print()
+QString NConsensusUnit::Print()
 {
     QString txt;
     QTextStream ts(&txt);

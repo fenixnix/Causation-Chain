@@ -1,21 +1,21 @@
 #ifndef NCONSENSUS_H
 #define NCONSENSUS_H
 
-#include <nconsensusblock.h>
-#include "nresult.h"
+#include <nconsensusunit.h>
+#include "nconsensusmetadata.h"
 
 class NConsensus
 {
 public:
   NConsensus();
-  void Add(NResult result);
+  void Add(NConsensusMetadata result);
   int maxSize();
   QString data();
   QString Print();
 
 private:
   QByteArray maxSizeHash;
-  QMap<QByteArray,NConsensusBlock> consensus;
+  QMap<QByteArray,NConsensusUnit> consensus;
 };
 
 #endif // NCONSENSUS_H

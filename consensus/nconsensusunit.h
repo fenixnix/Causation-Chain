@@ -3,11 +3,11 @@
 
 #include <QtCore>
 
-class NConsensusBlock
+class NConsensusUnit
 {
 public:
-    NConsensusBlock();
-    NConsensusBlock(QByteArray hash, QString data);
+    NConsensusUnit();
+    NConsensusUnit(QByteArray hash, QString data);
     void AddMember(QString id);
     int Size();
     QByteArray datahash;

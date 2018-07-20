@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QtNetwork>
-#include "ncausechain.h"
-#include "nresultchain.h"
+#include "nconsensuschain.h"
 
 class NCausationConsensus : public QObject
 {
@@ -29,8 +28,8 @@ private:
     int timeStep = 100;//ms
     int netCapacity = 3;//totel member in net
 
-    NCauseChain causeChain;
-    NResultChain resultChain;
+    NConsensusChain causeChain;
+    NConsensusChain resultChain;
 };
 
 #endif // CAUSATIONCONSENSUS_H

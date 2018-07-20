@@ -22,6 +22,7 @@ void NClientInterface::SetPort(int port)
 void NClientInterface::OnTick(int frameNo)
 {
     //1.向客户端请求本地控制命令；
+    packer.frame = frameNo;
     QJsonObject obj;
     obj.insert("frame",frameNo);
     ipc.Send("REQ"+QString(QJsonDocument(obj).toJson()));
@@ -73,7 +74,7 @@ void NClientInterface::RcvLocalCause(QString data)
     timeOut.start(500);
 
     QJsonObject sobj;
-    sobj.insert("frame",frame);
+    sobj.insert("frame",(int)frame);
     sobj.insert("addr",p2p.localAddr());
     sobj.insert("cmd","cause");
     sobj.insert("data",dataString);
@@ -100,6 +101,7 @@ void NClientInterface::BroadcastCause()
     //4.广播接收到的打包操作命令
     timeOut.stop();
     auto jsonDat = packer.PackJsonString();
+    auto frame = packer.frame;
     consensus.RcvCause(frame,p2p.localAddr(),jsonDat);//本地操作命令参与共识
     QJsonObject obj;
     obj.insert("frame",frame);
@@ -128,7 +130,7 @@ void NClientInterface::RcvLocalResult(QString data)
     consensus.RcvResult(frame, p2p.localAddr(),dataString);
 
     QJsonObject sobj;
-    sobj.insert("frame",frame);
+    sobj.insert("frame",(int)frame);
     sobj.insert("addr",p2p.localAddr());
     sobj.insert("cmd","result");
     sobj.insert("data",dataString);

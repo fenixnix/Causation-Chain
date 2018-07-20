@@ -5,21 +5,21 @@ NConsensus::NConsensus()
 
 }
 
-void NConsensus::Add(NResult result)
+void NConsensus::Add(NConsensusMetadata result)
 {
-  if(!consensus.contains(result.dataHash)){
-      NConsensusBlock block(result.dataHash, result.getData());
-      block.AddMember(result.id);
-      consensus.insert(result.dataHash,block);
+  if(!consensus.contains(result.hash)){
+      NConsensusUnit block(result.hash, result.getData());
+      block.AddMember(result.addr);
+      consensus.insert(result.hash,block);
     }else{
-      consensus[result.dataHash].AddMember(result.id);
+      consensus[result.hash].AddMember(result.addr);
     }
 }
 
 int NConsensus::maxSize()
 {
   int max = 0;
-  foreach(NConsensusBlock blk, consensus.values()){
+  foreach(NConsensusUnit blk, consensus.values()){
       if(blk.Size()>max){
           max = blk.Size();
           maxSizeHash = blk.datahash;
