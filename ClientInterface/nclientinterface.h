@@ -5,6 +5,7 @@
 #include <ncausationconsensus.h>
 #include <ncryptop2p.h>
 #include "udpipc.h"
+#include "ntimesync.h"
 
 #define StartPort 8890
 
@@ -15,8 +16,8 @@ public:
   explicit NClientInterface(QObject *parent = nullptr);
   void SetPort(int port);
 
-  void SendCause(QString cause);
-  void SendResult(QString result);//?
+//  void SendCause(QString cause);
+//  void SendResult(QString result);//?
 
 signals:
   void RcvCause(QString cause);
@@ -24,18 +25,27 @@ signals:
   //void RcvResultHash(QByteArray resultHash);
 
 public slots:
-  void OnRcvLocalCause(QString msg);
-  void OnRcvLocalResult(QString msg);
+  void OnTick(int frameNo);
+  void OnRcvLocal(QString msg);
+  void OnRcvNetCause(quint64 frame, QString addr, QString data);
+  void OnRcvNetResult(quint64 frame, QString addr, QString data);
 
-  void OnRcvNetCause(quint64 ts, QString addr,QString data);
-  void OnRcvNetResult(quint64 ts, QString addr, QString data);
+private slots:
+  void OnCauseTimeOut();
 
 private:
-  UdpIPC ipcCause;
-  UdpIPC ipcResult;
+  void BroadcastCause(QString addr, QString causeString);
+  void RcvLocalCause(QString data);
+  void RcvLocalResult(QString data);
 
+  QList<QString> articipators;
+
+  QTimer timeOut;
+
+  UdpIPC ipc;
   NCryptoP2P p2p;
   NCausationConsensus consensus;
+  NTimeSync timeSync;
 };
 
 #endif // NCLIENTINTERFACE_H

@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QHash>
 #include <chrono>
+#include <QDebug>
 
 using namespace std::chrono;
 
@@ -13,8 +14,11 @@ class NTimeSync : public QObject
     Q_OBJECT
 public:
     explicit NTimeSync(QObject *parent = nullptr);
-    void SetPingState(QHash<QString, int> pingState);
-    void Start(int interval);
+    void SetPingState(QHash<QString, int> states);
+    void StartP2PSync(int interval);
+    void StartServerSync();
+    void StartTestSync(int interval);
+
     int GetCurrentFrameNo();
 
 signals:
@@ -23,8 +27,10 @@ signals:
 
 public slots:
     void RcvTick(QString addr, int frameNo);
+    void RcvServerTick();
 
 private slots:
+    void OnTestTime();
     void OnTimeElapse();
     void OnDeadLineElapse();
 
@@ -33,10 +39,11 @@ private:
 
     steady_clock::time_point myTimePoint;
     QHash<QString, steady_clock::time_point> timePoints;
-    QHash<QString, int> pingState;//nano sec
+    QHash<QString, duration<long long, std::nano>> pingStates;//nano sec
     QTimer timer;
     QTimer deadLineTimer;
     int interval;
+    int modifyMS;
     int frameNo;
 };
 

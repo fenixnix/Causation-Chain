@@ -2,52 +2,103 @@
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
+    QObject::connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
+
     SetPort(StartPort);
-    //p2p.Init();
-    QObject::connect(&ipcCause,&UdpIPC::Rcv,this,&NClientInterface::OnRcvLocalCause,Qt::QueuedConnection);
-    QObject::connect(&ipcResult,&UdpIPC::Rcv,this,&NClientInterface::OnRcvLocalResult,Qt::QueuedConnection);
+    QObject::connect(&ipc, &UdpIPC::Rcv, this, &NClientInterface::OnRcvLocal);
+
+    QObject::connect(&p2p, &NCryptoP2P::RcvMsg, this, &NClientInterface::OnRcvNetCause);
+    QObject::connect(&p2p, &NCryptoP2P::RcvMsg, this, &NClientInterface::OnRcvNetResult);
+    p2p.Init();
+
+    timeOut.setSingleShot(true);
+    QObject::connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
 }
 
 void NClientInterface::SetPort(int port)
 {
-    ipcCause.SetPort(port);
-    ipcResult.SetPort(port+2);
+    ipc.SetPort(port);
+    //ipcResult.SetPort(port+2);
 }
 
-void NClientInterface::SendCause(QString cause)
+//void NClientInterface::SendCause(QString cause)
+//{
+//    ipc.Send(cause);
+//}
+
+//void NClientInterface::SendResult(QString result)
+//{
+//    ipc.Send(result);
+//}
+
+void NClientInterface::OnTick(int frameNo)
 {
-    ipcCause.Send(cause);
+    //1.向客户端请求本地控制命令；
+    QJsonObject obj;
+    obj.insert("frame",frameNo);
+    ipc.Send("REQ"+QString(QJsonDocument(obj).toJson()));
 }
 
-void NClientInterface::SendResult(QString result)
+#define CMDSIZE 3
+void NClientInterface::OnRcvLocal(QString msg)
 {
-    ipcResult.Send(result);
+    if(msg.size()<CMDSIZE){
+        return;
+    }
+    auto cmd = msg.left(CMDSIZE);
+    if(cmd == "CAU"){
+        auto data = msg.mid(CMDSIZE);
+        RcvLocalCause(data);
+    }
+    if(cmd == "RES"){
+        auto data = msg.mid(CMDSIZE);
+        RcvLocalResult(data);
+    }
 }
 
-void NClientInterface::OnRcvLocalCause(QString msg)
+void NClientInterface::OnRcvNetCause(quint64 frame, QString addr, QString data)
 {
+    //3.1收集其他节点的控制命令，在收集全部参与者的控制命令
+    consensus.RcvCause(frame,addr,data);//将本地结果也推入控制命令共识
+    //BroadcastCause();
+}
+
+void NClientInterface::OnRcvNetResult(quint64 frame, QString addr, QString data)
+{
+
+}
+
+void NClientInterface::RcvLocalCause(QString data)
+{
+    //2.获取到当前帧收集到的本地控制命令，广播
+    p2p.boardcastMsg(data);//广播本地控制命令
+    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
+    quint64 frame = obj["frame"].toDouble();
+    QString data = obj["data"].toString();
+    consensus.RcvCause(frame,p2p.localAddr(),data);//将本地结果也推入控制命令共识
+    //TODO:设置接收超时定时器
+    timeOut.start(500);
+}
+
+void NClientInterface::RcvLocalResult(QString data)
+{
+    //5.接收本地执行结果，并广播
     qDebug()<<__FUNCTION__<<msg;
     QJsonObject obj = QJsonDocument::fromJson(msg.toLatin1()).object();
-    quint64 ts = obj["ts"].toDouble();
+    quint64 ts = obj["frame"].toDouble();
     QString data = obj["data"].toString();
-    consensus.RcvCause(ts,p2p.localAddr(),data);
+    //consensus.RcvResult(ts,p2p.localAddr(),data);
 }
 
-void NClientInterface::OnRcvLocalResult(QString msg)
+void NClientInterface::OnCauseTimeOut()
 {
-    qDebug()<<__FUNCTION__<<msg;
-    QJsonObject obj = QJsonDocument::fromJson(msg.toLatin1()).object();
-    quint64 ts = obj["ts"].toDouble();
-    QString data = obj["data"].toString();
-    consensus.RcvResult(ts,p2p.localAddr(),data);
+    //3.2收集参与者控制命令后超时
+    //BroadcastCause();
 }
 
-void NClientInterface::OnRcvNetCause(quint64 ts, QString addr, QString data)
+void NClientInterface::BroadcastCause(QString addr, QString causeString)
 {
-
-}
-
-void NClientInterface::OnRcvNetResult(quint64 ts, QString addr, QString data)
-{
-
+    timeOut.stop();
+    //4.共识输入达成50%以上时执行。
+    ipc.Send(causeString);
 }

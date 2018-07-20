@@ -17,10 +17,10 @@ signals:
 public slots:
 
 private slots:
-    void OnTick();
+    void OnTick(int frameNo);
     void OnRcvSimulation();
 private:
-    QHash<QString, int> pingStates;
+    QHash<QString, int> pingStates; //ms
     QTimer testTimer;
     NTimeSync ts;
 };

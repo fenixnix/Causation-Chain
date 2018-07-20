@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "nclientinterface.h"
-#include "ntimesynctester.h"
 
 namespace Ui {
 class WTCMainWindow;
@@ -25,7 +24,6 @@ private slots:
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;
-    NTimeSyncTester nt;
 };
 
 #endif // WTCMAINWINDOW_H
