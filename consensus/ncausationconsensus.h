@@ -19,7 +19,14 @@ signals:
 public slots:
     void RcvCause(quint64 frame, QString id, QString data);
     void RcvResult(quint64 frame, QString id, QString data);
-    void RcvResultHash(quint64 frame, QString id, QByteArray hash);
+    void RcvResultHash(quint64 frame, QString id, QString data, QByteArray hash);
+
+    bool CauseIsConsensus(quint64 frame);
+    bool ResultIsConsensus(quint64 frame);
+
+    QString CauseConsensus(quint64 frame);
+    QByteArray ResultHashConsensus(quint64 frame);
+
     static QString SelfTest();
 
 private:

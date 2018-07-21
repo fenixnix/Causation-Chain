@@ -8,17 +8,18 @@ class NConsensusMetadata
 public:
   NConsensusMetadata();
   NConsensusMetadata(QString json);
-  NConsensusMetadata(quint64 ts);
-  NConsensusMetadata(quint64 ts,QString addr, QString data);
+  NConsensusMetadata(quint64 f);
+  NConsensusMetadata(quint64 f,QString addr, QString data);
+  NConsensusMetadata(quint64 f,QString addr, QString data, QByteArray hash);
 
   quint64 frame = 0;
-  QString addr = "none";
+  QString addr;
   QByteArray hash;
 
   QString getData() const;
   void setData(const QString &value);
 
-  void randomTestData(quint64 ts);
+  void randomTestData(quint64 f);
   QString Print();
 
 private:

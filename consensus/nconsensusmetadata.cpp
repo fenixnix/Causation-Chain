@@ -15,16 +15,24 @@ NConsensusMetadata::NConsensusMetadata(QString json)
     data = jObj["Data"].toString();
 }
 
-NConsensusMetadata::NConsensusMetadata(quint64 ts)
+NConsensusMetadata::NConsensusMetadata(quint64 f)
 {
-    randomTestData(ts);
+    randomTestData(f);
 }
 
-NConsensusMetadata::NConsensusMetadata(quint64 ts, QString id, QString data)
+NConsensusMetadata::NConsensusMetadata(quint64 f, QString id, QString data)
 {
-    frame = ts;
+    frame = f;
     addr = id;
     setData(data);
+}
+
+NConsensusMetadata::NConsensusMetadata(quint64 f, QString addr, QString data, QByteArray hash)
+{
+    frame = f;
+    this->addr = addr;
+    this->data = data;
+    this->hash = hash;
 }
 
 QString NConsensusMetadata::getData() const
@@ -62,9 +70,9 @@ QString randString(int length){
     return txt;
 }
 
-void NConsensusMetadata::randomTestData(quint64 ts)
+void NConsensusMetadata::randomTestData(quint64 f)
 {
-    frame = ts;
+    frame = f;
     addr = randString(4);
     setData(randString(16));
 }

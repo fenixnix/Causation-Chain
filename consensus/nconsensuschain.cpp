@@ -7,7 +7,7 @@ NConsensusChain::NConsensusChain()
 
 void NConsensusChain::Add(NConsensusMetadata res)
 {
-    if(res.frame<lastTimeStamp){
+    if(res.frame<lastFrame){
         qDebug()<<"result time out!!!";
         return;
     }
@@ -16,43 +16,56 @@ void NConsensusChain::Add(NConsensusMetadata res)
         NConsensus con;
         con.Add(res);
         consensus.insert(res.frame,con);
-        timeChain.append(res.frame);
+        frameChain.append(res.frame);
         return;
     }else{
         consensus[res.frame].Add(res);
-        lastTimeStamp = res.frame;
+        lastFrame = res.frame;
     }
 
 }
 
-int NConsensusChain::consensusSize(quint64 time)
+int NConsensusChain::consensusSize(quint64 frame)
 {
-    return consensus[time].maxSize();
+    return consensus[frame].maxSize();
 }
 
-QString NConsensusChain::consensusData(quint64 time)
+QString NConsensusChain::consensusData(quint64 frame)
 {
-    if(consensusSize(time)>0){
-        return consensus[time].data();
+    if(consensusSize(frame)>0){
+        return consensus[frame].data();
+    }
+    return "";
+}
+
+QByteArray NConsensusChain::consensusHash(quint64 frame)
+{
+    if(consensusSize(frame)>0){
+        return consensus[frame].hash();
     }
     return "";
 }
 
 int NConsensusChain::lastSize()
 {
-    return consensusSize(timeChain.last());
+    return consensusSize(frameChain.last());
 }
 
 QString NConsensusChain::lastData()
 {
-    return consensusData(timeChain.last());
+    return consensusData(frameChain.last());
+}
+
+QString NConsensusChain::lastHash()
+{
+
 }
 
 QString NConsensusChain::Print()
 {
     QString txt;
     QTextStream ts(&txt);
-    foreach(auto t, timeChain){
+    foreach(auto t, frameChain){
         ts<<"TS:"<<t<<"\n";
         ts<<"Size:"<<consensusSize(t)<<"\n";
         ts<<"Consens:"<<consensus[t].Print()<<"\n";

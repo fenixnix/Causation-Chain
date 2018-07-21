@@ -33,6 +33,11 @@ QString NConsensus::data()
     return consensus[maxSizeHash].data;
 }
 
+QByteArray NConsensus::hash()
+{
+    return maxSizeHash;
+}
+
 QString NConsensus::Print()
 {
     QString txt = "MaxHash:" + QString(maxSizeHash.toHex()) + "\n";

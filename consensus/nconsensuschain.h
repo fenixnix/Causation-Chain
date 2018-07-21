@@ -10,11 +10,13 @@ class NConsensusChain
 public:
   NConsensusChain();
   void Add(NConsensusMetadata res);
-  int consensusSize(quint64 time);
-  QString consensusData(quint64 time);
+  int consensusSize(quint64 frame);
+  QString consensusData(quint64 frame);
+  QByteArray consensusHash(quint64 frame);
   int lastSize();
   QString lastData();
-  quint64 lastTimeStamp = 0;
+  QString lastHash();
+  quint64 lastFrame = 0;
 
   QString Print();
 
@@ -22,7 +24,7 @@ public:
 
 private:
   QMap<quint64,NConsensus> consensus;
-  QList<quint64> timeChain;
+  QList<quint64> frameChain;
 };
 
 #endif // NRESULTCHAIN_H
