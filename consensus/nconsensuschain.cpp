@@ -58,7 +58,7 @@ QString NConsensusChain::lastData()
 
 QString NConsensusChain::lastHash()
 {
-
+    return consensusHash(frameChain.last());
 }
 
 QString NConsensusChain::Print()
@@ -78,12 +78,12 @@ QString NConsensusChain::SelfTest()
     NConsensusChain nrc;
     nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix1","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix2","Hello"));
+    nrc.Add(NConsensusMetadata(2,"Nix5","Hello6"));
+    nrc.Add(NConsensusMetadata(3,"Nix6","Hello6"));
     nrc.Add(NConsensusMetadata(1,"Nix2","Hello1"));
+    nrc.Add(NConsensusMetadata(1,"Nix3","Hello1"));
 
     nrc.Add(NConsensusMetadata(2,"Nix","Hello"));
     nrc.Add(NConsensusMetadata(2,"Nix","Hello"));
@@ -97,16 +97,13 @@ QString NConsensusChain::SelfTest()
     nrc.Add(NConsensusMetadata(3,"Nix","Hello2"));
     nrc.Add(NConsensusMetadata(3,"Nix1","Hello2"));
     nrc.Add(NConsensusMetadata(3,"Nix2","Hello2"));
+    nrc.Add(NConsensusMetadata(1,"Nix1","Hello"));
     nrc.Add(NConsensusMetadata(3,"Nix3","Hello2"));
     nrc.Add(NConsensusMetadata(3,"Nix2","Hello1"));
     nrc.Add(NConsensusMetadata(3,"Nix4","Hello1"));
 
     nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix","Hello"));
-    nrc.Add(NConsensusMetadata(1,"Nix1","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix2","Hello"));
     nrc.Add(NConsensusMetadata(1,"Nix2","Hello1"));
 

@@ -1,6 +1,5 @@
 #include "wtcmainwindow.h"
 #include "ui_wtcmainwindow.h"
-#include "ncmdpacker.h"
 
 WTCMainWindow::WTCMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,6 +7,7 @@ WTCMainWindow::WTCMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     NCmdPacker::SelfTest();
+    ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
 }
 
 WTCMainWindow::~WTCMainWindow()

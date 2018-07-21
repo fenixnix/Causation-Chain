@@ -17,6 +17,7 @@ public:
 private:
   QByteArray maxSizeHash;
   QHash<QByteArray,NConsensusUnit> consensus;
+  QList<QString> votedMember;
 };
 
 #endif // NCONSENSUS_H
