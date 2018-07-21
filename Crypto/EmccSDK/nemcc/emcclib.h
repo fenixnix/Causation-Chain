@@ -1,7 +1,7 @@
 #ifndef EMCCLIB_H
 #define EMCCLIB_H
 
-#define DLLEXPORT extern "C" __declspec(dllexport)
+#define DLLEXPORT extern "C" //__declspec(dllexport)
 
 DLLEXPORT int GetInfo(char* dataPtr);
 
