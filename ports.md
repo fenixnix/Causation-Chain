@@ -7,9 +7,8 @@ Peers:
 192.168.100.203:8421
 192.168.100.204:8421
 
-
-本地数据存储
+卤戮碌脴脢媒戮脻麓忙麓垄
 ID
-本地IP，Port
+卤戮碌脴IP拢卢Port
 NATServer EndPoint
 P2PServer EndPoint
