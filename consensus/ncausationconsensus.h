@@ -30,9 +30,6 @@ public slots:
     static QString SelfTest();
 
 private:
-    void SendCauseToLocal(quint64 timeStamp, QString data);
-
-    int timeStep = 100;//ms
     int netCapacity = 3;//totel member in net
 
     NConsensusChain causeChain;
