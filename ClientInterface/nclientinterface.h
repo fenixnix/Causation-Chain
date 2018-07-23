@@ -16,6 +16,7 @@ class NClientInterface : public QObject
 public:
   explicit NClientInterface(QObject *parent = nullptr);
   void SetPort(int port);
+  void StartTest();
 
 signals:
   void RcvCause(QString cause);

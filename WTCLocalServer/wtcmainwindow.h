@@ -2,6 +2,7 @@
 #define WTCMAINWINDOW_H
 
 #include <QMainWindow>
+#include "ntimesync.h"
 #include "nclientinterface.h"
 
 namespace Ui {

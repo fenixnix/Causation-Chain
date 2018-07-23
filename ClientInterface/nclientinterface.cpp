@@ -19,6 +19,11 @@ void NClientInterface::SetPort(int port)
     ipc.SetPort(port);
 }
 
+void NClientInterface::StartTest()
+{
+    timeSync.StartTestSync(3000);
+}
+
 void NClientInterface::OnInit(QString msg)
 {
     QString InitMsg;
@@ -28,6 +33,7 @@ void NClientInterface::OnInit(QString msg)
 void NClientInterface::OnTick(int frameNo)
 {
     //1.向客户端请求本地控制命令；
+    qDebug()<<__FUNCTION__<<frameNo;
     packer.frame = frameNo;
     QJsonObject obj;
     obj.insert("frame",frameNo);
@@ -37,6 +43,7 @@ void NClientInterface::OnTick(int frameNo)
 #define CMDSIZE 3
 void NClientInterface::OnRcvLocal(QString msg)
 {
+    qDebug()<<__FUNCTION__<<msg;
     if(msg.size()<CMDSIZE){
         return;
     }

@@ -6,6 +6,7 @@ WTCMainWindow::WTCMainWindow(QWidget *parent) :
     ui(new Ui::WTCMainWindow)
 {
     ui->setupUi(this);
+    interface.StartTest();
     NCmdPacker::SelfTest();
     ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
 }

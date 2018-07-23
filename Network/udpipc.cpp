@@ -11,12 +11,13 @@ void UdpIPC::SetPort(int port)
     sendPort = port+1;
     QObject::connect(&udp,&QUdpSocket::readyRead,
                      this,&UdpIPC::OnRcv);
-    udp.bind(rcvPort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    udp.bind(QHostAddress::LocalHost,rcvPort,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
 void UdpIPC::Send(QString msg)
 {
     auto res = udp.writeDatagram(msg.toLatin1(),QHostAddress::LocalHost,sendPort);
+    //auto res = udp.writeDatagram(msg.toLatin1(),QHostAddress("192.168.1.145"),sendPort);
     if(res == -1){
         qDebug()<<udp.errorString();
     }

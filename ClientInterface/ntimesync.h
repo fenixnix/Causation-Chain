@@ -44,7 +44,7 @@ private:
     QTimer deadLineTimer;
     int interval;
     int modifyMS;
-    int frameNo;
+    int frameNo = 0;
 };
 
 #endif // NTIMESYNC_H
