@@ -23,7 +23,10 @@ signals:
   //void RcvResultHash(QByteArray resultHash);
 
 public slots:
+  void OnInit(QString msg);//功能业务初始化 业务Server
+  void OnFinish(QString msg);//功能业务结束 业务Server
   void OnTick(int frameNo);
+
   void OnRcvLocal(QString msg);
   void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
 

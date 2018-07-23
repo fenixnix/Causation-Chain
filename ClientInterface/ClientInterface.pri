@@ -3,14 +3,12 @@ INCLUDEPATH += \
 
 HEADERS += \
     $$PWD/nclientinterface.h \
-    $$PWD/udpipc.h \
     $$PWD/ntimesync.h \
     $$PWD/ntimesynctester.h \
     $$PWD/ncmdpacker.h
 
 SOURCES += \
     $$PWD/nclientinterface.cpp \
-    $$PWD/udpipc.cpp \
     $$PWD/ntimesync.cpp \
     $$PWD/ntimesynctester.cpp \
     $$PWD/ncmdpacker.cpp

@@ -19,6 +19,12 @@ void NClientInterface::SetPort(int port)
     ipc.SetPort(port);
 }
 
+void NClientInterface::OnInit(QString msg)
+{
+    QString InitMsg;
+    ipc.Send("REQ" + InitMsg);
+}
+
 void NClientInterface::OnTick(int frameNo)
 {
     //1.向客户端请求本地控制命令；
@@ -45,6 +51,8 @@ void NClientInterface::OnRcvLocal(QString msg)
     }
     if(cmd == "FIN"){
         //TODO:report result to main network
+        //解析业务结果
+        //OnFinish(data);
     }
 }
 
@@ -62,6 +70,11 @@ void NClientInterface::OnRcvNet(quint64 timeStamp, QString addr, QString msg)
     if(cmd == "result"){
         RcvNetResult(frame,addr,obj["data"].toString());
     }
+}
+
+void NClientInterface::OnFinish(QString msg)
+{
+    //TODO:推送结果给远程服务
 }
 
 void NClientInterface::RcvLocalCause(QString data)
