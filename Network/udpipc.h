@@ -17,7 +17,6 @@ public slots:
     void OnRcv();
 private slots:
 
-
 private:
     int sendPort;
     int rcvPort;
