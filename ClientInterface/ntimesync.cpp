@@ -82,7 +82,7 @@ void NTimeSync::OnDeadLineElapse()
 
 void NTimeSync::CalcBias()
 {
-    long long mean;
+    long long mean = 0;
     foreach(auto v, timePoints){
         mean += v.time_since_epoch().count()/timePoints.size();
     }
