@@ -5,7 +5,7 @@
 #include <QSettings>
 #include "np2pnode.h"
 #include "ncryptop2p.h"
-#include "netsync.h"
+//#include "netsync.h"
 
 namespace Ui {
   class MainWindow;

@@ -38,5 +38,5 @@ FORMS += \
 
 include("../Crypto/EmccSDK/nemcc/nemcc.pri")
 include("../p2psrc/NP2P.pri")
-include("../NetSync/NetSync.pri")
+include("../Network/network.pri")
 
