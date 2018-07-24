@@ -5,7 +5,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     QObject::connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
 
     SetPort(StartPort);
-    QObject::connect(&ipc, &UdpIPC::Rcv, this, &NClientInterface::OnRcvLocal);
+    QObject::connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 
     QObject::connect(&p2p, &NCryptoP2P::RcvMsg, this, &NClientInterface::OnRcvNet);
     p2p.Init();
@@ -16,7 +16,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 
 void NClientInterface::SetPort(int port)
 {
-    ipc.SetPort(port);
+    ipc.SetIPCPort(port);
 }
 
 void NClientInterface::StartTest()

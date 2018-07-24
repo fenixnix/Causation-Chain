@@ -17,6 +17,12 @@ void UdpNetwork::SetSendEndPoint(QHostAddress addr, quint16 port)
     sendPort = port;
 }
 
+void UdpNetwork::SetIPCPort(int port)
+{
+    Listen(QHostAddress::LocalHost,port);
+    SetSendEndPoint(QHostAddress::LocalHost,port+1);
+}
+
 bool UdpNetwork::Send(QString msg)
 {
     auto res = udp.writeDatagram(msg.toLatin1(),QHostAddress::LocalHost,sendPort);

@@ -6,6 +6,7 @@
 #include "ncmdpacker.h"
 #include "ncryptop2p.h"
 #include "udpipc.h"
+#include "udpnetwork.h"
 #include "ntimesync.h"
 
 #define StartPort 8890
@@ -47,7 +48,8 @@ private:
 
   QTimer timeOut;
 
-  UdpIPC ipc;
+  UdpNetwork ipc;
+
   NCryptoP2P p2p;
   NCmdPacker packer;
   NCausationConsensus consensus;
