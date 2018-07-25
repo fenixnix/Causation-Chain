@@ -14,9 +14,11 @@ public:
 //private:
     QString addr;
     QIPEndPoint sendEndPoint;
+    QIPEndPoint nat;
+    QIPEndPoint local;
     QString pubKey;
-    QString nat;
-    QString type;//Solo, Team
+    QString natString;
+    QString type;//Solo, Team, Witness
     QString roomID;
 };
 

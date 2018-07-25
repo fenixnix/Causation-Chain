@@ -18,6 +18,7 @@ public slots:
     void OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort);
 
 private:
+    void EnterLobby(QString dat, QIPEndPoint endPoint);
     void MatchingSolo(QString dat, QHostAddress senderIP, quint16 senderPort);
     void CheckSolo();
     void Matching(QHash<QString, NWTCUser> &queue, int cnt);
