@@ -29,8 +29,6 @@ public:
     void join(QIPEndPoint endPoint);
 
     QStringList neighbourList();
-    //bool checkAlivebyID(QString id);
-    //qint64 udpSend(QIPEndPoint endPoint, QString msg);
     qint64 udpNatSend(QIPEndPoint endPoint, QString msg);
     void sendbyAddr(QString msg, QString localAddress);
     void sendMsg(QString msg,QString localAddress);
@@ -50,12 +48,10 @@ signals:
 
 private slots:
     void OnP2PMsg(QString cmd, QString dat);
-    //void OnP2PServer();
     void OnNat();
     void OnHeartbeat();
 
 private:
-    //void Query(QString msg);
     void GetP2PList(QString data);
     void GetAllAddr(QString data);
     void GetNatbyAddr(QString data);
@@ -63,11 +59,9 @@ private:
     void Ping(QString addr);
     void Pong(QString addr);
 
-    //QUdpSocket* udpP2p;
     QUdpSocket* udpNat;
 
     QIPEndPoint natServer;
-    //QIPEndPoint p2pServer;
     QIPEndPoint natEndPoint;
 
     NP2PServerInterface p2pServerInterface;

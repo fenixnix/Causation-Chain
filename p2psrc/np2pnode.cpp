@@ -4,9 +4,7 @@
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
-    //udpP2p = new QUdpSocket;
     udpNat = new QUdpSocket;
-    //QObject::connect(udpP2p, &QUdpSocket::readyRead, this, &NP2PNode::OnP2PServer);
 
     QObject::connect(&p2pServerInterface, &NP2PServerInterface::P2PMsg, this, &NP2PNode::OnP2PMsg);
     QObject::connect(udpNat, &QUdpSocket::readyRead, this, &NP2PNode::OnNat);
@@ -17,9 +15,7 @@ NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 NP2PNode::~NP2PNode()
 {
     heartbeatTimer.stop();
-    //udpP2p->close();
     udpNat->close();
-    //delete udpP2p;
     delete udpNat;
 }
 
@@ -39,16 +35,7 @@ void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
 void NP2PNode::setP2PServer(QIPEndPoint server)
 {
     p2pServerInterface.Init(server.IP(),server.Port());
-//    this->p2pServer.Init(server.IP().toString(),server.Port());
-//    bindP2PServer(QIPEndPoint(udpNat->localAddress(),server.Port()));
 }
-
-//void NP2PNode::bindP2PServer(QIPEndPoint p2pServer)
-//{
-//    udpP2p->close();
-//    udpP2p->bind(p2pServer.IP(),p2pServer.Port(),
-//                 QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-//}
 
 void NP2PNode::join(QIPEndPoint endPoint)
 {
@@ -69,25 +56,18 @@ QStringList NP2PNode::neighbourList()
     return ls;
 }
 
-//void NP2PNode::Query(QString msg)
-//{
-//    udpSend(p2pServer,msg);
-//}
-
 void NP2PNode::RequireJoin()
 {
     QString msg = MessageProtocol::Encode("P2PN",localAddress
                                           + "," + QIPEndPoint(udpNat->localAddress(),udpNat->localPort()).ToString()
                                           + "," + natEndPoint.ToString());
     p2pServerInterface.Query(msg);
-    //Query(msg);
 }
 
 void NP2PNode::RequireAllPeersList()
 {
     QString msg = "ALL ";
     p2pServerInterface.Query(msg);
-    //Query(msg);
 }
 
 void NP2PNode::RequireNatbyAddr(QByteArrayList addrs)
@@ -98,7 +78,6 @@ void NP2PNode::RequireNatbyAddr(QByteArrayList addrs)
     }
     QString msg = "IPLS" + ls.join(',');
     p2pServerInterface.Query(msg);
-    //Query(msg);
 }
 
 qint64 NP2PNode::udpNatSend(QIPEndPoint endPoint, QString msg)
@@ -149,15 +128,6 @@ void NP2PNode::broadcastMsg(QString msg)
     }
 }
 
-//qint64 NP2PNode::udpSend(QIPEndPoint endPoint, QString msg)
-//{
-//    auto ret = udpP2p->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
-//    if(ret==-1){
-//        qDebug()<<udpP2p->errorString();
-//    }
-//    return ret;
-//}
-
 QHostAddress NP2PNode::getLocalIP()
 {
     auto hostName = QHostInfo::localHostName();
@@ -202,38 +172,6 @@ void NP2PNode::OnP2PMsg(QString cmd, QString dat)
         GetNatbyAddr(dat);
     }
 }
-
-//void NP2PNode::OnP2PServer()
-//{
-//    while(udpP2p->hasPendingDatagrams())
-//    {
-//        QByteArray datagram;
-//        datagram.resize(udpP2p->pendingDatagramSize());
-//        auto ret = udpP2p->readDatagram(datagram.data(), datagram.size());
-//        if(ret==-1){
-//            qDebug()<<udpP2p->errorString();
-//            continue;
-//        }
-//        auto msg = QString::fromLatin1(datagram);
-
-//        MessageProtocol mp;
-//        auto cmd = mp.Decode(msg);
-//        if(cmd == "P2PN"){
-//            qDebug()<<"Rcv P2P:"+ mp.getData();
-//            GetP2PList(mp.getData());
-//        }
-
-//        if(cmd == "ALL "){
-//            qDebug()<<"Rcv All Addr:"+ mp.getData();
-//            GetAllAddr(mp.getData());
-//        }
-
-//        if(cmd == "IPLS"){
-//            qDebug()<<"Rcv NAT by Addr:" + mp.getData();
-//            GetNatbyAddr(mp.getData());
-//        }
-//    }
-//}
 
 void NP2PNode::OnNat()
 {
