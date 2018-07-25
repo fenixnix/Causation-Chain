@@ -29,7 +29,6 @@ public:
     void join(QIPEndPoint endPoint);
 
     QStringList neighbourList();
-    //qint64 udpNatSend(QIPEndPoint endPoint, QString msg);
     void sendbyAddr(QString msg, QString localAddress);
     void sendMsg(QString msg,QString localAddress);
     void broadcastMsg(QString msg);
@@ -49,8 +48,6 @@ signals:
 private slots:
     void OnP2PMsg(QString cmd, QString dat);
     void OnNatMsg(QString msg);
-
-    //void OnNat();
     void OnHeartbeat();
 
 private:
@@ -60,8 +57,6 @@ private:
 
     void Ping(QString addr);
     void Pong(QString addr);
-
-    //QUdpSocket* udpNat;
 
     QIPEndPoint natServer;
     QIPEndPoint natEndPoint;
