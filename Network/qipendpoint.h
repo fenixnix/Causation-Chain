@@ -18,8 +18,8 @@ public:
   QString ToString();
 
 private:
-  QHostAddress addr;
-  quint16 port;
+  QHostAddress addr = QHostAddress::LocalHost;
+  quint16 port = 0;
 };
 
 #endif // QIPENDPOINT_H

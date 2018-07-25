@@ -14,6 +14,14 @@ NP2PNode::~NP2PNode()
     heartbeatTimer.stop();
 }
 
+void NP2PNode::Init(QString id, QIPEndPoint natServer, QIPEndPoint p2pServer, QIPEndPoint local)
+{
+    setID(id);
+    bindLocalEndPoint(local);
+    setP2PServer(p2pServer);
+    join(natServer);
+}
+
 void NP2PNode::setID(QString id)
 {
     this->localAddress = id;
@@ -36,7 +44,6 @@ void NP2PNode::join(QIPEndPoint endPoint)
         RequireJoin();
     }else{
         nat.Send(endPoint.IP(),endPoint.Port(),localAddress);
-        //udpNatSend(endPoint, localAddress);
     }
 
     heartbeatTimer.start(HeartBeatInterval*1000);

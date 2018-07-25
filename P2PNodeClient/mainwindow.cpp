@@ -40,17 +40,14 @@ void MainWindow::on_actionSelfTest_triggered()
 {
     QSettings setting("config",QSettings::IniFormat);
     auto id = setting.value("ID").toString();
-    node.setID(id);
-    this->setWindowTitle(id);
     qDebug()<<"ID:"<<id;
-
     QIPEndPoint local(setting.value("Local").toString());
     QIPEndPoint nat(setting.value("NATServer").toString());
     QIPEndPoint p2p(setting.value("P2PServer").toString());
 
-    node.bindLocalEndPoint(QIPEndPoint(local.IP(),local.Port()));
-    node.setP2PServer(p2p);
-    node.join(nat);
+    node.Init(id,nat,p2p,local);
+
+    this->setWindowTitle(id+local.ToString());
 }
 
 void MainWindow::on_actionDefault_File_triggered()
