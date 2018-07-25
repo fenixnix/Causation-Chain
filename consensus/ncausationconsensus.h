@@ -32,7 +32,7 @@ public slots:
 private:
     int netCapacity = 3;//totel member in net
 
-    NConsensusChain causeChain;
+    NConsensusChain causeChain;//基于cause条目做逐条的最小化输入匹配共识，防止干扰者乱发信息
     NConsensusChain resultChain;
 };
 
