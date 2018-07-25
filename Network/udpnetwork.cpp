@@ -46,6 +46,16 @@ bool UdpNetwork::Send(QString msg)
 
 bool UdpNetwork::Send(QHostAddress addr, quint16 port, QString msg)
 {
+    auto res = udp.writeDatagram(msg.toLatin1(),addr,port);
+    if(res == -1){
+        qDebug()<<udp.errorString();
+        return false;
+    }
+    return true;
+}
+
+bool UdpNetwork::SendAndSet(QHostAddress addr, quint16 port, QString msg)
+{
     SetSendEndPoint(addr,port);
     return Send(msg);
 }

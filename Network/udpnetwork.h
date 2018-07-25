@@ -17,6 +17,7 @@ public:
 
     bool Send(QString msg);
     bool Send(QHostAddress addr, quint16 port, QString msg);
+    bool SendAndSet(QHostAddress addr, quint16 port, QString msg);
 
 signals:
     void Rcv(QString msg, QHostAddress senderIP, quint16 senderPort);
