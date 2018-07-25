@@ -19,6 +19,11 @@ public:
     bool Send(QHostAddress addr, quint16 port, QString msg);
     bool SendAndSet(QHostAddress addr, quint16 port, QString msg);
 
+    QHostAddress getSendAddr() const;
+    quint16 getSendPort() const;
+    QHostAddress getRcvAddr() const;
+    quint16 getRcvPort() const;
+
 signals:
     void Rcv(QString msg, QHostAddress senderIP, quint16 senderPort);
 

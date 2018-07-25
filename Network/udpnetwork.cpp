@@ -78,3 +78,23 @@ void UdpNetwork::OnRcv()
         emit Rcv(msg,senderIP,senderPort);
     }
 }
+
+quint16 UdpNetwork::getSendPort() const
+{
+    return sendPort;
+}
+
+QHostAddress UdpNetwork::getRcvAddr() const
+{
+    return udp.localAddress();
+}
+
+quint16 UdpNetwork::getRcvPort() const
+{
+    return udp.localPort();
+}
+
+QHostAddress UdpNetwork::getSendAddr() const
+{
+    return sendAddr;
+}
