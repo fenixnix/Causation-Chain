@@ -28,7 +28,6 @@ public slots:
 private:
     NEmcc emcc;
     NP2PNode p2p;
-
     QString Dsa(QString msg);
 };
 

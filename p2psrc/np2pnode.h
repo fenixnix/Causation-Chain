@@ -22,10 +22,10 @@ public:
     explicit NP2PNode(QObject *parent = nullptr);
     ~NP2PNode();
 
-    void setID(QString localAddress);
-    void bindLocalEndPoint(QIPEndPoint localEndPoint);
-    void setP2PServer(QIPEndPoint server);
-    void bindP2PServer(QIPEndPoint p2pServerRcv);
+    void setID(QString localAddress);//ID addr
+    void setP2PServer(QIPEndPoint server);//Set P2P Server Address
+    void bindLocalEndPoint(QIPEndPoint localEndPoint);//Set local EndPoint
+
     void join(QIPEndPoint endPoint);
 
     QStringList neighbourList();
