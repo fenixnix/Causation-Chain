@@ -4,6 +4,9 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    NFunServer::SelfTest();
+    qDebug()<<"Start WTC funciton Server";
+    NFunServer server;
+    //NFunServer::SelfTest();
+
     return a.exec();
 }

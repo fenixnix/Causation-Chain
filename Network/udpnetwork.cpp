@@ -34,7 +34,7 @@ bool UdpNetwork::Send(QString msg)
     return true;
 }
 
-bool UdpNetwork::Send(QHostAddress addr, quint16 port, msg)
+bool UdpNetwork::Send(QHostAddress addr, quint16 port, QString msg)
 {
     SetSendEndPoint(addr,port);
     return Send(msg);

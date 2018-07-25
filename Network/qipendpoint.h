@@ -8,18 +8,18 @@ class QIPEndPoint
 public:
   QIPEndPoint();
   QIPEndPoint(QString endPoint);
-  QIPEndPoint(QHostAddress ip, qint16 port);
-  QIPEndPoint(QString ip, qint16 port);
+  QIPEndPoint(QHostAddress ip, quint16 port);
+  QIPEndPoint(QString ip, quint16 port);
 
   void Init(QString endPoint);
-  void Init(QString ip, qint16 port);
+  void Init(QString ip, quint16 port);
   QHostAddress IP();
-  qint16 Port();
+  quint16 Port();
   QString ToString();
 
 private:
   QHostAddress addr;
-  qint16 port;
+  quint16 port;
 };
 
 #endif // QIPENDPOINT_H

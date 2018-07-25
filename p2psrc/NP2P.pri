@@ -9,8 +9,7 @@ HEADERS += \
     $$PWD/p2pfullnodenetwork.h \
     $$PWD/nsubnet.h \
     $$PWD/ncryptop2p.h \
-    $$PWD/np2pringnet.h \
-    $$PWD/messageprotocol.h
+    $$PWD/np2pringnet.h 
 
 SOURCES += \
     $$PWD/nodeinfo.cpp \
@@ -18,5 +17,4 @@ SOURCES += \
     $$PWD/p2pfullnodenetwork.cpp \
     $$PWD/nsubnet.cpp \
     $$PWD/ncryptop2p.cpp \
-    $$PWD/np2pringnet.cpp \
-    $$PWD/messageprotocol.cpp
+    $$PWD/np2pringnet.cpp 

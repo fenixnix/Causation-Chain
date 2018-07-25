@@ -41,7 +41,7 @@ void NClientInterface::OnTick(int frameNo)
 }
 
 #define CMDSIZE 3
-void NClientInterface::OnRcvLocal(QString msg)
+void NClientInterface::OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort)
 {
     qDebug()<<__FUNCTION__<<msg;
     if(msg.size()<CMDSIZE){

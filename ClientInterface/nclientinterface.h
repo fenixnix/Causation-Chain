@@ -5,7 +5,6 @@
 #include "ncausationconsensus.h"
 #include "ncmdpacker.h"
 #include "ncryptop2p.h"
-#include "udpipc.h"
 #include "udpnetwork.h"
 #include "ntimesync.h"
 
@@ -29,7 +28,7 @@ public slots:
   void OnFinish(QString msg);//功能业务结束 业务Server
   void OnTick(int frameNo);
 
-  void OnRcvLocal(QString msg);
+  void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
   void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
 
 private slots:

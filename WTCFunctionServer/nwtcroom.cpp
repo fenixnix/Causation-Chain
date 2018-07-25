@@ -1,6 +1,6 @@
 #include "nwtcroom.h"
 
-NWTCRoom::NWTCRoom()
+NWTCRoom::NWTCRoom(QObject *parent) : QObject(parent)
 {
 
 }
@@ -25,10 +25,35 @@ bool NWTCRoom::IsExist(QString addr)
 
 void NWTCRoom::AssignRoomID()
 {
-    auto hash = GetHash()();
-    foreach(var k, members.keys()){
+    auto hash = GetHash();
+    foreach(auto k, members.keys()){
         members[k].roomID = hash;
     }
+}
+
+void NWTCRoom::Start(UdpNetwork *udp)
+{
+    this->udp = udp;
+    QJsonArray memberArray;
+    foreach (auto m, members) {
+        QJsonObject user;
+        user["Addr"] = m.addr;
+        user["PubKey"] = m.pubKey;
+        memberArray.append(user);
+    }
+    QJsonObject obj;
+    obj["Members"] = memberArray;
+    obj["RoomID"] = roomID;
+
+    //game start
+    QString msg = "GMST" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+
+    foreach(auto m, members){
+        udp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
+    }
+
+    QObject::connect(&timer, &QTimer::timeout, this, &NWTCRoom::OnTrig);
+    timer.start(3000);
 }
 
 QStringList NWTCRoom::GetMembers()
@@ -44,7 +69,8 @@ QString NWTCRoom::GetHash()
         ts<<member.addr;
     }
     auto hashBr = QCryptographicHash::hash(memberList.toLatin1(),QCryptographicHash::Keccak_256);
-    return QString(hashBr.toHex());
+    roomID = QString(hashBr.toHex());
+    return roomID;
 }
 
 QString NWTCRoom::Print()
@@ -57,4 +83,15 @@ QString NWTCRoom::Print()
         ts<<m.addr<<"\n";
     }
     return txt;
+}
+
+void NWTCRoom::OnTrig()
+{
+    qDebug()<<__FUNCTION__;
+    QJsonObject obj;
+    obj["Room:"] = roomID;
+    QString msg = "TICK" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    foreach(auto m, members){
+        udp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
+    }
 }
