@@ -5,6 +5,11 @@ UdpNetwork::UdpNetwork(QObject *parent) : QObject(parent)
 
 }
 
+UdpNetwork::~UdpNetwork()
+{
+    udp.close();
+}
+
 void UdpNetwork::Listen(QHostAddress addr, quint16 port)
 {
     QObject::connect(&udp,&QUdpSocket::readyRead,this,&UdpNetwork::OnRcv);
@@ -23,10 +28,15 @@ void UdpNetwork::SetIPCPort(int port)
     SetSendEndPoint(QHostAddress::LocalHost,port+1);
 }
 
+void UdpNetwork::Close()
+{
+    udp.close();
+}
+
 bool UdpNetwork::Send(QString msg)
 {
-    auto res = udp.writeDatagram(msg.toLatin1(),QHostAddress::LocalHost,sendPort);
-    //auto res = udp.writeDatagram(msg.toLatin1(),QHostAddress("192.168.1.145"),sendPort);
+    //qDebug()<<__FUNCTION__<<msg;
+    auto res = udp.writeDatagram(msg.toLatin1(),sendAddr,sendPort);
     if(res == -1){
         qDebug()<<udp.errorString();
         return false;
@@ -54,6 +64,7 @@ void UdpNetwork::OnRcv()
             continue;
         }
         auto msg = QString::fromLatin1(datagram);
+        //qDebug()<<__FUNCTION__<<msg;
         emit Rcv(msg,senderIP,senderPort);
     }
 }

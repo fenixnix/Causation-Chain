@@ -9,9 +9,11 @@ class UdpNetwork : public QObject
     Q_OBJECT
 public:
     explicit UdpNetwork(QObject *parent = nullptr);
+    ~UdpNetwork();
     void Listen(QHostAddress addr, quint16 port);
     void SetSendEndPoint(QHostAddress addr, quint16 port);
     void SetIPCPort(int port);
+    void Close();
 
     bool Send(QString msg);
     bool Send(QHostAddress addr, quint16 port, QString msg);

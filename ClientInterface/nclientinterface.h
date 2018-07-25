@@ -50,6 +50,7 @@ private:
   UdpNetwork ipc;
 
   NCryptoP2P p2p;
+
   NCmdPacker packer;
   NCausationConsensus consensus;
   NTimeSync timeSync;
