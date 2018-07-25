@@ -34,18 +34,26 @@ bool UdpNetwork::Send(QString msg)
     return true;
 }
 
+bool UdpNetwork::Send(QHostAddress addr, quint16 port, msg)
+{
+    SetSendEndPoint(addr,port);
+    return Send(msg);
+}
+
 void UdpNetwork::OnRcv()
 {
     while(udp.hasPendingDatagrams())
     {
         QByteArray datagram;
         datagram.resize(udp.pendingDatagramSize());
-        auto res = udp.readDatagram(datagram.data(), datagram.size());
+        QHostAddress senderIP;
+        quint16 senderPort;
+        auto res = udp.readDatagram(datagram.data(), datagram.size(), &senderIP, &senderPort);
         if(res == -1){
             qDebug()<<udp.errorString();
             continue;
         }
         auto msg = QString::fromLatin1(datagram);
-        emit Rcv(msg);
+        emit Rcv(msg,senderIP,senderPort);
     }
 }

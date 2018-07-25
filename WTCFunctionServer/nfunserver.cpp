@@ -53,6 +53,11 @@ void NFunServer::OnUserJoin(QString msg)
     }
 }
 
+void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort)
+{
+
+}
+
 QString NFunServer::jsonUser(QString addr, QString pubKey, QString NAT, QString type)
 {
     QJsonObject obj;
@@ -82,7 +87,7 @@ void NFunServer::Matching(QHash<QString, NWTCUser> &queue, int cnt)
             break;
         }
     }
-    rooms.insert(room.GetHash(),room);
+    soloRooms.insert(room.GetHash(),room);
     RmvRoomMember(room,queue);
     room.AssignRoomID();
     qDebug()<<room.Print();
