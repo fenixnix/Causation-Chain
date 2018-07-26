@@ -116,7 +116,7 @@ void NetSync::onOnnRequire(QString contractID, QByteArray addr, QString cmd, QSt
     obj.insert("ID",contractID);
     obj.insert("Addr",ecDsa.ethAddr);
     obj.insert("CMD",cmd);
-    obj.insert("Data",data);
+    obj.insert("Dat",data);
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
@@ -129,7 +129,7 @@ void NetSync::onOnnBroadcast(QString contractID, QString cmd, QString data)
     obj.insert("ID",contractID);
     obj.insert("Addr",ecDsa.ethAddr);
     obj.insert("CMD",cmd);
-    obj.insert("Data",data);
+    obj.insert("Dat",data);
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
@@ -180,7 +180,7 @@ void NetSync::RcvP2pMsg(QString signedMsg)
     }
 
     if(obj.contains("CMD")){
-        emit doOnnRequire(contractID,addr,obj["CMD"].toString(),obj["Data"].toString());
+        emit doOnnRequire(contractID,addr,obj["CMD"].toString(),obj["Dat"].toString());
     }
 }
 
