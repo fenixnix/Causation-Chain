@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //sync.Init();
     //NP2PRingNet::SelfTest();
+
+
+    //QObject::connect(&sync, &NetSync::doOnnRequire, this, &MainWindow::OnRcvOnnRequire);
 }
 
 MainWindow::~MainWindow()
@@ -38,16 +41,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionSelfTest_triggered()
 {
-    QSettings setting("config",QSettings::IniFormat);
-    auto id = setting.value("ID").toString();
-    qDebug()<<"ID:"<<id;
-    QIPEndPoint local(setting.value("Local").toString());
-    QIPEndPoint nat(setting.value("NATServer").toString());
-    QIPEndPoint p2p(setting.value("P2PServer").toString());
+    NEmcc emcc;
+    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
+    QString secKey = cryptoSetting.value("SecKey").toString();
+    QString pubKey = cryptoSetting.value("PubKey").toString();
+    emcc.SetSecKey(secKey);
+    emcc.SetPubKey(pubKey);
+    QString addr = emcc.address;
 
-    node.Init(id,nat,p2p,local);
+    QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
+    QIPEndPoint local(p2pSetting.value("Local").toString());
+    QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
+    QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
+    node.Init(addr,natServer,p2pServer,local);
 
-    this->setWindowTitle(id+local.ToString());
+    this->setWindowTitle(addr+local.ToString());
+//    NEmcc emcc;
+//    emcc.GenerateKeyPair();
+//    sync.Init(emcc.privateKeyString, emcc.publicKeyString);
 }
 
 void MainWindow::on_actionDefault_File_triggered()
@@ -90,4 +101,17 @@ void MainWindow::on_actionRequire_NAT_triggered()
     list.append(QByteArray::fromHex(addr1.toLatin1()));
     list.append(QByteArray::fromHex(addr2.toLatin1()));
     node.RequireNatbyAddr(list);
+}
+
+void MainWindow::on_actionOnnRequire_triggered()
+{
+    //auto addr = ui->lineEditAddress->text();
+    //sync.onOnnRequire("ONN",QByteArray::fromHex(addr.toLatin1()),"TESTCMD","HELLO");
+}
+
+void MainWindow::OnRcvOnnRequire(QString contractID, QString addr, QString cmd, QString data)
+{
+    //QString txt = contractID + "," + addr + "," + cmd + "," + data;
+    //qDebug()<<txt;
+    //ui->plainTextEdit->appendPlainText(txt);
 }

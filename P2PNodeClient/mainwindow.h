@@ -30,6 +30,10 @@ private slots:
 
   void on_actionRequire_NAT_triggered();
 
+  void on_actionOnnRequire_triggered();
+
+  void OnRcvOnnRequire(QString contractID, QString addr, QString cmd, QString data);
+
 private:
   Ui::MainWindow *ui;
   NP2PNode node;

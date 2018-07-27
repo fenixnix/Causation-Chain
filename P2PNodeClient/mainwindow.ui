@@ -21,6 +21,9 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
+       <widget class="QLineEdit" name="lineEditAddress"/>
+      </item>
+      <item>
        <widget class="QLineEdit" name="lineEdit">
         <property name="text">
          <string>Hello</string>
@@ -36,6 +39,9 @@
       </item>
       <item>
        <widget class="QPlainTextEdit" name="plainTextEdit"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEditLocalAddr"/>
       </item>
      </layout>
     </item>
@@ -58,6 +64,7 @@
     <addaction name="actionDefault_File"/>
     <addaction name="actionRequire_All"/>
     <addaction name="actionRequire_NAT"/>
+    <addaction name="actionOnnRequire"/>
    </widget>
    <addaction name="menuTest"/>
   </widget>
@@ -88,6 +95,11 @@
   <action name="actionRequire_NAT">
    <property name="text">
     <string>Require NAT</string>
+   </property>
+  </action>
+  <action name="actionOnnRequire">
+   <property name="text">
+    <string>OnnRequire</string>
    </property>
   </action>
  </widget>

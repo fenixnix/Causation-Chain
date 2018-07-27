@@ -24,6 +24,7 @@ private slots:
 private:
     NP2PServerInterface interface;
     void UpdateP2PList(QString data);
+    void GetFullNode(QString data);
 };
 
 #endif // MAINNETSERVER_H

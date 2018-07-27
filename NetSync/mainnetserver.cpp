@@ -1,4 +1,5 @@
 #include "mainnetserver.h"
+#include "nodeinfo.h"
 
 MainNetServer::MainNetServer(QObject *parent) : QObject(parent)
 {
@@ -14,17 +15,17 @@ void MainNetServer::OnServerMsg(QString cmd, QString dat)
 {
     if(cmd == "P2PN"){
         qDebug()<<"Rcv P2P:"+ dat;
-        GetP2PList(dat);
+        UpdateP2PList(dat);
     }
 
     if(cmd == "ALL "){
         qDebug()<<"Rcv All Addr:"+ dat;
-        GetAllAddr(dat);
+        GetFullNode(dat);
     }
 
     if(cmd == "IPLS"){
         qDebug()<<"Rcv NAT by Addr:" + dat;
-        GetNatbyAddr(dat);
+        //GetNatbyAddr(dat);
     }
 }
 
@@ -35,10 +36,17 @@ void MainNetServer::UpdateP2PList(QString data)
         NodeInfo info;
         info.SetData(d);
         //skip myself
-        if(info.getId() == this->localAddress){
-            continue;
-        }
-        net.enter(d);
+//        if(info.getId() == this->localAddress){
+//            continue;
+//        }
+        //TODO:
+        //net.enter(d);
     }
-    emit neighbourListUpdate(neighbourList());
+    //TODO:
+    emit P2PListUpdate(datas);
+}
+
+void MainNetServer::GetFullNode(QString data)
+{
+    emit FullNodeUpdate(data.split(';'));
 }
