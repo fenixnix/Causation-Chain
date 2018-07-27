@@ -26,5 +26,5 @@ void NP2PServerInterface::OnUdp(QString msg)
     if(cmd==""){
         return;
     }
-    emit P2PMsg(cmd,mp.getData());
+    emit ServerMsg(cmd,mp.getData());
 }

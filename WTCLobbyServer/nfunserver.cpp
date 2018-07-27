@@ -68,7 +68,7 @@ void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort
 
 void NFunServer::EnterLobby(QString dat, QIPEndPoint endPoint)
 {
-
+    qDebug()<<endPoint.ToString()<<__FUNCTION__<<dat;
 }
 
 void NFunServer::MatchingSolo(QString dat, QHostAddress senderIP, quint16 senderPort)

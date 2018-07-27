@@ -13,7 +13,7 @@ public:
     void Query(QString msg);
 
 signals:
-    void P2PMsg(QString cmd, QString dat);
+    void ServerMsg(QString cmd, QString dat);
 
 private slots:
     void OnUdp(QString msg);

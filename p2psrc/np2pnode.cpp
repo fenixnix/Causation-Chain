@@ -4,7 +4,7 @@
 
 NP2PNode::NP2PNode(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2pServerInterface, &NP2PServerInterface::P2PMsg, this, &NP2PNode::OnP2PMsg);
+    QObject::connect(&p2pServerInterface, &NP2PServerInterface::ServerMsg, this, &NP2PNode::OnP2PMsg);
     QObject::connect(&nat, &UdpNetwork::Rcv, this, &NP2PNode::OnNatMsg);
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &NP2PNode::OnHeartbeat);
 }

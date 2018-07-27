@@ -52,21 +52,21 @@ private slots:
     void OnHeartbeat();
 
 private:
-    void GetP2PList(QString data);
-    void GetAllAddr(QString data);
-    void GetNatbyAddr(QString data);
+    void GetP2PList(QString data);//
+    void GetAllAddr(QString data);//
+    void GetNatbyAddr(QString data);//
 
     void Ping(QString addr);
     void Pong(QString addr);
 
     //QIPEndPoint natServer;//!!! nat server addr init
     QIPEndPoint natEndPoint;//
-
     UdpNetwork nat;
-    NP2PServerInterface p2pServerInterface;
     QString localAddress;
     NSubNet net;
     QTimer heartbeatTimer;
+
+    NP2PServerInterface p2pServerInterface;
 };
 
 #endif // NP2PNODE_H
