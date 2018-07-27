@@ -166,14 +166,17 @@ void NetSync::RcvP2pMsg(QString signedMsg)
         emit doRcvBlockChainLevel(contractID,addr,obj["Level"].toString());
         //qDebug()<<"Rcv:Level"<<contractID<<addr<<obj["Level"].toString();
     }
+
     if(obj.contains("Start")){
         emit doRcvBlockChainDataRequire(contractID,addr,obj["Start"].toString(),obj["End"].toString());
         //qDebug()<<"Rcv:Require"<<contractID<<addr<<obj["Start"].toString()<<obj["End"].toString();
     }
+
     if(obj.contains("Data")){
         emit doRcvBlockChainData(contractID,addr,obj["Data"].toString());
         //qDebug()<<"Rcv:Data"<<contractID<<addr<<obj["Data"].toString();
     }
+
     if(obj.contains("Require")){
         emit doRcvRequire(contractID,addr,obj["Require"].toString());
         //qDebug()<<"Rcv:Data"<<contractID<<addr<<obj["Data"].toString();
