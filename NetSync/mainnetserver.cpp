@@ -1,14 +1,29 @@
 #include "mainnetserver.h"
 #include "nodeinfo.h"
+#include "messageprotocol.h"
 
 MainNetServer::MainNetServer(QObject *parent) : QObject(parent)
 {
+    QObject::connect(&interface, &NP2PServerInterface::ServerMsg, this, &MainNetServer::OnServerMsg);
     Init();
 }
 
 void MainNetServer::Init()
 {
-    QObject::connect(&interface, &NP2PServerInterface::ServerMsg, this, &MainNetServer::OnServerMsg);
+
+}
+
+void MainNetServer::RequireJoin()
+{
+//    QString msg = MessageProtocol::Encode("P2PN",localAddress
+//                                          + "," + QIPEndPoint(nat.getRcvAddr(),nat.getRcvPort()).ToString()
+//                                          + "," + natEndPoint.ToString());
+//    interface.Query(msg);
+}
+
+void MainNetServer::RequireFullNode()
+{
+
 }
 
 void MainNetServer::OnServerMsg(QString cmd, QString dat)

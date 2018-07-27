@@ -2,7 +2,7 @@
 
 UdpNetwork::UdpNetwork(QObject *parent) : QObject(parent)
 {
-
+    QObject::connect(&udp,&QUdpSocket::readyRead,this,&UdpNetwork::OnRcv);
 }
 
 UdpNetwork::~UdpNetwork()
@@ -12,7 +12,7 @@ UdpNetwork::~UdpNetwork()
 
 void UdpNetwork::Listen(QHostAddress addr, quint16 port)
 {
-    QObject::connect(&udp,&QUdpSocket::readyRead,this,&UdpNetwork::OnRcv);
+    udp.close();
     udp.bind(addr,port,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 

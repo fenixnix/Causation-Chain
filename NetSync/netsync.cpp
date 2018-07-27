@@ -4,6 +4,7 @@
 NetSync::NetSync(QObject *parent) : QObject(parent)
 {
     QObject::connect(&p2p,&NP2PNode::neighbourListUpdate,this,&NetSync::PeerListUpdate);
+    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NetSync::RcvP2pMsg);
     Init();
 }
 
@@ -30,8 +31,6 @@ void NetSync::Init(QString priKey, QString pubKey)
 
     p2p.setP2PServer(p2pA);
     p2p.join(nat);
-
-    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NetSync::RcvP2pMsg);
 }
 
 void NetSync::Init()

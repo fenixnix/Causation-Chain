@@ -10,6 +10,9 @@ class MainNetServer : public QObject
 public:
     explicit MainNetServer(QObject *parent = nullptr);
     void Init();
+    void RequireJoin();
+    void RequireFullNode();
+    //void RequireNode();
 
 signals:
     void P2PListUpdate(QStringList list);//领域节点更新列表
