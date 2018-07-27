@@ -49,7 +49,7 @@ bool NEmcc::VerifyMsg(QString pubKey, QString msg, QString sign)
                   sign.toLocal8Bit().data());
 }
 
-void NEmcc::SetPriKey(QString key)
+void NEmcc::SetSecKey(QString key)
 {
     privateKeyString = key;
     priKey = QByteArray::fromHex(privateKeyString.toLatin1());

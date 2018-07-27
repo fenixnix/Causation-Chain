@@ -21,7 +21,6 @@ class NP2PNode : public QObject
 public:
     explicit NP2PNode(QObject *parent = nullptr);
     ~NP2PNode();
-
     void Init(QString id, QIPEndPoint natServer, QIPEndPoint p2pServer, QIPEndPoint local);
 
     void setID(QString localAddress);//ID addr

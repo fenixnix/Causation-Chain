@@ -11,7 +11,7 @@ public:
     QString Sign(QString data);
     static bool VerifyMsg(QString pubKey, QString msg, QString sign);
 
-    void SetPriKey(QString key);
+    void SetSecKey(QString key);
     void SetPubKey(QString key);
 
     QString privateKeyString;

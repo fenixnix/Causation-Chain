@@ -2,12 +2,18 @@
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
+    Init();
+}
+
+void NClientInterface::Init()
+{
     QObject::connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
 
     SetPort(StartPort);
     QObject::connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 
     QObject::connect(&p2p, &NCryptoP2P::RcvMsg, this, &NClientInterface::OnRcvNet);
+    p2p.GenerateKey();//TestCode
     p2p.Init();
 
     timeOut.setSingleShot(true);
@@ -17,6 +23,24 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 void NClientInterface::SetPort(int port)
 {
     ipc.SetIPCPort(port);
+}
+
+QString NClientInterface::GetLocalAddr()
+{
+    return p2p.localAddr();
+}
+
+QStringList NClientInterface::GetMemberList()
+{
+    return p2p.getP2pMemberList();
+}
+
+void NClientInterface::SendMsg(QString addr, QString msg)
+{
+    QJsonObject obj;
+    obj["cmd"] = "message";
+    obj["data"] = msg;
+    p2p.sendByID(addr,QString(QJsonDocument(obj).toJson(QJsonDocument::Compact)));
 }
 
 void NClientInterface::StartTest()
@@ -76,6 +100,9 @@ void NClientInterface::OnRcvNet(quint64 timeStamp, QString addr, QString msg)
     }
     if(cmd == "result"){
         RcvNetResult(frame,addr,obj["data"].toString());
+    }
+    if(cmd == "message"){
+        emit RcvMsg(addr,obj["data"].toString());
     }
 }
 

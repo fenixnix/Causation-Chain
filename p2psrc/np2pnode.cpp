@@ -175,22 +175,27 @@ void NP2PNode::OnNatMsg(QString msg)
         natEndPoint.Init(mp.getData());
         //qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
         RequireJoin();
+        return;
     }
 
     if(cmd == "MSG "){
         //qDebug()<<"Message: "<<data;
         emit RcvMsg(mp.getData());
+        return;
     }
 
     if(cmd == "PING"){
         //qDebug()<<"Ping from:"<<mp.getData();
         sendbyAddr("PONG"+localAddress,mp.getData());
+        return;
     }
 
     if(cmd == "PONG"){
         //qDebug()<<"Pong from:"<<mp.getData();
         Pong(mp.getData());
+        return;
     }
+    qDebug()<<"Undefine CMD:"<<cmd;
 }
 
 void NP2PNode::OnHeartbeat()

@@ -3,29 +3,45 @@
 
 NCryptoP2P::NCryptoP2P(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NCryptoP2P::rcvP2PMsg,Qt::QueuedConnection);
+    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NCryptoP2P::rcvP2PMsg);
+}
+
+void NCryptoP2P::GenerateKey()
+{
+    NEmcc ecc;
+    ecc.GenerateKeyPair();
+    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
+    cryptoSetting.setValue("SecKey", ecc.privateKeyString);
+    cryptoSetting.setValue("PubKey", ecc.publicKeyString);
+    cryptoSetting.sync();
 }
 
 void NCryptoP2P::Init()
 {
-    emcc.GenerateKeyPair();
-    p2p.setID(emcc.address);
-    qDebug()<<"ID:"<<emcc.address;
+    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
+    QString secKey = cryptoSetting.value("SecKey").toString();
+    QString pubKey = cryptoSetting.value("PubKey").toString();
+    emcc.SetSecKey(secKey);
+    emcc.SetPubKey(pubKey);
+    QString addr = emcc.address;
 
-    QSettings setting("config",QSettings::IniFormat);
-    QIPEndPoint local(setting.value("Local").toString());
-    QIPEndPoint nat(setting.value("NATServer").toString());
-    QIPEndPoint p2pA(setting.value("P2PServer").toString());
+    QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
+    QIPEndPoint local(p2pSetting.value("Local").toString());
+    QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
+    QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
+    p2p.Init(addr,natServer,p2pServer,local);
+}
 
-    p2p.bindLocalEndPoint(local);
-    p2p.setP2PServer(p2pA);
-    p2p.join(nat);
+QStringList NCryptoP2P::getP2pMemberList()
+{
+    return p2p.neighbourList();
 }
 
 QString NCryptoP2P::sendByID(QString id, QString msg)
 {
+    //qDebug()<<__FUNCTION__<<id<<msg;
     auto dMsg = Dsa(msg);
-    p2p.sendbyAddr(dMsg,id);
+    p2p.sendMsg(dMsg,id);
     return dMsg;
 }
 
@@ -52,11 +68,12 @@ void NCryptoP2P::SelfTest()
 
 void NCryptoP2P::rcvP2PMsg(QString msg)
 {
+    //qDebug()<<__FUNCTION__<<msg;
     QJsonObject obj = QJsonDocument::fromJson(msg.toLatin1()).object();
     QString dat = obj["DAT"].toString();
     QString sign = obj["SIGN"].toString();
     QJsonObject jsonDat = QJsonDocument::fromJson(dat.toLatin1()).object();
-    qDebug()<<"RcvData:"<<dat;
+    //qDebug()<<"RcvData:"<<dat;
     QString pubKey = jsonDat["PK"].toString();
     if(!NEmcc::VerifyMsg(pubKey,dat,sign)){
         qDebug()<<"Faked data!!!"<<msg;

@@ -11,8 +11,10 @@ class NCryptoP2P : public QObject
 public:
     explicit NCryptoP2P(QObject *parent = nullptr);
 
+    static void GenerateKey();
     void Init();
 
+    QStringList getP2pMemberList();
     QString sendByID(QString id, QString msg);
     QString localAddr();
     void boardcastMsg(QString msg);

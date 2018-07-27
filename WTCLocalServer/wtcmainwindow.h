@@ -22,6 +22,12 @@ private slots:
 
     void on_actionSend_Result_triggered();
 
+    void on_actionRefresh_triggered();
+
+    void on_sendMsgBtn_clicked();
+
+    void onP2pMsg(QString addr, QString msg);
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;

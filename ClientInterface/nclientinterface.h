@@ -15,12 +15,17 @@ class NClientInterface : public QObject
   Q_OBJECT
 public:
   explicit NClientInterface(QObject *parent = nullptr);
+  void Init();
   void SetPort(int port);
+  QString GetLocalAddr();
+  QStringList GetMemberList();
+  void SendMsg(QString addr, QString msg);
   void StartTest();
 
 signals:
   void RcvCause(QString cause);
   void RcvResult(QString result);
+  void RcvMsg(QString id, QString msg);
   //void RcvResultHash(QByteArray resultHash);
 
 public slots:
@@ -52,7 +57,7 @@ private:
   NCryptoP2P p2p;
 
   NCmdPacker packer;
-  NCausationConsensus consensus;
+  NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
   NTimeSync timeSync;
 };
 
