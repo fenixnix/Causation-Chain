@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
-#include "np2pnode.h"
+#include "mainnetserver.h"
 #include "ncryptop2p.h"
 //#include "netsync.h"
 
@@ -26,8 +26,6 @@ private slots:
   void on_RefreshMemberList(QStringList list);
   void on_RcvMessage(QString msg);
 
-  void on_actionRequire_All_triggered();
-
   void on_actionRequire_NAT_triggered();
 
   void on_actionOnnRequire_triggered();
@@ -36,7 +34,7 @@ private slots:
 
 private:
   Ui::MainWindow *ui;
-  NP2PNode node;
+  MainNetServer node;
   //NetSync sync;
 };
 

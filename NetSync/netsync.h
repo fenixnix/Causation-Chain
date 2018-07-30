@@ -2,15 +2,16 @@
 #define NETSYNC_H
 
 #include <QObject>
-#include "np2pnode.h"
+#include "mainnetserver.h"
 #include "nemcc.h"
+#include "ipclassify.h"
 
 class NetSync : public QObject
 {
     Q_OBJECT
 public:
     explicit NetSync(QObject *parent = nullptr);
-    void Init(QString priKey, QString pubKey);
+    void Init(QString secKey, QString pubKey);
     void Init();
     bool PeerIsNeighbour(QString peerAddress);
     QStringList neighbourPeerList();
@@ -50,7 +51,7 @@ private:
 
     QStringList prevAllPeerList;
 
-    NP2PNode p2p;
+    MainNetServer p2p;
     NEmcc ecDsa;
 };
 

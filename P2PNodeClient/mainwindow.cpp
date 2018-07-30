@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "np2pringnet.h"
+#include "ipclassify.h"
 
 #include <chrono>
 #include <iostream>
@@ -13,25 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    qDebug()<<NP2PNode::getLocalIP();
     ui->setupUi(this);
-    QObject::connect(&node,&NP2PNode::neighbourListUpdate,
+    QObject::connect(&node,&MainNetServer::P2PListUpdate,
                      this,&MainWindow::on_RefreshMemberList);
 
-    QObject::connect(&node,&NP2PNode::RcvMsg,
+    QObject::connect(&node,&MainNetServer::RcvMsg,
                      this,&MainWindow::on_RcvMessage);
-
-    //ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
-    //ui->plainTextEdit->appendPlainText(NCryptoP2P::SelfTest());
-    //NCryptoP2P::SelfTest();
-//    QObject::connect(&sync,&NetSync::UpdatePeerList,
-//                     this,&MainWindow::on_RefreshMemberList);
-
-    //sync.Init();
-    //NP2PRingNet::SelfTest();
-
-
-    //QObject::connect(&sync, &NetSync::doOnnRequire, this, &MainWindow::OnRcvOnnRequire);
+    qDebug()<<IPClassify::getLocalIP();
 }
 
 MainWindow::~MainWindow()
@@ -41,24 +30,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionSelfTest_triggered()
 {
-    NEmcc emcc;
-    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
-    QString secKey = cryptoSetting.value("SecKey").toString();
-    QString pubKey = cryptoSetting.value("PubKey").toString();
-    emcc.SetSecKey(secKey);
-    emcc.SetPubKey(pubKey);
-    QString addr = emcc.address;
-
-    QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
-    QIPEndPoint local(p2pSetting.value("Local").toString());
-    QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
-    QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
-    node.Init(addr,natServer,p2pServer,local);
-
-    this->setWindowTitle(addr+local.ToString());
-//    NEmcc emcc;
-//    emcc.GenerateKeyPair();
-//    sync.Init(emcc.privateKeyString, emcc.publicKeyString);
+    this->setWindowTitle(node.getID());
 }
 
 void MainWindow::on_actionDefault_File_triggered()
@@ -85,12 +57,7 @@ void MainWindow::on_sendBtn_clicked()
 {
     QString id = ui->p2pListView->currentIndex().data().toString();
     qDebug()<<__FUNCTION__<<": "<<id<<" Msg:"<<ui->lineEdit->text();
-    node.sendMsg(ui->lineEdit->text(),id);
-}
-
-void MainWindow::on_actionRequire_All_triggered()
-{
-    node.RequireAllPeersList();
+    node.SendMsg(ui->lineEdit->text(),id);
 }
 
 void MainWindow::on_actionRequire_NAT_triggered()
@@ -100,7 +67,7 @@ void MainWindow::on_actionRequire_NAT_triggered()
     QByteArrayList list;
     list.append(QByteArray::fromHex(addr1.toLatin1()));
     list.append(QByteArray::fromHex(addr2.toLatin1()));
-    node.RequireNatbyAddr(list);
+    //node.RequireNatbyAddr(list);
 }
 
 void MainWindow::on_actionOnnRequire_triggered()

@@ -29,7 +29,7 @@ void NCryptoP2P::Init()
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
-    p2p.Init(addr,natServer,p2pServer,local);
+    p2p.Init(addr,natServer,local);
 }
 
 QStringList NCryptoP2P::getP2pMemberList()

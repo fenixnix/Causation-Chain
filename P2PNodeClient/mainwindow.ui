@@ -62,7 +62,6 @@
     </property>
     <addaction name="actionSelfTest"/>
     <addaction name="actionDefault_File"/>
-    <addaction name="actionRequire_All"/>
     <addaction name="actionRequire_NAT"/>
     <addaction name="actionOnnRequire"/>
    </widget>
@@ -85,11 +84,6 @@
   <action name="actionDefault_File">
    <property name="text">
     <string>Default config file</string>
-   </property>
-  </action>
-  <action name="actionRequire_All">
-   <property name="text">
-    <string>Require All</string>
    </property>
   </action>
   <action name="actionRequire_NAT">

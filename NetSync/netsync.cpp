@@ -3,34 +3,14 @@
 
 NetSync::NetSync(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&p2p,&NP2PNode::neighbourListUpdate,this,&NetSync::PeerListUpdate);
-    QObject::connect(&p2p,&NP2PNode::RcvMsg,this,&NetSync::RcvP2pMsg);
+    connect(&p2p,&MainNetServer::P2PListUpdate,this,&NetSync::PeerListUpdate);
+    connect(&p2p,&MainNetServer::RcvMsg,this,&NetSync::RcvP2pMsg);
     Init();
 }
 
-void NetSync::Init(QString priKey, QString pubKey)
+void NetSync::Init(QString secKey, QString pubKey)
 {
-    ecDsa.SetSecKey(priKey);
-    ecDsa.SetPubKey(pubKey);
-
-    QSettings setting("config",QSettings::IniFormat);
-    auto id = ecDsa.ethAddr;
-    //qDebug()<<"ID:"<<id;
-    p2p.setID(id);
-
-
-    QIPEndPoint local(setting.value("Local").toString());
-    QIPEndPoint nat(setting.value("NATServer").toString());
-    QIPEndPoint p2pA(setting.value("P2PServer").toString());
-
-    if(local.IP().toString() == "127.0.0.1"){
-        p2p.bindLocalEndPoint(QIPEndPoint(QHostAddress(NP2PNode::getLocalIP2()),local.Port()));
-    }else{
-        p2p.bindLocalEndPoint(QIPEndPoint(local.IP(),local.Port()));
-    }
-
-    p2p.setP2PServer(p2pA);
-    p2p.join(nat);
+    p2p.Init(secKey, pubKey);
 }
 
 void NetSync::Init()
@@ -41,12 +21,12 @@ void NetSync::Init()
 
 QStringList NetSync::neighbourPeerList()
 {
-    return CheckEthAddrList(p2p.neighbourList());
+    return CheckEthAddrList(p2p.getNeighbourList());
 }
 
 bool NetSync::PeerIsNeighbour(QString peerAddress)
 {
-    return p2p.neighbourList().contains(peerAddress);
+    return p2p.getNeighbourList().contains(peerAddress);
 }
 
 void NetSync::onBroadcastBlockChainLevel(QString id, QString level)
@@ -58,7 +38,7 @@ void NetSync::onBroadcastBlockChainLevel(QString id, QString level)
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.broadcastMsg(signedMsg);
+    p2p.BroadcastMsg(signedMsg);
     //return signedMsg;
 }
 
@@ -72,7 +52,7 @@ void NetSync::onRequireBlockChainData(QString id, QString nodeAddress, QString s
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendMsg(signedMsg,nodeAddress);
+    p2p.SendMsg(signedMsg,nodeAddress);
     //return signedMsg;
 }
 
@@ -85,7 +65,7 @@ void NetSync::onSendBlockChainData(QString id, QString nodeAddress, QString data
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendMsg(signedMsg,nodeAddress);
+    p2p.SendMsg(signedMsg,nodeAddress);
     //return signedMsg;
 }
 
@@ -101,7 +81,7 @@ void NetSync::SelfTest()
 
 void NetSync::onGetBossAddr(QByteArrayList bossList)
 {
-    p2p.RequireNatbyAddr(bossList);
+    //p2p.RequireNatbyAddr(bossList);
 }
 
 void NetSync::onQueuePeerStatebyAddr(QByteArrayList peerList)
@@ -119,7 +99,7 @@ void NetSync::onOnnRequire(QString contractID, QByteArray addr, QString cmd, QSt
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendMsg(signedMsg,addr);
+    p2p.SendMsg(signedMsg,addr);
 }
 
 void NetSync::onOnnBroadcast(QString contractID, QString cmd, QString data)
@@ -132,7 +112,7 @@ void NetSync::onOnnBroadcast(QString contractID, QString cmd, QString data)
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.broadcastMsg(signedMsg);
+    p2p.BroadcastMsg(signedMsg);
 }
 
 void NetSync::onSendRequire(QString id, QByteArray addr, QString data)
@@ -144,7 +124,7 @@ void NetSync::onSendRequire(QString id, QByteArray addr, QString data)
     QJsonDocument jdom(obj);
     QString msg = QString(jdom.toJson());
     QString signedMsg = setUpSignedMsg(msg);
-    p2p.sendMsg(signedMsg,addr);
+    p2p.SendMsg(signedMsg,addr);
 }
 
 void NetSync::RcvP2pMsg(QString signedMsg)
