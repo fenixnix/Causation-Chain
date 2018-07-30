@@ -79,7 +79,7 @@ void MainNetServer::SendMsg(QString msg, QString addr)
 void MainNetServer::OnServerMsg(QString cmd, QString dat)
 {
     if(cmd == "P2PN"){
-        qDebug()<<"Rcv P2P:"+ dat;
+        //qDebug()<<"Rcv P2P:"+ dat;
         UpdateP2PList(dat);
     }
 
