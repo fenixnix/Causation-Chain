@@ -22,28 +22,35 @@ public:
     explicit NP2PNode(QObject *parent = nullptr);
     ~NP2PNode();
     void Init(QString id, QIPEndPoint natServer, QIPEndPoint p2pServer, QIPEndPoint local);
+    void SetP2PList(QString data);
 
-    void setID(QString localAddress);//ID addr
+    void setID(QString ID);//ID addr
+    QString getID();const
     void setP2PServer(QIPEndPoint server);//Set P2P Server Address
     void bindLocalEndPoint(QIPEndPoint localEndPoint);//Set local EndPoint
 
     void join(QIPEndPoint endPoint);
 
     QStringList neighbourList();
-    void sendbyAddr(QString msg, QString localAddress);
-    void sendMsg(QString msg,QString localAddress);
+    void sendbyAddr(QString msg, QString ID);
+    void sendMsg(QString msg,QString ID);
     void broadcastMsg(QString msg);
 
     void RequireJoin();
     void RequireAllPeersList();
     void RequireNatbyAddr(QByteArrayList addrs);
 
-    static QHostAddress getLocalIP();
-    static QString getLocalIP2();
+    QIPEndPoint getLocalEndPoint();
+    QHostAddress getLocalAddress();
+    quint16 getLocalPort();
+
+    QIPEndPoint getNatEndPoint() const;
+
+    QString getLocalInfoString();//for p2pServer Require
 
 signals:
     void neighbourListUpdate(QStringList list);
-    void RcvP2PAllAddress(QStringList list);
+    //void RcvP2PAllAddress(QStringList list);
     void RcvMsg(QString msg);//need Sender id
 
 private slots:
@@ -53,20 +60,20 @@ private slots:
 
 private:
     void GetP2PList(QString data);//
-    void GetAllAddr(QString data);//
-    void GetNatbyAddr(QString data);//
+    //void GetAllAddr(QString data);//
 
     void Ping(QString addr);
     void Pong(QString addr);
 
+    QString ID;
     //QIPEndPoint natServer;//!!! nat server addr init
     QIPEndPoint natEndPoint;//
     UdpNetwork nat;
-    QString localAddress;
+
     NSubNet net;
     QTimer heartbeatTimer;
 
-    NP2PServerInterface p2pServerInterface;
+    NP2PServerInterface p2pServerInterface;//Rmv
 };
 
 #endif // NP2PNODE_H

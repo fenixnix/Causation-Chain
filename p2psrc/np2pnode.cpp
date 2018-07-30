@@ -22,9 +22,28 @@ void NP2PNode::Init(QString id, QIPEndPoint natServer, QIPEndPoint p2pServer, QI
     join(natServer);
 }
 
+void NP2PNode::SetP2PList(QString data)
+{
+    auto datas = data.split(';');
+    foreach (auto d, datas) {
+        NodeInfo info;
+        info.SetData(d);
+        //skip myself
+        if(info.getId() == this->ID){
+            continue;
+        }
+        net.enter(d);
+    }
+}
+
 void NP2PNode::setID(QString id)
 {
-    this->localAddress = id;
+    this->ID = id;
+}
+
+QString NP2PNode::getID()
+{
+    return ID;
 }
 
 void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
@@ -43,7 +62,7 @@ void NP2PNode::join(QIPEndPoint endPoint)
         natEndPoint.Init(endPoint.IP().toString(),nat.getSendPort());
         RequireJoin();
     }else{
-        nat.Send(endPoint.IP(),endPoint.Port(),localAddress);
+        nat.Send(endPoint.IP(),endPoint.Port(),ID);
     }
 
     heartbeatTimer.start(HeartBeatInterval*1000);
@@ -58,9 +77,7 @@ QStringList NP2PNode::neighbourList()
 
 void NP2PNode::RequireJoin()
 {
-    QString msg = MessageProtocol::Encode("P2PN",localAddress
-                                          + "," + QIPEndPoint(nat.getRcvAddr(),nat.getRcvPort()).ToString()
-                                          + "," + natEndPoint.ToString());
+    QString msg = MessageProtocol::Encode("P2PN",getLocalInfoString());
     p2pServerInterface.Query(msg);
 }
 
@@ -80,9 +97,19 @@ void NP2PNode::RequireNatbyAddr(QByteArrayList addrs)
     p2pServerInterface.Query(msg);
 }
 
+QHostAddress NP2PNode::getLocalAddress()
+{
+    return nat.getRcvAddr();
+}
+
+quint16 NP2PNode::getLocalPort()
+{
+    return nat.getRcvPort();
+}
+
 void NP2PNode::sendbyAddr(QString msg, QString id)
 {
-    if(this->localAddress == id){
+    if(this->ID == id){
         //qDebug()<<"Can`t send to myself!"<<this->id<<id;
         return;
     }
@@ -119,48 +146,11 @@ void NP2PNode::broadcastMsg(QString msg)
     }
 }
 
-QHostAddress NP2PNode::getLocalIP()
-{
-    auto hostName = QHostInfo::localHostName();
-    auto host = QHostInfo::fromName(hostName);
-    //qDebug()<<host.addresses();
-    foreach(auto ip, host.addresses()){
-        if(ip.protocol() == QAbstractSocket::IPv4Protocol){
-            return ip;
-        }
-    }
-    return QHostAddress();
-}
-
-QString NP2PNode::getLocalIP2(){
-    QString ipAddr;
-    QList<QHostAddress> AddressList = QNetworkInterface::allAddresses();
-    for(QHostAddress address:AddressList){
-        if(address.protocol() == QAbstractSocket::IPv4Protocol){
-            if (address.toString().contains("127.0.")){
-                continue;
-            }
-            return address.toString();
-        }
-    }
-    return ipAddr;
-}
-
 void NP2PNode::OnP2PMsg(QString cmd, QString dat)
 {
     if(cmd == "P2PN"){
         qDebug()<<"Rcv P2P:"+ dat;
         GetP2PList(dat);
-    }
-
-    if(cmd == "ALL "){
-        qDebug()<<"Rcv All Addr:"+ dat;
-        GetAllAddr(dat);
-    }
-
-    if(cmd == "IPLS"){
-        qDebug()<<"Rcv NAT by Addr:" + dat;
-        GetNatbyAddr(dat);
     }
 }
 
@@ -186,7 +176,7 @@ void NP2PNode::OnNatMsg(QString msg)
 
     if(cmd == "PING"){
         //qDebug()<<"Ping from:"<<mp.getData();
-        sendbyAddr("PONG"+localAddress,mp.getData());
+        sendbyAddr("PONG"+ID,mp.getData());
         return;
     }
 
@@ -210,36 +200,32 @@ void NP2PNode::OnHeartbeat()
 
 void NP2PNode::GetP2PList(QString data)
 {
-    auto datas = data.split(';');
-    foreach (auto d, datas) {
-        NodeInfo info;
-        info.SetData(d);
-        //skip myself
-        if(info.getId() == this->localAddress){
-            continue;
-        }
-        net.enter(d);
-    }
+    SetP2PList(data);
     emit neighbourListUpdate(neighbourList());
 }
 
-void NP2PNode::GetAllAddr(QString data)
-{
-    emit RcvP2PAllAddress(data.split(';'));
-}
-
-void NP2PNode::GetNatbyAddr(QString data)
-{
-    QStringList ls = data.split(";");
-}
+//void NP2PNode::GetAllAddr(QString data)
+//{
+//    emit RcvP2PAllAddress(data.split(';'));
+//}
 
 void NP2PNode::Ping(QString addr)
 {
-    sendbyAddr("PING" + localAddress,addr);
+    sendbyAddr("PING" + ID,addr);
     net.ping(addr);
 }
 
 void NP2PNode::Pong(QString addr)
 {
     net.pong(addr);
+}
+
+QIPEndPoint NP2PNode::getNatEndPoint() const
+{
+    return natEndPoint;
+}
+
+QString NP2PNode::getLocalInfoString()
+{
+    return getID() + "," + getLocalEndPoint().ToString() + "," + getNatEndPoint().ToString();
 }

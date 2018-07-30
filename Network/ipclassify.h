@@ -11,6 +11,8 @@ public:
     static unsigned char getByte(quint32 val,int pos);
     static bool isPrivate(QHostAddress ip);
     static bool isPublic(QHostAddress ip);
+    static QHostAddress getLocalIP();
+    static QString getLocalIP2();
 };
 
 #endif // IPCLASSIFY_H

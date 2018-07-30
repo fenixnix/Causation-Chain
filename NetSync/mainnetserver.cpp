@@ -15,10 +15,8 @@ void MainNetServer::Init()
 
 void MainNetServer::RequireJoin()
 {
-//    QString msg = MessageProtocol::Encode("P2PN",localAddress
-//                                          + "," + QIPEndPoint(nat.getRcvAddr(),nat.getRcvPort()).ToString()
-//                                          + "," + natEndPoint.ToString());
-//    interface.Query(msg);
+    QString msg = MessageProtocol::Encode("P2PN",p2p.getLocalInfoString());
+    interface.Query(msg);
 }
 
 void MainNetServer::RequireFullNode()
@@ -34,34 +32,18 @@ void MainNetServer::OnServerMsg(QString cmd, QString dat)
     }
 
     if(cmd == "ALL "){
-        qDebug()<<"Rcv All Addr:"+ dat;
-        GetFullNode(dat);
+        //        qDebug()<<"Rcv All Addr:"+ dat;
+        //        GetAllAddr(dat);
     }
 
     if(cmd == "IPLS"){
-        qDebug()<<"Rcv NAT by Addr:" + dat;
+        //qDebug()<<"Rcv NAT by Addr:" + dat;
         //GetNatbyAddr(dat);
     }
 }
 
 void MainNetServer::UpdateP2PList(QString data)
 {
-    auto datas = data.split(';');
-    foreach (auto d, datas) {
-        NodeInfo info;
-        info.SetData(d);
-        //skip myself
-//        if(info.getId() == this->localAddress){
-//            continue;
-//        }
-        //TODO:
-        //net.enter(d);
-    }
-    //TODO:
-    emit P2PListUpdate(datas);
-}
-
-void MainNetServer::GetFullNode(QString data)
-{
-    emit FullNodeUpdate(data.split(';'));
+    p2p.SetP2PList(data);
+    emit P2PListUpdate(p2p.neighbourList());
 }

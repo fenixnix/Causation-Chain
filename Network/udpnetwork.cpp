@@ -10,6 +10,11 @@ UdpNetwork::~UdpNetwork()
     udp.close();
 }
 
+void UdpNetwork::Listen(QIPEndPoint endPoint)
+{
+    Listen(endPoint.IP(),endPoint.Port());
+}
+
 void UdpNetwork::Listen(QHostAddress addr, quint16 port)
 {
     udp.close();
@@ -92,6 +97,11 @@ QHostAddress UdpNetwork::getRcvAddr() const
 quint16 UdpNetwork::getRcvPort() const
 {
     return udp.localPort();
+}
+
+QIPEndPoint UdpNetwork::getRcvEndPoint() const
+{
+    return QIPEndPoint(udp.localAddress(),udp.localPort());
 }
 
 QHostAddress UdpNetwork::getSendAddr() const

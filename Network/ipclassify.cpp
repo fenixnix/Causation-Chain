@@ -31,3 +31,31 @@ bool IPClassify::isPublic(QHostAddress ip)
 {
     return !isPrivate(ip);
 }
+
+QHostAddress IPClassify::getLocalIP()
+{
+    auto hostName = QHostInfo::localHostName();
+    auto host = QHostInfo::fromName(hostName);
+    //qDebug()<<host.addresses();
+    foreach(auto ip, host.addresses()){
+        if(ip.protocol() == QAbstractSocket::IPv4Protocol){
+            return ip;
+        }
+    }
+    return QHostAddress();
+}
+
+QString IPClassify::getLocalIP2()
+{
+    QString ipAddr;
+    QList<QHostAddress> AddressList = QNetworkInterface::allAddresses();
+    for(QHostAddress address:AddressList){
+        if(address.protocol() == QAbstractSocket::IPv4Protocol){
+            if (address.toString().contains("127.0.")){
+                continue;
+            }
+            return address.toString();
+        }
+    }
+    return ipAddr;
+}
