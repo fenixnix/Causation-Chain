@@ -40,14 +40,3 @@ include("../consensus/NConsensus.pri")
 include("../Crypto/EmccSDK/nemcc/nemcc.pri")
 include("../p2psrc/NP2P.pri")
 include("../Network/network.pri")
-
-DISTFILES += \
-    android/AndroidManifest.xml \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradlew \
-    android/res/values/libs.xml \
-    android/build.gradle \
-    android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
-
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
