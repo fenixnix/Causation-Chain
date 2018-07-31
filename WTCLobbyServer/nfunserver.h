@@ -20,7 +20,7 @@ public slots:
 
 private:
     void EnterLobby(QString dat, QIPEndPoint endPoint);
-    void MatchingSolo(QString dat, QHostAddress senderIP, quint16 senderPort);
+    void MatchingSolo(QString dat);
     void CheckSolo();
     void Matching(QHash<QString, NWTCUser> &queue, int cnt);
     void RmvRoomMemberInQueue(NWTCRoom room, QHash<QString, NWTCUser> &queue);
@@ -28,7 +28,6 @@ private:
 
     QHash<QString, NWTCUser> users;//WTC Member
     QHash<QString, NWTCUser> soloQueue;
-    //QHash<QString, NWTCUser> teamQueue;
     QHash<QString, NWTCRoom> soloRooms;
 
     static QString jsonUser(QString addr, QString pubKey, QString NAT, QString type);

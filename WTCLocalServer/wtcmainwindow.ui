@@ -57,6 +57,9 @@
     </property>
     <addaction name="actionSend_Causue"/>
     <addaction name="actionSend_Result"/>
+    <addaction name="separator"/>
+    <addaction name="actionEnter_Lobby"/>
+    <addaction name="actionStart_Solo"/>
    </widget>
    <widget class="QMenu" name="menuRefresh">
     <property name="title">
@@ -90,6 +93,16 @@
   <action name="actionRefresh">
    <property name="text">
     <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionEnter_Lobby">
+   <property name="text">
+    <string>Enter Lobby</string>
+   </property>
+  </action>
+  <action name="actionStart_Solo">
+   <property name="text">
+    <string>Start Solo</string>
    </property>
   </action>
  </widget>

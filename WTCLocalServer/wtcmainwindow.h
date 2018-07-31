@@ -28,6 +28,10 @@ private slots:
 
     void onP2pMsg(QString addr, QString msg);
 
+    void on_actionEnter_Lobby_triggered();
+
+    void on_actionStart_Solo_triggered();
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;

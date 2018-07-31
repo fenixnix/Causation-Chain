@@ -43,3 +43,13 @@ void WTCMainWindow::onP2pMsg(QString addr, QString msg)
 {
     ui->plainTextEdit->appendPlainText(addr + ":" + msg);
 }
+
+void WTCMainWindow::on_actionEnter_Lobby_triggered()
+{
+    interface.EnterLobby();
+}
+
+void WTCMainWindow::on_actionStart_Solo_triggered()
+{
+    interface.StartSoloQueue();
+}

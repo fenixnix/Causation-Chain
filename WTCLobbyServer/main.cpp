@@ -1,10 +1,14 @@
 #include <QCoreApplication>
 #include "nfunserver.h"
+#include "ipclassify.h"
 
 int main(int argc, char *argv[])
 {
+    IPClassify::SelfTest();
+
     QCoreApplication a(argc, argv);
-    qDebug()<<"Start WTC funciton Server";
+    NFunServer::SelfTest();
+    qDebug()<<"Start WTC Lobby Server";
     NFunServer server;
     //NFunServer::SelfTest();
 

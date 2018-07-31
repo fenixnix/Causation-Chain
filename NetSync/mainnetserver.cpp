@@ -22,7 +22,7 @@ void MainNetServer::Init(QString secKey, QString pubKey)
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
-    interface.Init(p2pServer.IP(),p2pServer.Port());
+    interface.Init(local,p2pServer);
     p2p.Init(addr,natServer,local);
 }
 

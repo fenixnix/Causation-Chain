@@ -1,52 +1,71 @@
 #include "nfunserver.h"
 #include "QJsonDocument"
 #include "QJsonObject"
-#include "messageprotocol.h"
 #include <QSettings>
+#include "messageprotocol.h"
 #include "wtccmddefine.h"
+#include "ipclassify.h"
 
 NFunServer::NFunServer(QObject *parent) : QObject(parent)
 {
+    QObject::connect(&udp, &UdpNetwork::Rcv, this, &NFunServer::OnRcvMsg);
     Init();
 }
 
 void NFunServer::Init()
 {
-    udp.SetIPCPort(8900);
-    QObject::connect(&udp, &UdpNetwork::Rcv, this, &NFunServer::OnRcvMsg);
+    QSettings cfg("p2p.cfg",QSettings::IniFormat);
+    QString addr;
+    quint16 port;
+    if(cfg.contains("Local")){
+        addr = cfg.value("Local").toString();
+    }else{
+        addr = IPClassify::getLocalIP().toString();
+    }
+    if(cfg.contains("Port")){
+        port = cfg.value("Port").toInt();
+    }else{
+        port = 8900;
+    }
+    udp.Listen(QHostAddress(addr),port);
 }
 
 void NFunServer::SelfTest()
 {
+//    QSettings cfg("p2p.cfg",QSettings::IniFormat);
+//    cfg.setValue("Local",IPClassify::getLocalIP().toString());
+//    cfg.setValue("Port",8900);
+//    cfg.sync();
     NFunServer server;
-//    server.OnUserJoin(jsonUser("nix","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix1","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix2","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix3","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix4","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix5","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix6","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix7","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix8","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix9","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix10","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix11","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix12","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix13","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix14","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix15","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix16","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix17","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix18","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix19","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix20","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-//    server.OnUserJoin(jsonUser("nix21","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix22","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-//    server.OnUserJoin(jsonUser("nix23","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix1","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix2","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix3","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix4","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix5","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix6","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix7","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix8","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix9","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix10","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix11","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix12","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix13","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix14","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix15","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix16","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix17","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix18","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix19","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix20","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
+    //    server.OnUserJoin(jsonUser("nix21","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix22","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
+    //    server.OnUserJoin(jsonUser("nix23","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
 }
 
 void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort)
 {
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
     MessageProtocol mp;
     auto cmd = mp.Decode(msg);
     if(cmd.size()==0){
@@ -58,36 +77,41 @@ void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort
     }
 
     if(cmd == SV_CMD_SOLO){//solo queue
-        MatchingSolo(mp.getData(), senderIP, senderPort);
+        MatchingSolo(mp.getData());
     }
 
     if(cmd == SV_CMD_SOLO){//game over
 
     }
-
 }
 
 void NFunServer::EnterLobby(QString dat, QIPEndPoint endPoint)
 {
     qDebug()<<endPoint.ToString()<<__FUNCTION__<<dat;
+    auto pair = dat.split(';');
+    auto pubKey = pair[1];
+    NodeInfo info;
+    info.SetData(pair[0]);
+    qDebug()<<__FUNCTION__<<__LINE__;
+    NWTCUser user;//TODO bug fix
+    //user.Init(info.getId(),pubKey,info.nat.ToString(),"none");
+    qDebug()<<__FUNCTION__<<__LINE__;
+    users.insert(user.id,user);
+    qDebug()<<user.id<<" Join Lobby";
 }
 
-void NFunServer::MatchingSolo(QString dat, QHostAddress senderIP, quint16 senderPort)
+void NFunServer::MatchingSolo(QString dat)
 {
-    NWTCUser user;
-    auto datas = dat.split(';');
-    user.addr = datas[0];
-    user.pubKey = datas[1];
-    user.nat = datas[2];
-    user.type = "solo";
-    user.sendEndPoint = QIPEndPoint(senderIP, senderPort);
-    soloQueue.insert(user.addr,user);
+    qDebug()<<dat<<" start solo queue";
+    soloQueue.insert(dat,users[dat]);
     CheckSolo();
 }
 
 void NFunServer::CheckSolo()
 {
-    Matching(soloQueue,2);
+    if(soloQueue.size()>=2){
+        Matching(soloQueue,2);
+    }
 }
 
 QString NFunServer::jsonUser(QString addr, QString pubKey, QString NAT, QString type)
@@ -112,7 +136,7 @@ void NFunServer::Matching(QHash<QString, NWTCUser> &queue, int cnt)
     //soloRooms.insert(room.GetHash(),room);
     //RmvRoomMemberInQueue(room,soloQueue);
     room.AssignRoomID();
-    qDebug()<<room.Print();
+    qDebug()<<"Game Start"<<room.Print();
     //room.Start(&udp);
 }
 

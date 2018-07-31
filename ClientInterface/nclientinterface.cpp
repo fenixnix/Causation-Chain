@@ -19,7 +19,7 @@ void NClientInterface::Init()
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
-    server.Init(p2pServer);
+    server.Init(local, p2pServer);
     p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
     timeOut.setSingleShot(true);

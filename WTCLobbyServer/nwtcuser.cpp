@@ -22,9 +22,9 @@ void NWTCUser::Init(QString jsonStr)
 
 void NWTCUser::Init(QString addr, QString pubKey, QString NAT, QString type)
 {
-    this->addr = addr;
+    this->id = addr;
     this->pubKey = pubKey;
-    this->nat = NAT;
+    this->nat.Init(NAT);
     this->type = type;
     auto datas = NAT.split(';');
     sendEndPoint = QIPEndPoint(datas[1]);

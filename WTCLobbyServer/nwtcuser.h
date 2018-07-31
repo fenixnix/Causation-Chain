@@ -10,14 +10,14 @@ public:
     NWTCUser();
     NWTCUser(QString jsonStr);
     void Init(QString jsonStr);
-    void Init(QString addr, QString pubKey, QString NAT, QString type);
+    void Init(QString id, QString pubKey, QString NAT, QString type);
 //private:
-    QString addr;
+    QString id;
+    QString pubKey;
     QIPEndPoint sendEndPoint;
     QIPEndPoint nat;
-    QIPEndPoint local;
-    QString pubKey;
-    QString natString;
+    QIPEndPoint loc;
+
     QString type;//Solo, Team, Witness
     QString roomID;
 };

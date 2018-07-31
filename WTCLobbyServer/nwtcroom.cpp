@@ -7,10 +7,10 @@ NWTCRoom::NWTCRoom(QObject *parent) : QObject(parent)
 
 void NWTCRoom::Add(NWTCUser user)
 {
-    if(members.contains(user.addr)){
+    if(members.contains(user.id)){
         return;
     }
-    members.insert(user.addr,user);
+    members.insert(user.id,user);
 }
 
 int NWTCRoom::Size()
@@ -37,7 +37,7 @@ void NWTCRoom::Start(UdpNetwork *udp)
     QJsonArray memberArray;
     foreach (auto m, members) {
         QJsonObject user;
-        user["Addr"] = m.addr;
+        user["Addr"] = m.id;
         user["PubKey"] = m.pubKey;
         memberArray.append(user);
     }
@@ -66,7 +66,7 @@ QString NWTCRoom::GetHash()
     QString memberList;
     QTextStream ts(&memberList);
     foreach(auto member, members){
-        ts<<member.addr;
+        ts<<member.id;
     }
     auto hashBr = QCryptographicHash::hash(memberList.toLatin1(),QCryptographicHash::Keccak_256);
     roomID = QString(hashBr.toHex());
@@ -80,7 +80,7 @@ QString NWTCRoom::Print()
     ts<<"Room:"<<GetHash()<<"\n";
     ts<<"Members:\n";
     foreach(auto m, members){
-        ts<<m.addr<<"\n";
+        ts<<m.id<<"\n";
     }
     return txt;
 }
