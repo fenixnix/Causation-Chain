@@ -1,23 +1,27 @@
 #include "nclientinterface.h"
+#include "wtccmddefine.h"
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
+    connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
+    connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
+    connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvNet);
+    //connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
+    connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
     Init();
 }
 
 void NClientInterface::Init()
 {
-    QObject::connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
-
+    crypto.LoadConfigFile("crypto.cfg");
+    QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
+    QIPEndPoint local(p2pSetting.value("Local").toString());
+    QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
+    QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
+    server.Init(p2pServer);
+    p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
-    QObject::connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
-
-    QObject::connect(&p2p, &NCryptoP2P::RcvMsg, this, &NClientInterface::OnRcvNet);
-    p2p.GenerateKey();//TestCode
-    p2p.Init();
-
     timeOut.setSingleShot(true);
-    QObject::connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
 }
 
 void NClientInterface::SetPort(int port)
@@ -25,27 +29,33 @@ void NClientInterface::SetPort(int port)
     ipc.SetIPCPort(port);
 }
 
-QString NClientInterface::GetLocalAddr()
+QString NClientInterface::getID()
 {
-    return p2p.localAddr();
+    return crypto.getAddr();
 }
 
 QStringList NClientInterface::GetMemberList()
 {
-    return p2p.getP2pMemberList();
+    return p2p.neighbourList();
 }
 
-void NClientInterface::SendMsg(QString addr, QString msg)
+void NClientInterface::SendChatMsg(QString addr, QString msg)
 {
     QJsonObject obj;
     obj["cmd"] = "message";
     obj["data"] = msg;
-    p2p.sendByID(addr,QString(QJsonDocument(obj).toJson(QJsonDocument::Compact)));
+    //p2p.sendMsg();
+    //p2p.sendByID(addr,QString(QJsonDocument(obj).toJson(QJsonDocument::Compact)));
 }
 
 void NClientInterface::StartTest()
 {
     timeSync.StartTestSync(3000);
+}
+
+void NClientInterface::EnterLobby()
+{
+    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString());
 }
 
 void NClientInterface::OnInit(QString msg)
@@ -117,15 +127,15 @@ void NClientInterface::RcvLocalCause(QString data)
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();
     QString dataString = obj["data"].toString();
-    packer.Push(p2p.localAddr(),dataString);
+    packer.Push(getID(),dataString);
     timeOut.start(500);
 
     QJsonObject sobj;
     sobj.insert("frame",(int)frame);
-    sobj.insert("addr",p2p.localAddr());
+    sobj.insert("addr",getID());
     sobj.insert("cmd","cause");
     sobj.insert("data",dataString);
-    p2p.boardcastMsg(QString(QJsonDocument(sobj).toJson()));//广播本地控制命令
+    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地控制命令
 }
 
 void NClientInterface::RcvNetCause(quint64 frame, QString addr, QString data)
@@ -143,19 +153,24 @@ void NClientInterface::OnCauseTimeOut()
     BroadcastCause();
 }
 
+void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
+{
+
+}
+
 void NClientInterface::BroadcastCause()
 {
     //4.广播接收到的打包操作命令
     timeOut.stop();
     auto jsonDat = packer.PackJsonString();
     auto frame = packer.frame;
-    consensus.RcvCause(frame,p2p.localAddr(),jsonDat);//本地操作命令参与共识
+    consensus.RcvCause(frame,getID(),jsonDat);//本地操作命令参与共识
     QJsonObject obj;
     obj.insert("frame",frame);
-    obj.insert("addr",p2p.localAddr());
+    obj.insert("addr",getID());
     obj.insert("cmd","causePark");
     obj.insert("data",jsonDat);
-    p2p.boardcastMsg(QString(QJsonDocument(obj).toJson()));
+    CryptoBroadcast(QString(QJsonDocument(obj).toJson()));
 }
 
 void NClientInterface::RcvNetCausePack(quint64 frame, QString addr, QString data)
@@ -174,18 +189,30 @@ void NClientInterface::RcvLocalResult(QString data)
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();
     QString dataString = obj["data"].toString();
-    consensus.RcvResult(frame, p2p.localAddr(),dataString);
+    consensus.RcvResult(frame, getID(),dataString);
 
     QJsonObject sobj;
     sobj.insert("frame",(int)frame);
-    sobj.insert("addr",p2p.localAddr());
+    sobj.insert("addr",getID());
     sobj.insert("cmd","result");
     sobj.insert("data",dataString);
-    p2p.boardcastMsg(QString(QJsonDocument(sobj).toJson()));//广播本地结果
+    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
 }
 
 void NClientInterface::RcvNetResult(quint64 frame, QString addr, QString data)
 {
     //7.接收网络执行结果，共识，并推入区块,甄别作弊者
     consensus.RcvResult(frame,addr,data);
+}
+
+void NClientInterface::CryptoSend(QString id, QString msg)
+{
+    auto cmsg = crypto.encode(msg);
+    p2p.sendMsg(id,cmsg);
+}
+
+void NClientInterface::CryptoBroadcast(QString msg)
+{
+    auto cmsg = crypto.encode(msg);
+    p2p.broadcastMsg(cmsg);
 }

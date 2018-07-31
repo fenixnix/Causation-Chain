@@ -5,7 +5,8 @@ HEADERS += \
     $$PWD/nclientinterface.h \
     $$PWD/ntimesync.h \
     $$PWD/ntimesynctester.h \
-    $$PWD/ncmdpacker.h
+    $$PWD/ncmdpacker.h \
+    $$PWD/wtccmddefine.h
 
 SOURCES += \
     $$PWD/nclientinterface.cpp \

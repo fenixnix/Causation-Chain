@@ -23,7 +23,7 @@ void NCryptoMsg::SetKey(QString secKey, QString pubKey)
 
 void NCryptoMsg::LoadConfigFile(QString fileName)
 {
-    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
+    QSettings cryptoSetting(fileName, QSettings::IniFormat);
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     SetKey(secKey,pubKey);

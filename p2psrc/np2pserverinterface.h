@@ -9,6 +9,7 @@ class NP2PServerInterface : public QObject
     Q_OBJECT
 public:
     explicit NP2PServerInterface(QObject *parent = nullptr);
+    void Init(QIPEndPoint endPoint);
     void Init(QHostAddress ip, quint16 port);
     void Query(QString msg);
 

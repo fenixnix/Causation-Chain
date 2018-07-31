@@ -3,6 +3,7 @@
 #include "QJsonObject"
 #include "messageprotocol.h"
 #include <QSettings>
+#include "wtccmddefine.h"
 
 NFunServer::NFunServer(QObject *parent) : QObject(parent)
 {
@@ -52,15 +53,15 @@ void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort
         return;
     }
 
-    if(cmd == "ENTR"){//enter server
+    if(cmd == SV_CMD_ENTER){//enter server
         EnterLobby(mp.getData(), QIPEndPoint(senderIP,senderPort));
     }
 
-    if(cmd == "SLQU"){//solo queue
+    if(cmd == SV_CMD_SOLO){//solo queue
         MatchingSolo(mp.getData(), senderIP, senderPort);
     }
 
-    if(cmd == "GMVR"){//game over
+    if(cmd == SV_CMD_SOLO){//game over
 
     }
 

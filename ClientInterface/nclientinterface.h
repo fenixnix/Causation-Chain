@@ -19,10 +19,12 @@ public:
   explicit NClientInterface(QObject *parent = nullptr);
   void Init();
   void SetPort(int port);
-  QString GetLocalAddr();
+  QString getID();
   QStringList GetMemberList();
-  void SendMsg(QString addr, QString msg);
+  void SendChatMsg(QString addr, QString msg);
+  //Test Code
   void StartTest();
+  void EnterLobby();
 
 signals:
   void RcvCause(QString cause);
@@ -40,6 +42,7 @@ public slots:
 
 private slots:
   void OnCauseTimeOut();
+  void OnRcvServerMsg(QString cmd, QString msg);
 
 private:
   void BroadcastCause();
@@ -49,6 +52,9 @@ private:
   void RcvNetCause(quint64 frame, QString addr, QString data);
   void RcvNetCausePack(quint64 frame, QString addr, QString data);
   void RcvNetResult(quint64 frame, QString addr, QString data);
+
+  void CryptoSend(QString id, QString msg);
+  void CryptoBroadcast(QString msg);
 
   QList<QString> articipators;
 

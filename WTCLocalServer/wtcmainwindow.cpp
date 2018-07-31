@@ -31,12 +31,12 @@ void WTCMainWindow::on_actionRefresh_triggered()
 {
     ui->listWidget->clear();
     ui->listWidget->addItems(interface.GetMemberList());
-    this->setWindowTitle(interface.GetLocalAddr());
+    this->setWindowTitle(interface.getID());
 }
 
 void WTCMainWindow::on_sendMsgBtn_clicked()
 {
-    interface.SendMsg(ui->listWidget->currentIndex().data().toString(),ui->lineEditMsg->text());
+    interface.SendChatMsg(ui->listWidget->currentIndex().data().toString(),ui->lineEditMsg->text());
 }
 
 void WTCMainWindow::onP2pMsg(QString addr, QString msg)

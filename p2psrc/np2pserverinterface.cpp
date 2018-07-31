@@ -7,6 +7,11 @@ NP2PServerInterface::NP2PServerInterface(QObject *parent) : QObject(parent)
                      this, &NP2PServerInterface::OnUdp);
 }
 
+void NP2PServerInterface::Init(QIPEndPoint endPoint)
+{
+    Init(endPoint.IP(), endPoint.Port());
+}
+
 void NP2PServerInterface::Init(QHostAddress ip, quint16 port)
 {
     udp.Listen(ip,port);

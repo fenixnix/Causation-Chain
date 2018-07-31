@@ -26,3 +26,4 @@ HEADERS += \
     nwtcroom.h
 
 include("../Network/network.pri")
+include("../ClientInterface/ClientInterface.pri")
