@@ -4,8 +4,9 @@
 #include <QObject>
 #include "ncausationconsensus.h"
 #include "ncmdpacker.h"
-#include "ncryptop2p.h"
-#include "udpnetwork.h"
+#include "np2pnode.h"
+#include "ncryptomsg.h".h"
+#include "np2pserverinterface.h"
 #include "ntimesync.h"
 
 #define StartPort 8890
@@ -52,9 +53,9 @@ private:
 
   QTimer timeOut;
 
-  UdpNetwork ipc;
-
-  NCryptoP2P p2p;
+  NP2PNode p2p;
+  NCryptoMsg crypto;
+  NP2PServerInterface ipc;
 
   NCmdPacker packer;
   NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
