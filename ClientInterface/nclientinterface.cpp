@@ -5,14 +5,15 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
-    connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvNet);
-    //connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
+    connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvP2P);
+    connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
     connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
     Init();
 }
 
 void NClientInterface::Init()
 {
+    neighbourKeyMap.clear();
     crypto.LoadConfigFile("crypto.cfg");
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());
@@ -55,7 +56,12 @@ void NClientInterface::StartTest()
 
 void NClientInterface::EnterLobby()
 {
-    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString());
+    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString() + ";" + crypto.getPubKey());
+}
+
+void NClientInterface::StartSoloQueue()
+{
+    server.Query(SV_CMD_SOLO+getID());
 }
 
 void NClientInterface::OnInit(QString msg)
@@ -151,6 +157,14 @@ void NClientInterface::OnCauseTimeOut()
 {
     //3.2收集参与者控制命令 超时
     BroadcastCause();
+}
+
+void NClientInterface::OnRcvP2P(QString msg)
+{
+    auto res = crypto.decode(msg,neighbourKeyMap);
+    if(res.size()>=3){
+        OnRcvNet(res[0].toInt(),res[1],res[2]);
+    }
 }
 
 void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)

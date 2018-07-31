@@ -25,6 +25,7 @@ public:
   //Test Code
   void StartTest();
   void EnterLobby();
+  void StartSoloQueue();
 
 signals:
   void RcvCause(QString cause);
@@ -42,6 +43,7 @@ public slots:
 
 private slots:
   void OnCauseTimeOut();
+  void OnRcvP2P(QString msg);
   void OnRcvServerMsg(QString cmd, QString msg);
 
 private:
@@ -57,11 +59,12 @@ private:
   void CryptoBroadcast(QString msg);
 
   QList<QString> articipators;
+  QMap<QString, QString> neighbourKeyMap;
 
   QTimer timeOut;
 
-  NP2PNode p2p;
   NCryptoMsg crypto;
+  NP2PNode p2p;
   NP2PServerInterface server;
   UdpNetwork ipc;
 

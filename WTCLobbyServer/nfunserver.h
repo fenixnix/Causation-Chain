@@ -5,6 +5,7 @@
 #include <QHash>
 #include "nwtcroom.h"
 #include "udpnetwork.h"
+#include "nsubnet.h"
 
 class NFunServer : public QObject
 {
@@ -32,6 +33,7 @@ private:
 
     static QString jsonUser(QString addr, QString pubKey, QString NAT, QString type);
 
+    NSubNet net;
     UdpNetwork udp;
 };
 

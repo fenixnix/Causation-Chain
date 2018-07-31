@@ -34,6 +34,11 @@ QString NCryptoMsg::getAddr()
     return ecc.address;
 }
 
+QString NCryptoMsg::getPubKey()
+{
+    return ecc.publicKeyString;
+}
+
 QString NCryptoMsg::encode(QString msg)
 {
     return Dsa(msg);

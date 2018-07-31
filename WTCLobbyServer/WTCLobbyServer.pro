@@ -27,3 +27,4 @@ HEADERS += \
 
 include("../Network/network.pri")
 include("../ClientInterface/ClientInterface.pri")
+include("../p2psrc/NP2P.pri")
