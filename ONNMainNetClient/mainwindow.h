@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QSettings>
 #include "mainnetserver.h"
-#include "ncryptop2p.h"
 //#include "netsync.h"
 
 namespace Ui {

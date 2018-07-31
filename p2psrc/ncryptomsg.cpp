@@ -2,6 +2,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QSettings>
+#include <QDebug>
+#include <QDateTime>
 
 NCryptoMsg::NCryptoMsg()
 {
@@ -29,7 +31,7 @@ void NCryptoMsg::LoadConfigFile(QString fileName)
 
 QString NCryptoMsg::getAddr()
 {
-    return ecc.addr;
+    return ecc.address;
 }
 
 QString NCryptoMsg::encode(QString msg)
@@ -101,7 +103,7 @@ QString NCryptoMsg::GetMsgTSString(QString msg)
 QString NCryptoMsg::Dsa(QString msg)
 {
     QString jsonDatString = GetMsgTSString(msg);
-    auto sign = emcc.Sign(jsonDatString);
+    auto sign = ecc.Sign(jsonDatString);
     QJsonObject sendJsonObj;
     sendJsonObj.insert("ID",ecc.address);
     sendJsonObj.insert("DAT",jsonDatString);
@@ -114,12 +116,12 @@ QString NCryptoMsg::Dsa(QString msg)
 QString NCryptoMsg::DsaWithPubKey(QString msg)
 {
     QString jsonDatString = GetMsgTSString(msg);
-    auto sign = emcc.Sign(jsonDatString);
+    auto sign = ecc.Sign(jsonDatString);
     QJsonObject sendJsonObj;
     sendJsonObj.insert("ID",ecc.address);
     sendJsonObj.insert("DAT",jsonDatString);
     sendJsonObj.insert("SIGN",sign);
-    sendJsonObj.insert("PK",emcc.publicKeyString);
+    sendJsonObj.insert("PK",ecc.publicKeyString);
     QJsonDocument jSendDom(sendJsonObj);
     QString sendJsonDatString = QString(jSendDom.toJson(QJsonDocument::Compact));
     return sendJsonDatString;

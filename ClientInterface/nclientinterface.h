@@ -5,8 +5,9 @@
 #include "ncausationconsensus.h"
 #include "ncmdpacker.h"
 #include "np2pnode.h"
-#include "ncryptomsg.h".h"
+#include "ncryptomsg.h"
 #include "np2pserverinterface.h"
+#include "udpnetwork.h"
 #include "ntimesync.h"
 
 #define StartPort 8890
@@ -55,7 +56,8 @@ private:
 
   NP2PNode p2p;
   NCryptoMsg crypto;
-  NP2PServerInterface ipc;
+  NP2PServerInterface server;
+  UdpNetwork ipc;
 
   NCmdPacker packer;
   NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
