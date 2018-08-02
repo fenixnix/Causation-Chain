@@ -41,8 +41,6 @@ void NWebSocket::onConnected()
 
 void NWebSocket::onTextReceived(QString msg)
 {
-    qDebug()<<"----------------data-----------------";
-    qDebug()<<msg;
     emit RcvMsg(msg);
 }
 

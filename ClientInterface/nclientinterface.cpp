@@ -189,7 +189,35 @@ void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
 void NClientInterface::OnOnnMsg(QString msg)
 {
     qDebug()<<__FUNCTION__<<__LINE__<<msg;
-    ipc.Send("CAU"+msg);
+    auto res = QJsonDocument::fromJson(msg.toLatin1()).array();
+    if(res.count()<=0){
+        qDebug()<<__FUNCTION__<<__LINE__;
+        return;
+    }
+
+    if(!res[0].isObject()){
+        qDebug()<<__FUNCTION__<<__LINE__;
+        return;
+    }
+
+    QJsonObject obj = res[0].toObject();
+
+    if(!obj.contains("method")){
+        qDebug()<<__FUNCTION__<<__LINE__;
+        return;
+    }
+
+    auto method = obj["method"].toString();
+
+    if(method == "startGame"){
+        QString jsonMsg = QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+        ipc.Send("INI" + jsonMsg);
+    }
+
+    if(method == "timeout"){
+        OnTick(0);
+        //ipc.Send("CAU" + msg);
+    }
 }
 
 void NClientInterface::BroadcastCause()
