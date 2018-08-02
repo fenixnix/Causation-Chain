@@ -34,9 +34,19 @@ QString NCryptoMsg::getAddr()
     return ecc.address;
 }
 
-QString NCryptoMsg::getPubKey()
+QString NCryptoMsg::getPubKeyStr()
 {
     return ecc.publicKeyString;
+}
+
+QByteArray NCryptoMsg::getSecKey()
+{
+    return ecc.priKey;
+}
+
+QByteArray NCryptoMsg::getPubKey()
+{
+    return ecc.pubKey;
 }
 
 QString NCryptoMsg::encode(QString msg)

@@ -1,5 +1,6 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
+#include "httprequest.h"
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -23,6 +24,7 @@ void NClientInterface::Init()
     p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
     timeOut.setSingleShot(true);
+    timeSync.StartTestSync(150);
 }
 
 void NClientInterface::SetPort(int port)
@@ -56,7 +58,7 @@ void NClientInterface::StartTest()
 
 void NClientInterface::EnterLobby()
 {
-    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString() + ";" + crypto.getPubKey());
+    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString() + ";" + crypto.getPubKeyStr());
 }
 
 void NClientInterface::StartSoloQueue()
@@ -73,7 +75,7 @@ void NClientInterface::OnInit(QString msg)
 void NClientInterface::OnTick(int frameNo)
 {
     //1.向客户端请求本地控制命令；
-    qDebug()<<__FUNCTION__<<frameNo;
+    //qDebug()<<__FUNCTION__<<frameNo;
     packer.frame = frameNo;
     QJsonObject obj;
     obj.insert("frame",frameNo);
@@ -130,6 +132,10 @@ void NClientInterface::OnFinish(QString msg)
 void NClientInterface::RcvLocalCause(QString data)
 {
     //2.获取到当前帧收集到的本地控制命令，广播
+
+    //Send to ONN Server
+    HttpRequest::doMethodSet(crypto.getSecKey(),crypto.getPubKey(),"play",data);
+
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();
     QString dataString = obj["data"].toString();

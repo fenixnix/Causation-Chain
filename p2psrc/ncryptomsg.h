@@ -12,7 +12,9 @@ public:
     void SetKey(QString secKey, QString pubKey);
     void LoadConfigFile(QString fileName);
     QString getAddr();
-    QString getPubKey();
+    QString getPubKeyStr();
+    QByteArray getSecKey();
+    QByteArray getPubKey();
 
     QString encode(QString msg);
     QStringList decode(QString msg, QMap<QString, QString> keyMap);//timeStamp, addr, msg
