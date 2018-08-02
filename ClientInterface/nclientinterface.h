@@ -9,6 +9,7 @@
 #include "np2pserverinterface.h"
 #include "udpnetwork.h"
 #include "ntimesync.h"
+#include "onnconnector.h"
 
 #define StartPort 8890
 
@@ -46,6 +47,8 @@ private slots:
   void OnRcvP2P(QString msg);
   void OnRcvServerMsg(QString cmd, QString msg);
 
+  void OnOnnMsg(QString msg);
+
 private:
   void BroadcastCause();
   void RcvLocalCause(QString data);
@@ -67,6 +70,8 @@ private:
   NP2PNode p2p;
   NP2PServerInterface server;
   UdpNetwork ipc;
+
+  OnnConnector onn;
 
   NCmdPacker packer;
   NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作

@@ -9,6 +9,8 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvP2P);
     connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
     connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
+
+    connect(&onn, &OnnConnector::RcvMsg, this, &NClientInterface::OnOnnMsg);
     Init();
 }
 
@@ -24,7 +26,9 @@ void NClientInterface::Init()
     p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
     timeOut.setSingleShot(true);
-    timeSync.StartTestSync(150);
+
+    //timeSync.StartTestSync(150);//Timer Simulation Test
+    onn.JoinGame(crypto.getSecKey(),crypto.getPubKey());
 }
 
 void NClientInterface::SetPort(int port)
@@ -134,7 +138,7 @@ void NClientInterface::RcvLocalCause(QString data)
     //2.获取到当前帧收集到的本地控制命令，广播
 
     //Send to ONN Server
-    HttpRequest::doMethodSet(crypto.getSecKey(),crypto.getPubKey(),"play",data);
+    onn.SendMsg(crypto.getSecKey(),crypto.getPubKey(),data);
 
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();
@@ -176,6 +180,12 @@ void NClientInterface::OnRcvP2P(QString msg)
 void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
 {
 
+}
+
+void NClientInterface::OnOnnMsg(QString msg)
+{
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    ipc.Send("CAU"+msg);
 }
 
 void NClientInterface::BroadcastCause()
