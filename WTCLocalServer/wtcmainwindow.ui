@@ -60,6 +60,7 @@
     <addaction name="separator"/>
     <addaction name="actionEnter_Lobby"/>
     <addaction name="actionStart_Solo"/>
+    <addaction name="actionJoin_Tank"/>
    </widget>
    <widget class="QMenu" name="menuRefresh">
     <property name="title">
@@ -103,6 +104,11 @@
   <action name="actionStart_Solo">
    <property name="text">
     <string>Start Solo</string>
+   </property>
+  </action>
+  <action name="actionJoin_Tank">
+   <property name="text">
+    <string>Join Tank</string>
    </property>
   </action>
  </widget>

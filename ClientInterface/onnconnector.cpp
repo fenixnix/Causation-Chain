@@ -16,7 +16,7 @@ void OnnConnector::JoinGame(QByteArray secKey, QByteArray pubKey)
 {
     this->secKey = secKey;
     this->pubKey = pubKey;
-    HttpRequest::doMethodSet(secKey,pubKey,"play");
+    HttpRequest::doMethodSet(secKey,pubKey);
 }
 
 void OnnConnector::SendMsg(QString msg)

@@ -27,6 +27,7 @@ public:
   void StartTest();
   void EnterLobby();
   void StartSoloQueue();
+  void JoinTank();
 
 signals:
   void RcvCause(QString cause);

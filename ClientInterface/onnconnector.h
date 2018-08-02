@@ -10,8 +10,8 @@ class OnnConnector : public QObject
 public:
     explicit OnnConnector(QObject *parent = nullptr);
     void Init();
-    static void JoinGame(QByteArray secKey, QByteArray pubKey);
-    static void SendMsg(QString msg);
+    void JoinGame(QByteArray secKey, QByteArray pubKey);
+    void SendMsg(QString msg);
 
 signals:
     void RcvMsg(QString msg);

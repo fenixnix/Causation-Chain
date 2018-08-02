@@ -53,3 +53,8 @@ void WTCMainWindow::on_actionStart_Solo_triggered()
 {
     interface.StartSoloQueue();
 }
+
+void WTCMainWindow::on_actionJoin_Tank_triggered()
+{
+    interface.JoinTank();
+}

@@ -32,6 +32,8 @@ private slots:
 
     void on_actionStart_Solo_triggered();
 
+    void on_actionJoin_Tank_triggered();
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;

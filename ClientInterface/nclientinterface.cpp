@@ -1,6 +1,5 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
-#include "httprequest.h"
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -28,7 +27,7 @@ void NClientInterface::Init()
     timeOut.setSingleShot(true);
 
     //timeSync.StartTestSync(150);//Timer Simulation Test
-    onn.JoinGame(crypto.getSecKey(),crypto.getPubKey());
+
 }
 
 void NClientInterface::SetPort(int port)
@@ -68,6 +67,11 @@ void NClientInterface::EnterLobby()
 void NClientInterface::StartSoloQueue()
 {
     server.Query(SV_CMD_SOLO+getID());
+}
+
+void NClientInterface::JoinTank()
+{
+    onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 }
 
 void NClientInterface::OnInit(QString msg)
@@ -138,7 +142,7 @@ void NClientInterface::RcvLocalCause(QString data)
     //2.获取到当前帧收集到的本地控制命令，广播
 
     //Send to ONN Server
-    onn.SendMsg(crypto.getSecKey(),crypto.getPubKey(),data);
+    onn.SendMsg(data);
 
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();

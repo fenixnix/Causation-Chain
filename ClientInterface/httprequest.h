@@ -18,8 +18,13 @@
 #include <QFile>
 #include <QNetworkRequest>
 #include <QtNetwork>
+#include "emcc/uECC.h"
 
 #define BUG qDebug()<<__FUNCTION__<<__LINE__
+
+#define GETMD5(A) QCryptographicHash::hash(A,QCryptographicHash::Md5).toHex()
+#define GETADDR(A) QCryptographicHash::hash(A,QCryptographicHash::Keccak_256).toHex().left(40)
+#define GETSHA256(A) QCryptographicHash::hash(A,QCryptographicHash::Sha256).toHex()
 
 using namespace std;
 
@@ -84,6 +89,7 @@ public:
     }
 
     static QString docmd(QString type,QString pubkey,QString prikey,QString name,QString func,QString arg) {
+        BUG << type << pubkey;
         QString msg = type + "$" + pubkey + "$" + name + "$" + func + "$" + arg;
         QByteArray hash = GETSHA256(msg.toLatin1());
         sign(prikey.toLatin1().data(),hash.data());
@@ -93,7 +99,10 @@ public:
         return block;
     }
 
-    static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK", QString url = "http://47.75.190.195:3000"){
+//#define IP "http://47.75.190.195:3000"
+#define IP "http://192.168.1.156:3000"
+
+    static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK", QString url = IP){
         QString block = pContract+"$"+pMethod+"$"+pArg+"$"+pubKey;
         BUG << block;
         QByteArray result = qtGet(url+"/"+block);
@@ -103,7 +112,8 @@ public:
         return jsonArr;
     }
 
-    static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK", QString url = "http://47.75.190.195:3000"){
+    static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK", QString url = IP){
+        BUG << pubKey;
         QString block = docmd("method",pubKey,secKey,pContract,pMethod,pArg);
         BUG << url << block;
         //return qtGet(url+"/"+block);
