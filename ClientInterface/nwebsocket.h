@@ -11,8 +11,11 @@ class NWebSocket : public QObject
 public:
     explicit NWebSocket(QObject *parent = nullptr);
 
+signals:
+    void RcvMsg(QString msg);
+
 public slots:
-    void createDataRecvWS();    /*-<创建websocket连接 */
+    void createDataRecvWS(QString url = "ws://47.75.190.195:3000");    /*-<创建websocket连接 */
 
 private slots:
     void onConnected();                 /*-<socket建立成功后，触发该函数 */
@@ -24,6 +27,7 @@ private:
     bool connectStatus;         /*-<websocket连接状态，连接成功：true；断开：false */
     void reconnect();           /*-<周期重连函数 */
     QTimer *m_timer;            /*-<周期重连Timer */
+    QString url = "";
 };
 
 #endif // NWEBSOCKET_H
