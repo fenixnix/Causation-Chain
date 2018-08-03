@@ -34,7 +34,7 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 void NodeInfo::Ping()
 {
     pingTime = steady_clock::now();
-    //qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
+    qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
 }
 
 void NodeInfo::RcvPing()

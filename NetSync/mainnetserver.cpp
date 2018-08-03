@@ -29,8 +29,9 @@ void MainNetServer::Init(QString secKey, QString pubKey)
 
 void MainNetServer::Init()
 {
-    QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
-    if(!QFile("crypto").exists()){
+    const QString cryptoFileName = "crypto.cfg";
+    QSettings cryptoSetting(cryptoFileName, QSettings::IniFormat);
+    if(!QFile(cryptoFileName).exists()){
         qDebug()<<"Not find crypto.cfg, generate new keyPair!!";
         NEmcc ecc;
         ecc.GenerateKeyPair();

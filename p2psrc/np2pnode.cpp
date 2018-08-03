@@ -24,9 +24,6 @@ void NP2PNode::SetP2PList(QString data)
 {
     auto datas = data.split(';');
     foreach (QString d, datas) {
-        if(d.isEmpty()){
-            continue;
-        }
         NodeInfo info;
         info.SetData(d);
         //skip myself
@@ -175,8 +172,8 @@ void NP2PNode::OnHeartbeat()
 
 void NP2PNode::Ping(QString addr)
 {
-    sendbyAddr("PING" + ID,addr);
     net.ping(addr);
+    sendbyAddr("PING" + ID,addr);
 }
 
 void NP2PNode::Pong(QString addr)
