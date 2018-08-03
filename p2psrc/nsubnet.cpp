@@ -5,15 +5,20 @@ NSubNet::NSubNet()
 
 }
 
-void NSubNet::enter(QString data)
+void NSubNet::enter(NodeInfo info)
 {
-    NodeInfo info;
-    info.SetData(data);
     if(memberList.contains(info.getId())){
         memberList[info.getId()].Ping();
         return;
     }
     memberList.insert(info.getId(),info);
+}
+
+void NSubNet::enter(QString data)
+{
+    NodeInfo info;
+    info.SetData(data);
+    enter(info);
 }
 
 bool NSubNet::has(QString id)

@@ -31,6 +31,10 @@ private slots:
 
   void OnRcvOnnRequire(QString contractID, QString addr, QString cmd, QString data);
 
+  void on_actionStart_triggered();
+
+  void on_actionCheck_triggered();
+
 private:
   Ui::MainWindow *ui;
   MainNetServer node;

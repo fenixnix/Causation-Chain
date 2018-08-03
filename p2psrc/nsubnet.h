@@ -11,6 +11,7 @@ public:
   NSubNet();
   QString ID;//SubNet ID
 
+  void enter(NodeInfo info);
   void enter(QString data);
   bool has(QString id);
   bool isActive(QString id);

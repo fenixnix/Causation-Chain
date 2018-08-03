@@ -53,7 +53,7 @@
      <x>0</x>
      <y>0</y>
      <width>403</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTest">
@@ -65,7 +65,15 @@
     <addaction name="actionRequire_NAT"/>
     <addaction name="actionOnnRequire"/>
    </widget>
+   <widget class="QMenu" name="menuCodeTest">
+    <property name="title">
+     <string>CodeTest</string>
+    </property>
+    <addaction name="actionStart"/>
+    <addaction name="actionCheck"/>
+   </widget>
    <addaction name="menuTest"/>
+   <addaction name="menuCodeTest"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -94,6 +102,16 @@
   <action name="actionOnnRequire">
    <property name="text">
     <string>OnnRequire</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionCheck">
+   <property name="text">
+    <string>Check</string>
    </property>
   </action>
  </widget>
