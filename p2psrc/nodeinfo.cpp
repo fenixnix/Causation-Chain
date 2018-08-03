@@ -34,7 +34,7 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 void NodeInfo::Ping()
 {
     pingTime = steady_clock::now();
-    //qDebug()<<"ping"<<id<<pingTime;
+    qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
 }
 
 void NodeInfo::Pong()
@@ -48,6 +48,7 @@ bool NodeInfo::CheckAlive()
 {
     duration<qint64,std::nano> difT = steady_clock::now() - pingTime;
     int sec = difT.count() /1000000000;
+    qDebug()<<__FUNCTION__<<__LINE__<<sec;
     return sec<=lifeCycle;
 }
 

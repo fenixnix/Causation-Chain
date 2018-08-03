@@ -35,6 +35,8 @@ private slots:
 
   void on_actionCheck_triggered();
 
+  void on_actionPing_triggered();
+
 private:
   Ui::MainWindow *ui;
   MainNetServer node;

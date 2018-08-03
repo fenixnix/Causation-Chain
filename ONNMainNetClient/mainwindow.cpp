@@ -93,5 +93,10 @@ void MainWindow::on_actionStart_triggered()
 
 void MainWindow::on_actionCheck_triggered()
 {
+    net.removeDeadMemberAtNow();
+}
+
+void MainWindow::on_actionPing_triggered()
+{
     net.ping("Red");
 }

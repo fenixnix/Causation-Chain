@@ -70,6 +70,7 @@
      <string>CodeTest</string>
     </property>
     <addaction name="actionStart"/>
+    <addaction name="actionPing"/>
     <addaction name="actionCheck"/>
    </widget>
    <addaction name="menuTest"/>
@@ -112,6 +113,11 @@
   <action name="actionCheck">
    <property name="text">
     <string>Check</string>
+   </property>
+  </action>
+  <action name="actionPing">
+   <property name="text">
+    <string>Ping</string>
    </property>
   </action>
  </widget>
