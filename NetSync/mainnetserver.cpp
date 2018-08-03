@@ -30,6 +30,15 @@ void MainNetServer::Init(QString secKey, QString pubKey)
 void MainNetServer::Init()
 {
     QSettings cryptoSetting("crypto.cfg", QSettings::IniFormat);
+    if(!QFile("crypto").exists()){
+        qDebug()<<"Not find crypto.cfg, generate new keyPair!!";
+        NEmcc ecc;
+        ecc.GenerateKeyPair();
+        cryptoSetting.setValue("SecKey", ecc.privateKeyString);
+        cryptoSetting.setValue("PubKey", ecc.publicKeyString);
+        cryptoSetting.sync();
+    }
+
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     Init(secKey, pubKey);

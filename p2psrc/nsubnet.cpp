@@ -47,6 +47,11 @@ void NSubNet::ping(QString id)
     memberList[id].Ping();
 }
 
+void NSubNet::rcvPing(QString id)
+{
+    memberList[id].RcvPing();
+}
+
 void NSubNet::pong(QString id)
 {
     memberList[id].Pong();

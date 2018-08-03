@@ -98,5 +98,5 @@ void MainWindow::on_actionCheck_triggered()
 
 void MainWindow::on_actionPing_triggered()
 {
-    net.ping("Red");
+    net.rcvPing("Red");
 }

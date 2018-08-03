@@ -34,21 +34,27 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 void NodeInfo::Ping()
 {
     pingTime = steady_clock::now();
-    qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
+    //qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
+}
+
+void NodeInfo::RcvPing()
+{
+    lastUpdateTime = steady_clock::now();
 }
 
 void NodeInfo::Pong()
 {
-    duration<qint64,std::nano> difT = steady_clock::now() - pingTime;
+    lastUpdateTime = steady_clock::now();
+    duration<qint64,std::nano> difT = lastUpdateTime - pingTime;
     ping = difT.count();
     qDebug()<<"ping:"<<id<<(float)ping/1000000.0f<<"ms";
 }
 
 bool NodeInfo::CheckAlive()
 {
-    duration<qint64,std::nano> difT = steady_clock::now() - pingTime;
+    duration<qint64,std::nano> difT = steady_clock::now() - lastUpdateTime;
     int sec = difT.count() /1000000000;
-    qDebug()<<__FUNCTION__<<__LINE__<<sec;
+    //qDebug()<<__FUNCTION__<<__LINE__<<sec;
     return sec<=lifeCycle;
 }
 

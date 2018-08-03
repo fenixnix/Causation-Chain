@@ -23,7 +23,10 @@ void NP2PNode::Init(QString id, QIPEndPoint natServer, QIPEndPoint local)
 void NP2PNode::SetP2PList(QString data)
 {
     auto datas = data.split(';');
-    foreach (auto d, datas) {
+    foreach (QString d, datas) {
+        if(d.isEmpty()){
+            continue;
+        }
         NodeInfo info;
         info.SetData(d);
         //skip myself
@@ -146,7 +149,9 @@ void NP2PNode::OnNatMsg(QString msg)
 
     if(cmd == "PING"){
         //qDebug()<<"Ping from:"<<mp.getData();
-        sendbyAddr("PONG"+ID,mp.getData());
+        auto addr = mp.getData();
+        net.rcvPing(addr);
+        sendbyAddr("PONG"+ID,addr);
         return;
     }
 

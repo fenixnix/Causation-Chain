@@ -16,6 +16,7 @@ public:
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 
     void Ping();
+    void RcvPing();
     void Pong();
     bool CheckAlive();
     QString ToString();
@@ -35,6 +36,7 @@ public:
 private:
     QString id;//blockchain address;
     steady_clock::time_point pingTime;
+    steady_clock::time_point lastUpdateTime;
 };
 
 #endif // NODEINFO_H
