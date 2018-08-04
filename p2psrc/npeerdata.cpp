@@ -1,16 +1,16 @@
-#include "nodeinfo.h"
+#include "npeerdata.h"
 
-NodeInfo::NodeInfo()
+NPeerData::NPeerData()
 {
     pingTime = steady_clock::now();
 }
 
-NodeInfo::NodeInfo(QString id, QIPEndPoint loc, QIPEndPoint nat)
+NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
 {
     SetData(id,loc,nat);
 }
 
-void NodeInfo::SetData(QString data)
+void NPeerData::SetData(QString data)
 {
     auto datas = data.split(',');
     if(data.size()<3){
@@ -23,7 +23,7 @@ void NodeInfo::SetData(QString data)
     pingTime = netInTime;
 }
 
-void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
+void NPeerData::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 {
     this->id = id;
     this->addr = id.toLatin1().toHex();
@@ -31,18 +31,18 @@ void NodeInfo::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
     this->nat = nat;
 }
 
-void NodeInfo::Ping()
+void NPeerData::Ping()
 {
     pingTime = steady_clock::now();
     qDebug()<<"ping"<<id<<pingTime.time_since_epoch().count()/1000000000;
 }
 
-void NodeInfo::RcvPing()
+void NPeerData::RcvPing()
 {
     lastUpdateTime = steady_clock::now();
 }
 
-void NodeInfo::Pong()
+void NPeerData::Pong()
 {
     lastUpdateTime = steady_clock::now();
     duration<qint64,std::nano> difT = lastUpdateTime - pingTime;
@@ -50,7 +50,7 @@ void NodeInfo::Pong()
     qDebug()<<"ping:"<<id<<(float)ping/1000000.0f<<"ms";
 }
 
-bool NodeInfo::CheckAlive()
+bool NPeerData::CheckAlive()
 {
     duration<qint64,std::nano> difT = steady_clock::now() - lastUpdateTime;
     int sec = difT.count() /1000000000;
@@ -58,7 +58,7 @@ bool NodeInfo::CheckAlive()
     return sec<=lifeCycle;
 }
 
-QString NodeInfo::ToString()
+QString NPeerData::ToString()
 {
     QString res = id;
     res += ",";
@@ -68,12 +68,12 @@ QString NodeInfo::ToString()
     return res;
 }
 
-QString NodeInfo::getId() const
+QString NPeerData::getId() const
 {
     return id;
 }
 
-void NodeInfo::setId(const QString &value)
+void NPeerData::setId(const QString &value)
 {
     id = value;
     addr = QByteArray::fromHex(value.toLatin1());

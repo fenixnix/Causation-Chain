@@ -5,7 +5,7 @@
 #include <QStringList>
 #include <QLinkedList>
 #include <QHash>
-#include <nodeinfo.h>
+#include <npeerdata.h>
 
 class NP2PRingNet : public QObject
 {
@@ -13,11 +13,11 @@ class NP2PRingNet : public QObject
 public:
     explicit NP2PRingNet(QObject *parent = nullptr);
 
-    void peerJoinCall(NodeInfo peerInfo);
+    void peerJoinCall(NPeerData peerInfo);
     void update();
 
     QByteArrayList getAllAddress();
-    NodeInfo getNodeInfo(QByteArray addr);
+    NPeerData getNodeInfo(QByteArray addr);
 
     static void SelfTest();
 
@@ -33,7 +33,7 @@ private:
 
     int neighbourRange = 3;
     QLinkedList<QByteArray> peerAddrList;
-    QHash<QByteArray,NodeInfo> peerInfoHashMap;
+    QHash<QByteArray,NPeerData> peerInfoHashMap;
     QList<QByteArray> deadPeers;
 
     QLinkedList<QByteArray>::iterator next(QLinkedList<QByteArray>::iterator iitr);

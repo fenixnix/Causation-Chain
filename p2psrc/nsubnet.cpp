@@ -5,7 +5,7 @@ NSubNet::NSubNet()
 
 }
 
-void NSubNet::enter(NodeInfo info)
+void NSubNet::enter(NPeerData info)
 {
     if(memberList.contains(info.getId())){
         memberList[info.getId()].Ping();
@@ -16,7 +16,7 @@ void NSubNet::enter(NodeInfo info)
 
 void NSubNet::enter(QString data)
 {
-    NodeInfo info;
+    NPeerData info;
     info.SetData(data);
     enter(info);
 }
@@ -57,7 +57,7 @@ void NSubNet::pong(QString id)
     memberList[id].Pong();
 }
 
-NodeInfo NSubNet::get(QString id)
+NPeerData NSubNet::get(QString id)
 {
     return memberList[id];
 }
@@ -93,7 +93,7 @@ QString NSubNet::getMemberListString()
     return datas.join(';');
 }
 
-QMap<QString, NodeInfo> NSubNet::getMemberList() const
+QMap<QString, NPeerData> NSubNet::getMemberList() const
 {
     return memberList;
 }

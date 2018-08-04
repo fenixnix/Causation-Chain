@@ -9,7 +9,7 @@
 #include <QMap>
 #include "messageprotocol.h"
 #include "qipendpoint.h"
-#include "nodeinfo.h"
+#include "npeerdata.h"
 #include "nsubnet.h"
 #include "np2pserverinterface.h"
 

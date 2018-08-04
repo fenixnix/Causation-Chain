@@ -1,5 +1,5 @@
 #include "mainnetserver.h"
-#include "nodeinfo.h"
+#include "npeerdata.h"
 #include "messageprotocol.h"
 #include "nemcc.h"
 

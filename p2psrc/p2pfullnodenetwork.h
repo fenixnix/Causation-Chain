@@ -9,41 +9,45 @@
 #include "messageprotocol.h"
 #include "nsubnet.h"
 #include "np2pringnet.h"
+#include "udpnetwork.h"
 
 class P2PFullNodeNetwork : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  explicit P2PFullNodeNetwork(QObject *parent = nullptr);
-  void Init(int Port, int heartRate);
-  QByteArrayList getAllPeerAddrs();
-  QStringList getAllPeerAddrsString();
+    explicit P2PFullNodeNetwork(QObject *parent = nullptr);
+    void Init(int Port, int heartRate);
+    QByteArrayList getAllPeerAddrs();
+    QStringList getAllPeerAddrsString();
 
 signals:
-  void UpdateMemberList();
+    void UpdateMemberList();
 
 public slots:
 
 private slots:
-  void OnNetRequire();
-  void OnHeartbeat();
-  void OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg);
+    void OnRcv(QString msg, QHostAddress ip, quint16 port);
+    //void OnNetRequire();
+    void OnHeartbeat();
+    void OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg);
 
 private:
-  void EnterMain(QString data,QIPEndPoint nat);
-  QStringList getNodeInfoListbyAddr(QString data);
+    void EnterMain(QString data,QIPEndPoint nat);
+    QStringList getNodeInfoListbyAddr(QString data);
 
-  quint16 portNetinRequire = 8889;
-  int heartRate = 20;//sec
+    quint16 portNetinRequire = 8889;
+    int heartRate = 20;//sec
 
-  NP2PRingNet ringNet;
-  QHash<QByteArray, QIPEndPoint> peers;
+    NP2PRingNet ringNet;
+    QHash<QByteArray, QIPEndPoint> peers;
 
-  QUdpSocket* udp;
-  qint64 udpSend(QIPEndPoint endPoint, QString msg);
+    UdpNetwork udp;
 
-  //TODO: timer heartbeat
-  QTimer heartbeatTimer;
+    //QUdpSocket* udp;
+    //qint64 udpSend(QIPEndPoint endPoint, QString msg);
+
+    //TODO: timer heartbeat
+    QTimer heartbeatTimer;
 };
 
 #endif // P2PFULLNODENETWORK_H

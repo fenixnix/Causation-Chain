@@ -88,7 +88,7 @@ void MainWindow::OnRcvOnnRequire(QString contractID, QString addr, QString cmd, 
 NSubNet net;
 void MainWindow::on_actionStart_triggered()
 {
-    net.enter(NodeInfo("Red", QIPEndPoint("192.168.1.100",8000), QIPEndPoint("45.75.190.195",8000)));
+    net.enter(NPeerData("Red", QIPEndPoint("192.168.1.100",8000), QIPEndPoint("45.75.190.195",8000)));
 }
 
 void MainWindow::on_actionCheck_triggered()

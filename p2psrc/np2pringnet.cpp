@@ -5,7 +5,7 @@ NP2PRingNet::NP2PRingNet(QObject *parent) : QObject(parent)
 
 }
 
-void NP2PRingNet::peerJoinCall(NodeInfo peerInfo)
+void NP2PRingNet::peerJoinCall(NPeerData peerInfo)
 {
     if(peerInfoHashMap.contains(peerInfo.addr)){
         peerInfoHashMap[peerInfo.addr].RcvPing();
@@ -26,7 +26,7 @@ QByteArrayList NP2PRingNet::getAllAddress()
     return peerInfoHashMap.keys();
 }
 
-NodeInfo NP2PRingNet::getNodeInfo(QByteArray addr)
+NPeerData NP2PRingNet::getNodeInfo(QByteArray addr)
 {
     return peerInfoHashMap[addr];
 }
@@ -118,13 +118,13 @@ QLinkedList<QByteArray>::iterator NP2PRingNet::prev(QLinkedList<QByteArray>::ite
 void NP2PRingNet::SelfTest()
 {
     NP2PRingNet net;
-    net.peerJoinCall(NodeInfo("010101",QIPEndPoint("127.0.0.1:10000"),QIPEndPoint("127.10.0.1:10000")));
-    net.peerJoinCall(NodeInfo("010102",QIPEndPoint("127.0.0.2:10000"),QIPEndPoint("127.10.0.2:10000")));
-    net.peerJoinCall(NodeInfo("010103",QIPEndPoint("127.0.0.3:10000"),QIPEndPoint("127.10.0.3:10000")));
-    net.peerJoinCall(NodeInfo("010104",QIPEndPoint("127.0.0.4:10000"),QIPEndPoint("127.10.0.4:10000")));
-    net.peerJoinCall(NodeInfo("010105",QIPEndPoint("127.0.0.5:10000"),QIPEndPoint("127.10.0.5:10000")));
-    net.peerJoinCall(NodeInfo("010106",QIPEndPoint("127.0.0.6:10000"),QIPEndPoint("127.10.0.6:10000")));
-    net.peerJoinCall(NodeInfo("010107",QIPEndPoint("127.0.0.7:10000"),QIPEndPoint("127.10.0.7:10000")));
-    net.peerJoinCall(NodeInfo("010108",QIPEndPoint("127.0.0.8:10000"),QIPEndPoint("127.10.0.8:10000")));
+    net.peerJoinCall(NPeerData("010101",QIPEndPoint("127.0.0.1:10000"),QIPEndPoint("127.10.0.1:10000")));
+    net.peerJoinCall(NPeerData("010102",QIPEndPoint("127.0.0.2:10000"),QIPEndPoint("127.10.0.2:10000")));
+    net.peerJoinCall(NPeerData("010103",QIPEndPoint("127.0.0.3:10000"),QIPEndPoint("127.10.0.3:10000")));
+    net.peerJoinCall(NPeerData("010104",QIPEndPoint("127.0.0.4:10000"),QIPEndPoint("127.10.0.4:10000")));
+    net.peerJoinCall(NPeerData("010105",QIPEndPoint("127.0.0.5:10000"),QIPEndPoint("127.10.0.5:10000")));
+    net.peerJoinCall(NPeerData("010106",QIPEndPoint("127.0.0.6:10000"),QIPEndPoint("127.10.0.6:10000")));
+    net.peerJoinCall(NPeerData("010107",QIPEndPoint("127.0.0.7:10000"),QIPEndPoint("127.10.0.7:10000")));
+    net.peerJoinCall(NPeerData("010108",QIPEndPoint("127.0.0.8:10000"),QIPEndPoint("127.10.0.8:10000")));
     net.update();
 }

@@ -10,6 +10,11 @@ UdpNetwork::~UdpNetwork()
     udp.close();
 }
 
+void UdpNetwork::Listen(quint16 port)
+{
+    Listen(QHostAddress::LocalHost,port);
+}
+
 void UdpNetwork::Listen(QIPEndPoint endPoint)
 {
     Listen(endPoint.IP(),endPoint.Port());
@@ -58,6 +63,11 @@ bool UdpNetwork::Send(QHostAddress addr, quint16 port, QString msg)
         return false;
     }
     return true;
+}
+
+bool UdpNetwork::Send(QIPEndPoint ep, QString msg)
+{
+    Send(ep.IP(), ep.Port(), msg);
 }
 
 bool UdpNetwork::SendAndSet(QHostAddress addr, quint16 port, QString msg)

@@ -11,6 +11,7 @@ class UdpNetwork : public QObject
 public:
     explicit UdpNetwork(QObject *parent = nullptr);
     ~UdpNetwork();
+    void Listen(quint16 port);
     void Listen(QIPEndPoint endPoint);
     void Listen(QHostAddress addr, quint16 port);
     void SetSendEndPoint(QHostAddress addr, quint16 port);
@@ -19,6 +20,7 @@ public:
 
     bool Send(QString msg);
     bool Send(QHostAddress addr, quint16 port, QString msg);
+    bool Send(QIPEndPoint ep, QString msg);
     bool SendAndSet(QHostAddress addr, quint16 port, QString msg);
 
     QHostAddress getSendAddr() const;

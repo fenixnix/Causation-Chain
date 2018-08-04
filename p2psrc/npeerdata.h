@@ -7,11 +7,11 @@
 
 using namespace std::chrono;
 
-class NodeInfo
+class NPeerData
 {
 public:
-    NodeInfo();
-    NodeInfo(QString id, QIPEndPoint loc, QIPEndPoint nat);
+    NPeerData();
+    NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat);
     void SetData(QString data);
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 

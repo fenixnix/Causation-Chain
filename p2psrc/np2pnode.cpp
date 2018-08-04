@@ -24,7 +24,7 @@ void NP2PNode::SetP2PList(QString data)
 {
     auto datas = data.split(';');
     foreach (QString d, datas) {
-        NodeInfo info;
+        NPeerData info;
         info.SetData(d);
         //skip myself
         if(info.getId() == this->ID){

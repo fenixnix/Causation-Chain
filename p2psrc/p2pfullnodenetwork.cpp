@@ -2,8 +2,9 @@
 
 P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 {
-    udp = new QUdpSocket;
-    QObject::connect(udp, &QUdpSocket::readyRead, this, &P2PFullNodeNetwork::OnNetRequire,Qt::QueuedConnection);
+    //udp = new QUdpSocket;
+    connect(&udp, &UdpNetwork::Rcv, this, &P2PFullNodeNetwork::OnRcv);
+    //QObject::connect(udp, &QUdpSocket::readyRead, this, &P2PFullNodeNetwork::OnNetRequire,Qt::QueuedConnection);
     QObject::connect(&heartbeatTimer, &QTimer::timeout, this, &P2PFullNodeNetwork::OnHeartbeat,Qt::QueuedConnection);
 
     QObject::connect(&ringNet, &NP2PRingNet::Send, this, &P2PFullNodeNetwork::OnBroadcast,Qt::QueuedConnection);
@@ -12,7 +13,8 @@ P2PFullNodeNetwork::P2PFullNodeNetwork(QObject *parent) : QObject(parent)
 void P2PFullNodeNetwork::Init(int Port, int heartRate)
 {
     this->heartRate = heartRate;
-    udp->bind(Port,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    udp.Listen(Port);
+    //udp->bind(Port,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     this->heartRate = heartRate;
     heartbeatTimer.start(1000 * heartRate);
 }
@@ -24,7 +26,7 @@ void P2PFullNodeNetwork::EnterMain(QString data, QIPEndPoint nat)
         return;
     }
 
-    NodeInfo info;
+    NPeerData info;
     info.SetData(data);
     ringNet.peerJoinCall(info);
     peers.insert(info.addr,nat);
@@ -57,44 +59,67 @@ QStringList P2PFullNodeNetwork::getAllPeerAddrsString()
     return list;
 }
 
-void P2PFullNodeNetwork::OnNetRequire()
+void P2PFullNodeNetwork::OnRcv(QString msg, QHostAddress ip, quint16 port)
 {
-    while(udp->hasPendingDatagrams())
-    {
-        QByteArray datagram;
-        QHostAddress senderIP;
-        quint16 senderPort;
-        datagram.resize(udp->pendingDatagramSize());
-        auto ret = udp->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
-        if(ret==-1){
-            qDebug()<<udp->errorString();
-            continue;
-        }
+    MessageProtocol mp;
+    auto cmd = mp.Decode(msg);
+    auto nat = QIPEndPoint(ip,port);
 
-        QString dataString = QString::fromLatin1(datagram);
-        QIPEndPoint nat = QIPEndPoint(senderIP.toString().mid(7),senderPort);
+    if(cmd == "P2PN"){//p2p neighbour nodeinfo list
+        EnterMain(mp.getData(),nat);
+    }
 
-        QString msg = "Rcv:"+ dataString + " From:"+ nat.ToString();
-        qDebug()<<msg;
+    if(cmd == "IPLS"){//addrs nodeinfo list
+        QString msg = "IPLS"+getNodeInfoListbyAddr(mp.getData()).join(";");//TODO:getTotelList
+        udp.Send(nat,msg);
+        //udpSend(nat,msg);
+    }
 
-        MessageProtocol mp;
-        auto cmd = mp.Decode(dataString);
-
-        if(cmd == "P2PN"){//p2p neighbour nodeinfo list
-            EnterMain(mp.getData(),nat);
-        }
-
-        if(cmd == "IPLS"){//addrs nodeinfo list
-            QString msg = "IPLS"+getNodeInfoListbyAddr(mp.getData()).join(";");//TODO:getTotelList
-            udpSend(nat,msg);
-        }
-
-        if(cmd == "ALL "){//all addrs list
-            QString msg = "ALL "+getAllPeerAddrsString().join(";");//TODO:getTotelList
-            udpSend(nat,msg);
-        }
+    if(cmd == "ALL "){//all addrs list
+        QString msg = "ALL "+getAllPeerAddrsString().join(";");//TODO:getTotelList
+        //udpSend(nat,msg);
+        udp.Send(nat,msg);
     }
 }
+
+//void P2PFullNodeNetwork::OnNetRequire()
+//{
+//    while(udp->hasPendingDatagrams())
+//    {
+//        QByteArray datagram;
+//        QHostAddress senderIP;
+//        quint16 senderPort;
+//        datagram.resize(udp->pendingDatagramSize());
+//        auto ret = udp->readDatagram(datagram.data(), datagram.size(),&senderIP,&senderPort);
+//        if(ret==-1){
+//            qDebug()<<udp->errorString();
+//            continue;
+//        }
+
+//        QString dataString = QString::fromLatin1(datagram);
+//        QIPEndPoint nat = QIPEndPoint(senderIP.toString().mid(7),senderPort);
+
+//        QString msg = "Rcv:"+ dataString + " From:"+ nat.ToString();
+//        qDebug()<<msg;
+
+//        MessageProtocol mp;
+//        auto cmd = mp.Decode(dataString);
+
+//        if(cmd == "P2PN"){//p2p neighbour nodeinfo list
+//            EnterMain(mp.getData(),nat);
+//        }
+
+//        if(cmd == "IPLS"){//addrs nodeinfo list
+//            QString msg = "IPLS"+getNodeInfoListbyAddr(mp.getData()).join(";");//TODO:getTotelList
+//            udpSend(nat,msg);
+//        }
+
+//        if(cmd == "ALL "){//all addrs list
+//            QString msg = "ALL "+getAllPeerAddrsString().join(";");//TODO:getTotelList
+//            udpSend(nat,msg);
+//        }
+//    }
+//}
 
 void P2PFullNodeNetwork::OnHeartbeat()
 {
@@ -114,14 +139,14 @@ void P2PFullNodeNetwork::OnHeartbeat()
 void P2PFullNodeNetwork::OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg)
 {
     auto ep = peers[addr];
-    udpSend(ep,"P2PN" + msg);
+    udp.Send(ep,"P2PN" + msg);
 }
 
-qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)
-{
-    auto ret = udp->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
-    if(ret==-1){
-        qDebug()<<udp->errorString();
-    }
-    return ret;
-}
+//qint64 P2PFullNodeNetwork::udpSend(QIPEndPoint endPoint, QString msg)
+//{
+//    auto ret = udp->writeDatagram(msg.toLatin1(),endPoint.IP(),endPoint.Port());
+//    if(ret==-1){
+//        qDebug()<<udp->errorString();
+//    }
+//    return ret;
+//}
