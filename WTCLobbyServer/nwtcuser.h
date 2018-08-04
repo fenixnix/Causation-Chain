@@ -2,7 +2,7 @@
 #define NWTCUSER_H
 
 #include <QString>
-#include "QIPEndPoint.h"
+#include "qipendpoint.h"
 
 class NWTCUser
 {

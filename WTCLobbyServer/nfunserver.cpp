@@ -90,7 +90,7 @@ void NFunServer::EnterLobby(QString dat, QIPEndPoint endPoint)
     qDebug()<<endPoint.ToString()<<__FUNCTION__<<dat;
     auto pair = dat.split(';');
     auto pubKey = pair[1];
-    NodeInfo info;
+    NPeerData info;
     info.SetData(pair[0]);
     qDebug()<<__FUNCTION__<<__LINE__;
     NWTCUser user;//TODO bug fix

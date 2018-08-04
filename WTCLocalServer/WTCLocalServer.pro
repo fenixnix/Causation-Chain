@@ -38,5 +38,5 @@ FORMS += \
 include("../ClientInterface/ClientInterface.pri")
 include("../consensus/NConsensus.pri")
 include("../Crypto/EmccSDK/nemcc/nemcc.pri")
-include("../p2psrc/NP2P.pri")
+include("../p2psrc/np2p.pri")
 include("../Network/network.pri")
