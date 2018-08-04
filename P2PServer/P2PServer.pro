@@ -19,6 +19,5 @@ SOURCES += \
 
 HEADERS +=
 
-include("../p2psrc/NP2P.pri")
+include("../p2psrc/np2p.pri")
 include("../Network/network.pri")
-include("../Crypto/EmccSDK/nemcc/nemcc.pri")

@@ -11,11 +11,11 @@
 #include "np2pringnet.h"
 #include "udpnetwork.h"
 
-class P2PFullNodeNetwork : public QObject
+class P2PNetwork : public QObject
 {
     Q_OBJECT
 public:
-    explicit P2PFullNodeNetwork(QObject *parent = nullptr);
+    explicit P2PNetwork(QObject *parent = nullptr);
     void Init(int Port, int heartRate);
     QByteArrayList getAllPeerAddrs();
     QStringList getAllPeerAddrsString();
@@ -23,30 +23,21 @@ public:
 signals:
     void UpdateMemberList();
 
-public slots:
-
 private slots:
     void OnRcv(QString msg, QHostAddress ip, quint16 port);
-    //void OnNetRequire();
-    void OnHeartbeat();
     void OnBroadcast(QByteArray addr, QIPEndPoint endPoint, QString msg);
+    void OnHeartbeat();
 
 private:
-    void EnterMain(QString data,QIPEndPoint nat);
+    void Join(QString data,QIPEndPoint nat);
     QStringList getNodeInfoListbyAddr(QString data);
 
-    quint16 portNetinRequire = 8889;
+    UdpNetwork udp;
     int heartRate = 20;//sec
 
     NP2PRingNet ringNet;
     QHash<QByteArray, QIPEndPoint> peers;
 
-    UdpNetwork udp;
-
-    //QUdpSocket* udp;
-    //qint64 udpSend(QIPEndPoint endPoint, QString msg);
-
-    //TODO: timer heartbeat
     QTimer heartbeatTimer;
 };
 
