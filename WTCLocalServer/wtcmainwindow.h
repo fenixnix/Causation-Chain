@@ -2,6 +2,7 @@
 #define WTCMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QInputDialog>
 #include "ntimesync.h"
 #include "nclientinterface.h"
 
@@ -33,6 +34,8 @@ private slots:
     void on_actionStart_Solo_triggered();
 
     void on_actionJoin_Tank_triggered();
+
+    void on_actionSetID_triggered();
 
 private:
     Ui::WTCMainWindow *ui;

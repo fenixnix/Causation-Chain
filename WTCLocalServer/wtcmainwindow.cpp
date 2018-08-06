@@ -58,3 +58,8 @@ void WTCMainWindow::on_actionJoin_Tank_triggered()
 {
     interface.JoinTank();
 }
+
+void WTCMainWindow::on_actionSetID_triggered()
+{
+    interface.SetLocalID(QInputDialog::getText(this,"ID","ID"));
+}

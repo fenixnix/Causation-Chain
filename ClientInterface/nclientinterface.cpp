@@ -1,6 +1,8 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
 
+#define TEST
+
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
@@ -9,12 +11,34 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
     connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
 
+#ifdef TEST
     connect(&onn, &OnnConnector::RcvMsg, this, &NClientInterface::OnOnnMsg);
+#endif
     Init();
 }
 
 void NClientInterface::Init()
 {
+    const QString cryptoFileName = "crypto.cfg";
+    QSettings cryptoSetting(cryptoFileName, QSettings::IniFormat);
+    if(!QFile(cryptoFileName).exists()){
+        qDebug()<<"Not find crypto.cfg, generate new keyPair!!";
+        NEmcc ecc;
+        ecc.GenerateKeyPair();
+        cryptoSetting.setValue("SecKey", ecc.privateKeyString);
+        cryptoSetting.setValue("PubKey", ecc.publicKeyString);
+        cryptoSetting.sync();
+    }
+
+    QString secKey = cryptoSetting.value("SecKey").toString();
+    QString pubKey = cryptoSetting.value("PubKey").toString();
+    Init(secKey, pubKey);
+
+}
+
+void NClientInterface::Init(QString secKey, QString pubKey)
+{
+    //TODO: use secKey & pubKey
     neighbourKeyMap.clear();
     crypto.LoadConfigFile("crypto.cfg");
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
@@ -26,8 +50,10 @@ void NClientInterface::Init()
     SetPort(StartPort);
     timeOut.setSingleShot(true);
 
-    //timeSync.StartTestSync(150);//Timer Simulation Test
-
+#ifdef TEST
+    timeSync.StartTestSync(150);//Timer Simulation Test
+    //timeSync.StartTestSync(1000);//Timer Simulation Test
+#endif
 }
 
 void NClientInterface::SetPort(int port)
@@ -43,6 +69,11 @@ QString NClientInterface::getID()
 QStringList NClientInterface::GetMemberList()
 {
     return p2p.neighbourList();
+}
+
+void NClientInterface::SetLocalID(QString ID)
+{
+    SendLocalMsg("ID_",ID);
 }
 
 void NClientInterface::SendChatMsg(QString addr, QString msg)
@@ -71,13 +102,13 @@ void NClientInterface::StartSoloQueue()
 
 void NClientInterface::JoinTank()
 {
-    onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+    //onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 }
 
 void NClientInterface::OnInit(QString msg)
 {
     QString InitMsg;
-    ipc.Send("REQ" + InitMsg);
+    SendLocalMsg("REQ",InitMsg);
 }
 
 void NClientInterface::OnTick(int frameNo)
@@ -86,24 +117,27 @@ void NClientInterface::OnTick(int frameNo)
     //qDebug()<<__FUNCTION__<<frameNo;
     packer.frame = frameNo;
     QJsonObject obj;
-    obj.insert("frame",frameNo);
-    ipc.Send("REQ"+QString(QJsonDocument(obj).toJson()));
+    obj.insert("frame", frameNo);
+    SendLocalMsg("REQ",QString(QJsonDocument(obj).toJson()));
 }
 
 #define CMDSIZE 3
 void NClientInterface::OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort)
 {
-    qDebug()<<__FUNCTION__<<msg;
+    //qDebug()<<__FUNCTION__<<msg;
     if(msg.size()<CMDSIZE){
         return;
     }
     auto cmd = msg.left(CMDSIZE);
+    auto data = msg.mid(CMDSIZE);
+
+    if(cmd == "STT"){
+        RcvStart(data);
+    }
     if(cmd == "CAU"){
-        auto data = msg.mid(CMDSIZE);
         RcvLocalCause(data);
     }
     if(cmd == "RES"){
-        auto data = msg.mid(CMDSIZE);
         RcvLocalResult(data);
     }
     if(cmd == "FIN"){
@@ -142,7 +176,10 @@ void NClientInterface::RcvLocalCause(QString data)
     //2.获取到当前帧收集到的本地控制命令，广播
 
     //Send to ONN Server
-    onn.SendMsg(data);
+#ifdef TEST
+    //onn.SendMsg(data);
+    SendLocalMsg("CAU",data);//TestCode
+#endif
 
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     quint64 frame = obj["frame"].toDouble();
@@ -211,13 +248,22 @@ void NClientInterface::OnOnnMsg(QString msg)
 
     if(method == "startGame"){
         QString jsonMsg = QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
-        ipc.Send("INI" + jsonMsg);
+        SendLocalMsg("INI", jsonMsg);
     }
 
     if(method == "timeout"){
         OnTick(0);
         //ipc.Send("CAU" + msg);
     }
+}
+
+void NClientInterface::SendLocalMsg(QString cmd, QString msg)
+{
+    if(cmd.size()!=3){
+        qDebug()<<"error cmd!!!"<< cmd;
+        return;
+    }
+    ipc.Send(cmd+msg);
 }
 
 void NClientInterface::BroadcastCause()
@@ -233,6 +279,11 @@ void NClientInterface::BroadcastCause()
     obj.insert("cmd","causePark");
     obj.insert("data",jsonDat);
     CryptoBroadcast(QString(QJsonDocument(obj).toJson()));
+}
+
+void NClientInterface::RcvStart(QString data)
+{
+    SetLocalID(crypto.getAddr());
 }
 
 void NClientInterface::RcvNetCausePack(quint64 frame, QString addr, QString data)
