@@ -13,7 +13,7 @@
 #include "nsubnet.h"
 #include "np2pserverinterface.h"
 
-#define HeartBeatInterval 10
+#define HeartBeatInterval 3
 
 class NP2PNode : public QObject
 {

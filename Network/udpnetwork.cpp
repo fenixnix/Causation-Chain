@@ -67,7 +67,7 @@ bool UdpNetwork::Send(QHostAddress addr, quint16 port, QString msg)
 
 bool UdpNetwork::Send(QIPEndPoint ep, QString msg)
 {
-    Send(ep.IP(), ep.Port(), msg);
+    return Send(ep.IP(), ep.Port(), msg);
 }
 
 bool UdpNetwork::SendAndSet(QHostAddress addr, quint16 port, QString msg)

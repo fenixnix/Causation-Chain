@@ -163,6 +163,7 @@ void NP2PNode::OnNatMsg(QString msg)
 void NP2PNode::OnHeartbeat()
 {
     emit RequireJoin();
+    //qDebug()<<__FUNCTION__<<__LINE__<<neighbourList();
     net.removeDeadMemberAtNow();
     foreach(auto memberID, neighbourList()){
         Ping(memberID);

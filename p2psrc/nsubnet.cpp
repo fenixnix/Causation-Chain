@@ -8,10 +8,11 @@ NSubNet::NSubNet()
 void NSubNet::enter(NPeerData info)
 {
     if(memberList.contains(info.getId())){
-        memberList[info.getId()].Ping();
+        memberList[info.getId()].RcvPing();
         return;
     }
     memberList.insert(info.getId(),info);
+    memberList[info.getId()].RcvPing();
 }
 
 void NSubNet::enter(QString data)
