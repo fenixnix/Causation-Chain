@@ -7,6 +7,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
+    connect(&p2p, &NP2PNode::RequireJoin, this, &NClientInterface::OnReadyJoin);
     connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvP2P);
     connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
     connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
@@ -40,7 +41,7 @@ void NClientInterface::Init(QString secKey, QString pubKey)
 {
     //TODO: use secKey & pubKey
     neighbourKeyMap.clear();
-    crypto.LoadConfigFile("crypto.cfg");
+    crypto.SetKey(secKey, pubKey);
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
@@ -166,9 +167,31 @@ void NClientInterface::OnRcvNet(quint64 timeStamp, QString addr, QString msg)
     }
 }
 
+void NClientInterface::OnLobbyNet(QString dat)
+{
+    p2p.SetP2PList(dat);
+}
+
+void NClientInterface::OnGameNet(QString dat)
+{
+    p2p.SetP2PList(dat);
+}
+
+void NClientInterface::OnGameStart(QString dat)
+{
+    qDebug()<<__FUNCTION__<<__LINE__<<dat;
+    SendGameInitInfo(dat);
+}
+
+void NClientInterface::OnGameTick(QString dat)
+{
+    OnTick(0);
+}
+
 void NClientInterface::OnFinish(QString msg)
 {
     //TODO:推送结果给远程服务
+    Game_Over(msg);
 }
 
 QString JsonPackCmd(QString data){
@@ -232,7 +255,15 @@ void NClientInterface::OnRcvP2P(QString msg)
 
 void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
 {
+    if(cmd == SV_CMD_LOBBY_NET) OnLobbyNet(msg);
+    if(cmd == SV_CMD_GAME_NET) OnGameNet(msg);
+    if(cmd == SV_CMD_GAME_START) OnGameStart(msg);
+    if(cmd == SV_CMD_TICK) OnGameTick(msg);
+}
 
+void NClientInterface::OnReadyJoin()
+{
+    EnterLobby();
 }
 
 void NClientInterface::OnOnnMsg(QString msg)
@@ -276,6 +307,16 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
         return;
     }
     ipc.Send(cmd+msg);
+}
+
+void NClientInterface::Enter_Lobby()
+{
+    server.Query(SV_CMD_ENTER + p2p.getLocalInfoString());
+}
+
+void NClientInterface::Queue_Solo()
+{
+    server.Query(SV_CMD_QUEUE_SOLO + getID());
 }
 
 void NClientInterface::SendGameInitInfo(QString data)

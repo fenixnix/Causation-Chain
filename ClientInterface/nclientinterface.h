@@ -27,6 +27,12 @@ public:
     void SendChatMsg(QString addr, QString msg);
     void SendLocalMsg(QString cmd, QString msg);
 
+    //To Lobby
+    void Enter_Lobby();//local nat
+    void Queue_Solo();//local addr
+    void Game_Over(QString Result);//local game result
+
+
     void SendGameInitInfo(QString data);
 
     //Test Code
@@ -50,10 +56,17 @@ public slots:
     void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
 
 private slots:
+    //Fram Lobby
+    void OnLobbyNet(QString dat);
+    void OnGameNet(QString dat);
+    void OnGameStart(QString dat);
+    void OnGameTick(QString dat);
+
     void OnCauseTimeOut();
     void OnRcvP2P(QString msg);
     void OnRcvServerMsg(QString cmd, QString msg);
 
+    void OnReadyJoin();
     void OnOnnMsg(QString msg);
 
 private:
