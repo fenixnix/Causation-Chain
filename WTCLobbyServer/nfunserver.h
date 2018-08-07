@@ -6,6 +6,7 @@
 #include "nwtcroom.h"
 #include "udpnetwork.h"
 #include "nsubnet.h"
+#include "ntcpnetwork.h"
 
 class NFunServer : public QObject
 {
@@ -36,6 +37,7 @@ private:
 
     NSubNet lobbyNet;
     UdpNetwork udp;
+    NTcpNetwork tcp;
 };
 
 #endif // NFUNSERVER_H

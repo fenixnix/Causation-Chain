@@ -10,6 +10,7 @@
 #include "udpnetwork.h"
 #include "ntimesync.h"
 #include "onnconnector.h"
+#include "ntcpnetwork.h"
 
 #define StartPort 8890
 
@@ -90,6 +91,8 @@ private:
     NCryptoMsg crypto;
     NP2PNode p2p;
     NP2PServerInterface server;
+    NTcpNetwork tcpServer;
+
     UdpNetwork ipc;
 
     OnnConnector onn;

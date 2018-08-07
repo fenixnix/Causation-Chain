@@ -9,7 +9,7 @@ HEADERS += \
     $$PWD/udpnetwork.h \
     $$PWD/messageprotocol.h \
     $$PWD/nwsnetwork.h \
-    $$PWD/ntcpnetworkserver.h
+    $$PWD/ntcpnetwork.h
 
 SOURCES += \
     $$PWD/ipclassify.cpp \
@@ -17,6 +17,6 @@ SOURCES += \
     $$PWD/udpnetwork.cpp \
     $$PWD/messageprotocol.cpp \
     $$PWD/nwsnetwork.cpp \
-    $$PWD/ntcpnetworkserver.cpp
+    $$PWD/ntcpnetwork.cpp
 
 

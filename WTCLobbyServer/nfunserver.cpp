@@ -28,6 +28,7 @@ void NFunServer::Init()
         port = 8900;
     }
     udp.Listen(QHostAddress(addr),port);
+    tcp.InitServer(9999);
 }
 
 void NFunServer::SelfTest()
@@ -92,7 +93,7 @@ void NFunServer::EnterLobby(QString dat, QIPEndPoint endPoint)
     if(!info.SetData(dat)) return;
     lobbyNet.enter(info);
     peerSendAddrs.insert(info.addr,endPoint);
-    qDebug()<<user.id<<" Join Lobby";
+    qDebug()<<info.addr<<" Join Lobby";
 }
 
 void NFunServer::QueueSolo(QString dat)

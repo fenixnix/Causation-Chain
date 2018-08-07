@@ -47,12 +47,14 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
     server.Init(local, p2pServer);
+    tcpServer.InitClient(QIPEndPoint(QHostAddress::LocalHost,9999));
+
     p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
     timeOut.setSingleShot(true);
 
 #ifdef TEST
-    timeSync.StartTestSync(150);//Timer Simulation Test
+    //timeSync.StartTestSync(150);//Timer Simulation Test
     //timeSync.StartTestSync(1000);//Timer Simulation Test
 #endif
 }
@@ -98,7 +100,7 @@ void NClientInterface::EnterLobby()
 
 void NClientInterface::StartSoloQueue()
 {
-    server.Query(SV_CMD_SOLO+getID());
+    server.Query(SV_CMD_QUEUE_SOLO+getID()+";"+crypto.getPubKeyStr());
 }
 
 void NClientInterface::JoinTank()
@@ -317,6 +319,11 @@ void NClientInterface::Enter_Lobby()
 void NClientInterface::Queue_Solo()
 {
     server.Query(SV_CMD_QUEUE_SOLO + getID());
+}
+
+void NClientInterface::Game_Over(QString Result)
+{
+    server.Query(SV_CMD_GAMEOVER+Result);
 }
 
 void NClientInterface::SendGameInitInfo(QString data)
