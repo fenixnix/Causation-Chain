@@ -16,13 +16,9 @@ void P2PNetwork::Init(int Port, int heartRate)
 
 void P2PNetwork::Join(QString data, QIPEndPoint nat)
 {
-    auto datas = data.split(',');
-    if(datas.size()<3){
-        return;
-    }
-
     NPeerData info;
-    info.SetData(data);
+    if(!info.SetData(data)) return;
+
     ringNet.peerJoinCall(info);
     peers.insert(info.addr,nat);
 }

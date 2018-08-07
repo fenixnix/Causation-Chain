@@ -18,9 +18,9 @@ public:
 public slots:
     void OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort);
 
-private:
+private:    
     void EnterLobby(QString dat, QIPEndPoint endPoint);
-    void MatchingSolo(QString dat);
+    void QueueSolo(QString dat);
     void CheckSolo();
     void Matching(QHash<QString, NWTCUser> &queue, int cnt);
     void RmvRoomMemberInQueue(NWTCRoom room, QHash<QString, NWTCUser> &queue);
@@ -30,9 +30,11 @@ private:
     QHash<QString, NWTCUser> soloQueue;
     QHash<QString, NWTCRoom> soloRooms;
 
+    QHash<QByteArray, QIPEndPoint> peerSendAddrs;
+
     static QString jsonUser(QString addr, QString pubKey, QString NAT, QString type);
 
-    NSubNet net;
+    NSubNet lobbyNet;
     UdpNetwork udp;
 };
 

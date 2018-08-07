@@ -10,17 +10,18 @@ NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
     SetData(id,loc,nat);
 }
 
-void NPeerData::SetData(QString data)
+bool NPeerData::SetData(QString data)
 {
     auto datas = data.split(',');
     if(data.size()<3){
-        return;
+        return false;
     }
     setId(datas[0]);
     loc.Init(datas[1]);
     nat.Init(datas[2]);
     netInTime = steady_clock::now();
     pingTime = netInTime;
+    return true;
 }
 
 void NPeerData::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)

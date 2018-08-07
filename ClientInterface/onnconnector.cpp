@@ -3,7 +3,7 @@
 
 OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
 {
-    connect(&ws, &NWebSocket::RcvMsg, this, &OnnConnector::RcvMsg);
+    connect(&ws, &NWsNetwork::RcvMsg, this, &OnnConnector::RcvMsg);
     Init();
 }
 

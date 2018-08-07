@@ -76,31 +76,26 @@ void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort
         EnterLobby(mp.getData(), QIPEndPoint(senderIP,senderPort));
     }
 
-    if(cmd == SV_CMD_SOLO){//solo queue
-        MatchingSolo(mp.getData());
+    if(cmd == SV_CMD_QUEUE_SOLO){//solo queue
+        QueueSolo(mp.getData());
     }
 
-    if(cmd == SV_CMD_SOLO){//game over
-
+    if(cmd == SV_CMD_GAMEOVER){//game over
+        //TODO
     }
 }
 
 void NFunServer::EnterLobby(QString dat, QIPEndPoint endPoint)
 {
     qDebug()<<endPoint.ToString()<<__FUNCTION__<<dat;
-    auto pair = dat.split(';');
-    auto pubKey = pair[1];
     NPeerData info;
-    info.SetData(pair[0]);
-    qDebug()<<__FUNCTION__<<__LINE__;
-    NWTCUser user;//TODO bug fix
-    //user.Init(info.getId(),pubKey,info.nat.ToString(),"none");
-    qDebug()<<__FUNCTION__<<__LINE__;
-    users.insert(user.id,user);
+    if(!info.SetData(dat)) return;
+    lobbyNet.enter(info);
+    peerSendAddrs.insert(info.addr,endPoint);
     qDebug()<<user.id<<" Join Lobby";
 }
 
-void NFunServer::MatchingSolo(QString dat)
+void NFunServer::QueueSolo(QString dat)
 {
     qDebug()<<dat<<" start solo queue";
     soloQueue.insert(dat,users[dat]);
@@ -112,16 +107,6 @@ void NFunServer::CheckSolo()
     if(soloQueue.size()>=2){
         Matching(soloQueue,2);
     }
-}
-
-QString NFunServer::jsonUser(QString addr, QString pubKey, QString NAT, QString type)
-{
-    QJsonObject obj;
-    obj.insert("Addr", addr);
-    obj.insert("PubKey", pubKey);
-    obj.insert("NAT", NAT);
-    obj.insert("Type",type);
-    return QString(QJsonDocument(obj).toJson());
 }
 
 void NFunServer::Matching(QHash<QString, NWTCUser> &queue, int cnt)
@@ -151,4 +136,14 @@ void NFunServer::RmvRoomMemberInQueue(NWTCRoom room, QHash<QString, NWTCUser> &q
     foreach(auto m, room.GetMembers()){
         queue.remove(m);
     }
+}
+
+QString NFunServer::jsonUser(QString addr, QString pubKey, QString NAT, QString type)
+{
+    QJsonObject obj;
+    obj.insert("Addr", addr);
+    obj.insert("PubKey", pubKey);
+    obj.insert("NAT", NAT);
+    obj.insert("Type",type);
+    return QString(QJsonDocument(obj).toJson());
 }

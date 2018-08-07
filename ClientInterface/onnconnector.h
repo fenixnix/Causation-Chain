@@ -2,7 +2,7 @@
 #define ONNCONNECTOR_H
 
 #include <QObject>
-#include "nwebsocket.h"
+#include "nwsnetwork.h"
 
 class OnnConnector : public QObject
 {
@@ -17,7 +17,7 @@ signals:
     void RcvMsg(QString msg);
 
 private:
-    NWebSocket ws;
+    NWsNetwork ws;
     QByteArray secKey;
     QByteArray pubKey;
 };

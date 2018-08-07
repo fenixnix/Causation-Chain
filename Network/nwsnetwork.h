@@ -5,11 +5,11 @@
 #include <QWebSocket>
 #include <QTimer>
 
-class NWebSocket : public QObject
+class NWsNetwork : public QObject
 {
     Q_OBJECT
 public:
-    explicit NWebSocket(QObject *parent = nullptr);
+    explicit NWsNetwork(QObject *parent = nullptr);
 
 signals:
     void RcvMsg(QString msg);

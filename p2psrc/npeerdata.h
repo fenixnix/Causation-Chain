@@ -12,7 +12,7 @@ class NPeerData
 public:
     NPeerData();
     NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat);
-    void SetData(QString data);
+    bool SetData(QString data);
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 
     void Ping();
