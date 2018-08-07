@@ -33,35 +33,14 @@ void NFunServer::Init()
 
 void NFunServer::SelfTest()
 {
-//    QSettings cfg("p2p.cfg",QSettings::IniFormat);
-//    cfg.setValue("Local",IPClassify::getLocalIP().toString());
-//    cfg.setValue("Port",8900);
-//    cfg.sync();
+    //    QSettings cfg("p2p.cfg",QSettings::IniFormat);
+    //    cfg.setValue("Local",IPClassify::getLocalIP().toString());
+    //    cfg.setValue("Port",8900);
+    //    cfg.sync();
     NFunServer server;
     //    server.OnUserJoin(jsonUser("nix","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
     //    server.OnUserJoin(jsonUser("nix1","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
     //    server.OnUserJoin(jsonUser("nix2","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix3","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix4","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix5","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix6","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix7","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix8","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix9","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix10","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix11","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix12","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix13","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix14","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix15","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix16","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix17","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix18","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix19","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix20","123","nix;192.168.1.200:10000;192.168.1.200:10000","team"));
-    //    server.OnUserJoin(jsonUser("nix21","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix22","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
-    //    server.OnUserJoin(jsonUser("nix23","123","nix;192.168.1.200:10000;192.168.1.200:10000","solo"));
 }
 
 void NFunServer::OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort)

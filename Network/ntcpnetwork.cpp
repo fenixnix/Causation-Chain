@@ -3,8 +3,6 @@
 NTcpNetwork::NTcpNetwork(QObject *parent) : QObject(parent)
 {
     connect(&server, &QTcpServer::newConnection, this, &NTcpNetwork::OnNewConnect);
-    //connect(&server, &QTcpServer::acceptError, this, &NTcpNetworkServer::OnNewConnect);
-
     connect(&client, &QTcpSocket::readyRead, this, &NTcpNetwork::OnClientRcvMsg);
 }
 
@@ -27,6 +25,13 @@ void NTcpNetwork::Send2Server(QString msg)
     SendMsg(&client,msg);
 }
 
+void NTcpNetwork::Broadcast(QString msg)
+{
+    foreach(auto c, connections){
+        SendMsg(c,msg);
+    }
+}
+
 void NTcpNetwork::OnNewConnect()
 {
     while(server.hasPendingConnections()){
@@ -36,23 +41,34 @@ void NTcpNetwork::OnNewConnect()
         clientConnections.insert(senderAddr.toLatin1(),clientConnection);
         connections<<clientConnection;
         connect(clientConnection, &QTcpSocket::readyRead, this, &NTcpNetwork::OnServerRcvMsg);
-        SendMsg(clientConnection,"Hello");
+        connect(clientConnection, &QTcpSocket::disconnected, this, &NTcpNetwork::OnClientDisconnect);
+        SendMsg(clientConnection,"Welcome!");
     }
+}
+
+void NTcpNetwork::OnClientDisconnect()
+{
+    QTcpSocket* clientSocket = (QTcpSocket*)this->sender();
+    qDebug()<<this->sender()<<__FUNCTION__;
+    emit ClientDisconnect(clientSocket);
+    connections.removeOne(clientSocket);
+    disconnect(clientSocket, &QTcpSocket::readyRead, this, &NTcpNetwork::OnServerRcvMsg);
+    disconnect(clientSocket, &QTcpSocket::disconnected, this, &NTcpNetwork::OnClientDisconnect);
 }
 
 void NTcpNetwork::OnServerRcvMsg()
 {
     QTcpSocket* clientSocket = (QTcpSocket*)this->sender();
     QString dat = QString(clientSocket->readAll());
-    qDebug()<<__FUNCTION__<<dat;
+    //qDebug()<<__FUNCTION__<<dat;
     emit ServerRcvMsg(clientSocket, dat);
 }
 
 void NTcpNetwork::OnClientRcvMsg()
 {
     auto data =  client.readAll();
-    qDebug()<<__FUNCTION__<<QString(data);
-    SendMsg(&client,"Hello too");
+    //qDebug()<<__FUNCTION__<<QString(data);
+    //SendMsg(&client,"Hello too");
     emit ClientRcvMsg(QString(data));
 }
 

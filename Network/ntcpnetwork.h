@@ -15,13 +15,16 @@ public:
     void InitServer(quint16 port);
     void InitClient(QIPEndPoint ep);
     void Send2Server(QString msg);
+    void Broadcast(QString msg);
     static void SendMsg(QTcpSocket* socket, QString msg);
 signals:
     void ServerRcvMsg(QTcpSocket* sender,QString msg);
     void ClientRcvMsg(QString msg);
+    void ClientDisconnect(QTcpSocket* sender);
 
 private slots:
     void OnNewConnect();
+    void OnClientDisconnect();
     void OnServerRcvMsg();
     void OnClientRcvMsg();
 
