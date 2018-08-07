@@ -35,7 +35,7 @@ private slots:
 
     void on_actionJoin_Tank_triggered();
 
-    void on_actionSetID_triggered();
+    void on_actionInit_Game_triggered();
 
 private:
     Ui::WTCMainWindow *ui;

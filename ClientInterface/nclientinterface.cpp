@@ -171,6 +171,15 @@ void NClientInterface::OnFinish(QString msg)
     //TODO:推送结果给远程服务
 }
 
+QString JsonPackCmd(QString data){
+    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
+    QJsonObject root;
+    QJsonArray arr;
+    arr.append(obj);
+    root.insert("cmds",arr);
+    return QString(QJsonDocument(root).toJson(QJsonDocument::Compact));
+}
+
 void NClientInterface::RcvLocalCause(QString data)
 {
     //2.获取到当前帧收集到的本地控制命令，广播
@@ -178,7 +187,10 @@ void NClientInterface::RcvLocalCause(QString data)
     //Send to ONN Server
 #ifdef TEST
     //onn.SendMsg(data);
-    SendLocalMsg("CAU",data);//TestCode
+    QString packString = JsonPackCmd(data);
+    SendLocalMsg("CAU",packString);//TestCode
+
+    //SendLocalMsg("CAU",data);
 #endif
 
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
@@ -248,7 +260,7 @@ void NClientInterface::OnOnnMsg(QString msg)
 
     if(method == "startGame"){
         QString jsonMsg = QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
-        SendLocalMsg("INI", jsonMsg);
+        SendGameInitInfo(jsonMsg);
     }
 
     if(method == "timeout"){
@@ -264,6 +276,11 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
         return;
     }
     ipc.Send(cmd+msg);
+}
+
+void NClientInterface::SendGameInitInfo(QString data)
+{
+    SendLocalMsg("INI", data);
 }
 
 void NClientInterface::BroadcastCause()

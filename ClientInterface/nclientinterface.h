@@ -26,6 +26,9 @@ public:
     void SetLocalID(QString ID);
     void SendChatMsg(QString addr, QString msg);
     void SendLocalMsg(QString cmd, QString msg);
+
+    void SendGameInitInfo(QString data);
+
     //Test Code
     void StartTest();
     void EnterLobby();

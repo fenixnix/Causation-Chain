@@ -59,7 +59,11 @@ void WTCMainWindow::on_actionJoin_Tank_triggered()
     interface.JoinTank();
 }
 
-void WTCMainWindow::on_actionSetID_triggered()
+void WTCMainWindow::on_actionInit_Game_triggered()
 {
-    interface.SetLocalID(QInputDialog::getText(this,"ID","ID"));
+    QString id = QInputDialog::getText(this,"ID","ID");
+    QString jsonString = "{\"method\":\"startGame\",\"owner\":\"";
+    jsonString += id;
+    jsonString += "\",\"msg\":[\"P11\",\"P22\",\"P33\"],\"result\":true,\"symbol\":\"TANK\"}";
+    interface.SendGameInitInfo(jsonString);
 }
