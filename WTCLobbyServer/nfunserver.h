@@ -8,7 +8,6 @@
 #include "nsubnet.h"
 #include "nwtcroom.h"
 
-
 class NFunServer : public QObject
 {
     Q_OBJECT
@@ -19,6 +18,7 @@ public:
 
 public slots:
     void OnRcvMsg(QString msg, QHostAddress senderIP, quint16 senderPort);
+    void OnRcvTcpMsg(QString msg);
 
 private:    
     void EnterLobby(QString dat, QIPEndPoint endPoint);

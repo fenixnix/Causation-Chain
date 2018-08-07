@@ -54,7 +54,7 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     timeOut.setSingleShot(true);
 
 #ifdef TEST
-    //timeSync.StartTestSync(150);//Timer Simulation Test
+    timeSync.StartTestSync(150);//Timer Simulation Test
     //timeSync.StartTestSync(1000);//Timer Simulation Test
 #endif
 }

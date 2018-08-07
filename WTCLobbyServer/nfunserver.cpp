@@ -8,8 +8,9 @@
 
 NFunServer::NFunServer(QObject *parent) : QObject(parent)
 {
-    QObject::connect(&udp, &UdpNetwork::Rcv, this, &NFunServer::OnRcvMsg);
-    Init();
+    connect(&udp, &UdpNetwork::Rcv, this, &NFunServer::OnRcvMsg);
+    //connect(&tcp, &QTcpServer::)
+    //Init();
 }
 
 void NFunServer::Init()
