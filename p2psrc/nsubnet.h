@@ -25,6 +25,7 @@ public:
   void removeDeadMemberAtNow();
   int GetSize();
   QString getMemberListString();
+  QString getSubnetMemberListString(QStringList subMember);
 
   QMap<QString, NPeerData> getMemberList() const;
 

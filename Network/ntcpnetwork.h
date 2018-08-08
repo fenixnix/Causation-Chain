@@ -18,7 +18,7 @@ public:
     void Broadcast(QString msg);
     static void SendMsg(QTcpSocket* socket, QString msg);
 signals:
-    void ServerRcvMsg(QTcpSocket* sender,QString msg);
+    void ServerRcvMsg(QString msg, QTcpSocket* sender);
     void ClientRcvMsg(QString msg);
     void ClientDisconnect(QTcpSocket* sender);
 

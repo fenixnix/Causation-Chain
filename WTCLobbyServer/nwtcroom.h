@@ -4,7 +4,7 @@
 #include <QObject>
 #include "nwtcuser.h"
 #include <QTimer>
-#include "udpnetwork.h"
+#include "ntcpnetwork.h"
 
 class NWTCRoom : public QObject
 {
@@ -15,7 +15,7 @@ public:
     int Size();
     bool IsExist(QString addr);
     void AssignRoomID();
-    void Start(UdpNetwork* udp);
+    void Start(NTcpNetwork* tcp);
     void Close();//???
     QStringList GetMembers();
     QString GetHash();
@@ -27,7 +27,7 @@ private slots:
 private:
     QHash<QString, NWTCUser> members;
     QTimer timer;
-    UdpNetwork* udp;
+    NTcpNetwork* tcp;
     QString roomID;
 };
 

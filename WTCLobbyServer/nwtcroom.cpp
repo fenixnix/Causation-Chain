@@ -1,4 +1,5 @@
 #include "nwtcroom.h"
+#include "wtccmddefine.h"
 
 NWTCRoom::NWTCRoom(QObject *parent) : QObject(parent)
 {
@@ -31,9 +32,9 @@ void NWTCRoom::AssignRoomID()
     }
 }
 
-void NWTCRoom::Start(UdpNetwork *udp)
+void NWTCRoom::Start(NTcpNetwork *tcp)
 {
-    this->udp = udp;
+    this->tcp = tcp;
     QJsonArray memberArray;
     foreach (auto m, members) {
         QJsonObject user;
@@ -46,11 +47,11 @@ void NWTCRoom::Start(UdpNetwork *udp)
     obj["RoomID"] = roomID;
 
     //game start
-    QString msg = "GMST" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+//    QString msg = "GMST" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
 
-    foreach(auto m, members){
-        udp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
-    }
+//    foreach(auto m, members){
+//        tcp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
+//    }
 
     QObject::connect(&timer, &QTimer::timeout, this, &NWTCRoom::OnTrig);
     timer.start(3000);
@@ -90,8 +91,8 @@ void NWTCRoom::OnTrig()
     qDebug()<<__FUNCTION__;
     QJsonObject obj;
     obj["Room:"] = roomID;
-    QString msg = "TICK" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    QString msg = SV_CMD_TICK + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
     foreach(auto m, members){
-        udp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
+        NTcpNetwork::SendMsg(m.socket,msg);
     }
 }

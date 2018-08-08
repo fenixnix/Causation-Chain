@@ -94,6 +94,15 @@ QString NSubNet::getMemberListString()
     return datas.join(';');
 }
 
+QString NSubNet::getSubnetMemberListString(QStringList subMember)
+{
+    QStringList datas;
+    foreach(auto sub, subMember){
+        datas<<memberList[sub].ToString();
+    }
+    return datas.join(";");
+}
+
 QMap<QString, NPeerData> NSubNet::getMemberList() const
 {
     return memberList;

@@ -61,7 +61,7 @@ void NTcpNetwork::OnServerRcvMsg()
     QTcpSocket* clientSocket = (QTcpSocket*)this->sender();
     QString dat = QString(clientSocket->readAll());
     //qDebug()<<__FUNCTION__<<dat;
-    emit ServerRcvMsg(clientSocket, dat);
+    emit ServerRcvMsg(dat, clientSocket);
 }
 
 void NTcpNetwork::OnClientRcvMsg()

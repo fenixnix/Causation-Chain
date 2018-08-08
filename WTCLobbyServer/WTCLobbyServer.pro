@@ -16,14 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    nfunserver.cpp \
     nwtcuser.cpp \
-    nwtcroom.cpp
+    nwtcroom.cpp \
+    nlobbyserver.cpp
 
 HEADERS += \
-    nfunserver.h \
     nwtcuser.h \
-    nwtcroom.h
+    nwtcroom.h \
+    nlobbyserver.h
 
 include("../Network/network.pri")
 include("../ClientInterface/ClientInterface.pri")

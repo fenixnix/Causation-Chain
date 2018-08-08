@@ -8,16 +8,12 @@ class NWTCUser
 {
 public:
     NWTCUser();
-    NWTCUser(QString jsonStr);
-    void Init(QString jsonStr);
-    void Init(QString id, QString pubKey, QString NAT, QString type);
+    NWTCUser(QString id, QString pubKey, QString type, QTcpSocket* socket);
+    void Init(QString id, QString pubKey, QString type, QTcpSocket* socket);
 //private:
     QString id;
     QString pubKey;
-    QIPEndPoint sendEndPoint;
-    QIPEndPoint nat;
-    QIPEndPoint loc;
-
+    QTcpSocket* socket;
     QString type;//Solo, Team, Witness
     QString roomID;
 };
