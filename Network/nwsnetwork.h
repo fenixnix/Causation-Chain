@@ -15,8 +15,8 @@ signals:
     void RcvMsg(QString msg);
 
 public slots:
-    //void createDataRecvWS(QString url = "ws://47.75.190.195:3001");    /*-<创建websocket连接 */
-    void createDataRecvWS(QString url = "ws://192.168.1.156:3001");    /*-<创建websocket连接 */
+    void createDataRecvWS(QString url = "ws://47.75.190.195:3001");    /*-<创建websocket连接 */
+    //void createDataRecvWS(QString url = "ws://192.168.1.156:3001");    /*-<创建websocket连接 */
 
 private slots:
     void onConnected();                 /*-<socket建立成功后，触发该函数 */

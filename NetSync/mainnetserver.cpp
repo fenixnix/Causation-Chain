@@ -16,7 +16,7 @@ void MainNetServer::Init(QString secKey, QString pubKey)
     NEmcc emcc;
     emcc.SetSecKey(secKey);
     emcc.SetPubKey(pubKey);
-    QString addr = emcc.address;
+    QString addr = emcc.ethAddr;
 
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());

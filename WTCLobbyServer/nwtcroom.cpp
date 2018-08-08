@@ -3,7 +3,7 @@
 
 NWTCRoom::NWTCRoom(QObject *parent) : QObject(parent)
 {
-
+    QObject::connect(&timer, &QTimer::timeout, this, &NWTCRoom::OnTrig);
 }
 
 void NWTCRoom::Add(NWTCUser user)
@@ -32,9 +32,8 @@ void NWTCRoom::AssignRoomID()
     }
 }
 
-void NWTCRoom::Start(NTcpNetwork *tcp)
+void NWTCRoom::Start()
 {
-    this->tcp = tcp;
     QJsonArray memberArray;
     foreach (auto m, members) {
         QJsonObject user;
@@ -46,15 +45,17 @@ void NWTCRoom::Start(NTcpNetwork *tcp)
     obj["Members"] = memberArray;
     obj["RoomID"] = roomID;
 
+    QEventLoop eventloop;
+    QTimer::singleShot(100, &eventloop, SLOT(quit()));
+    eventloop.exec();
     //game start
-//    QString msg = "GMST" + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    QString msg = SV_CMD_GAME_START + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    foreach(auto m, members){
+        NTcpNetwork::SendMsg(m.socket,msg);
+    }
 
-//    foreach(auto m, members){
-//        tcp->Send(m.sendEndPoint.IP(),m.sendEndPoint.Port(),msg);
-//    }
-
-    QObject::connect(&timer, &QTimer::timeout, this, &NWTCRoom::OnTrig);
-    timer.start(3000);
+    timer.start(1000);
 }
 
 QStringList NWTCRoom::GetMembers()
@@ -88,7 +89,7 @@ QString NWTCRoom::Print()
 
 void NWTCRoom::OnTrig()
 {
-    qDebug()<<__FUNCTION__;
+    //qDebug()<<__FUNCTION__;
     QJsonObject obj;
     obj["Room:"] = roomID;
     QString msg = SV_CMD_TICK + QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));

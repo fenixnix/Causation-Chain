@@ -35,7 +35,7 @@ public:
 
     static QByteArray qtGet(const QString &strUrl)
     {
-        BUG << strUrl;
+        //BUG << strUrl;
 
         const QUrl url = QUrl::fromUserInput(strUrl);
         QNetworkAccessManager m_qnam;
@@ -59,7 +59,7 @@ public:
 
     static QByteArray qtPost(const QString &strUrl,QByteArray pData)
     {
-        BUG;
+        //BUG;
 
         const QUrl url = QUrl::fromUserInput(strUrl);
         QNetworkAccessManager m_qnam;
@@ -89,7 +89,7 @@ public:
     }
 
     static QString docmd(QString type,QString pubkey,QString prikey,QString name,QString func,QString arg) {
-        BUG << type << pubkey;
+        //BUG << type << pubkey;
         QString msg = type + "$" + pubkey + "$" + name + "$" + func + "$" + arg;
         QByteArray hash = GETSHA256(msg.toLatin1());
         sign(prikey.toLatin1().data(),hash.data());
@@ -99,23 +99,23 @@ public:
         return block;
     }
 
-//#define IP "http://47.75.190.195:3000"
-#define IP "http://192.168.1.156:3000"
+#define IP "http://47.75.190.195:3000"
+//#define IP "http://192.168.1.156:3000"
 
     static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK2", QString url = IP){
         QString block = pContract+"$"+pMethod+"$"+pArg+"$"+pubKey;
-        BUG << block;
+        //BUG << block;
         QByteArray result = qtGet(url+"/"+block);
         QJsonDocument jsonDoc = QJsonDocument::fromJson(result);
         QJsonArray    jsonArr = jsonDoc.array();
-        BUG << jsonArr;
+        //BUG << jsonArr;
         return jsonArr;
     }
 
     static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK2", QString url = IP){
-        BUG << pubKey;
+        //BUG << pubKey<<QByteArray::fromHex(pArg.toLatin1());
         QString block = docmd("method",pubKey,secKey,pContract,pMethod,pArg);
-        BUG << url << block;
+        //BUG << url << block;
         //return qtGet(url+"/"+block);
         return qtPost(url,block.toLatin1());
     }

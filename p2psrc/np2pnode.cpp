@@ -134,7 +134,7 @@ void NP2PNode::OnNatMsg(QString msg)
 
     if(cmd == "NAT "){
         natEndPoint.Init(mp.getData());
-        qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
+        //qDebug()<<"Rcv NAT:"+ natEndPoint.ToString();
         emit RequireJoin();
         return;
     }

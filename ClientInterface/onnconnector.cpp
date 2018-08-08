@@ -21,5 +21,5 @@ void OnnConnector::JoinGame(QByteArray secKey, QByteArray pubKey)
 
 void OnnConnector::SendMsg(QString msg)
 {
-    HttpRequest::doMethodSet(secKey,pubKey,"play",msg);
+    HttpRequest::doMethodSet(secKey,pubKey,"play",msg.toLatin1().toHex());
 }

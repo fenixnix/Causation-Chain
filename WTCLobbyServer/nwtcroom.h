@@ -15,20 +15,21 @@ public:
     int Size();
     bool IsExist(QString addr);
     void AssignRoomID();
-    void Start(NTcpNetwork* tcp);
+    void Start();
     void Close();//???
     QStringList GetMembers();
     QString GetHash();
     QString Print();
 
+    QHash<QString, NWTCUser> members;
+    QTimer timer;
+    QString roomID;
+
 private slots:
     void OnTrig();
 
 private:
-    QHash<QString, NWTCUser> members;
-    QTimer timer;
-    NTcpNetwork* tcp;
-    QString roomID;
+
 };
 
 #endif // NWTCROOM_H

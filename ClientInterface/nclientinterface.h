@@ -55,8 +55,7 @@ public slots:
 
 private slots:
     //Fram Lobby
-    void OnLobbyNet(QString dat);
-    void OnGameNet(QString dat);
+    void OnSubNet(QString dat);
     void OnGameStart(QString dat);
     void OnGameTick(QString dat);
 
@@ -88,7 +87,6 @@ private:
 
     NCryptoMsg crypto;
     NP2PNode p2p;
-    //NP2PServerInterface server;
     NTcpNetwork tcpServer;
 
     UdpNetwork ipc;

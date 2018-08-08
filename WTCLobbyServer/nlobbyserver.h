@@ -24,14 +24,15 @@ private:
     void EnterLobby(QString dat, QTcpSocket* socket);
     void QueueSolo(QString dat);
     void CheckSolo();
-    void Matching(QHash<QString, NWTCUser> &queue, int cnt);
-    void RmvRoomMemberInQueue(NWTCRoom room, QHash<QString, NWTCUser> &queue);
+    void Matching(QMap<QString, NWTCUser> &queue, int cnt);
+    void RmvRoomMemberInQueue(NWTCRoom room, QMap<QString, NWTCUser> &queue);
     void GameOver(QString dat);
 
-    QHash<QString, NWTCUser> soloQueue;
-    QHash<QString, NWTCRoom> soloRooms;
+    QMap<QString, NWTCUser> soloQueue;
+    QMap<QString, NWTCRoom*> soloRooms;
+    //QList<NWTCRoom> rooms;
 
-    QHash<QString, QTcpSocket*> clientSockets;
+    QMap<QString, QTcpSocket*> clientSockets;
     NSubNet lobbyNet;
 
     NTcpNetwork tcp;

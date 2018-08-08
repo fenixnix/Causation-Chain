@@ -70,25 +70,26 @@ void NLobbyServer::CheckSolo()
     }
 }
 
-void NLobbyServer::Matching(QHash<QString, NWTCUser> &queue, int cnt)
+void NLobbyServer::Matching(QMap<QString, NWTCUser> &queue, int cnt)
 {
-    NWTCRoom room;
+    NWTCRoom* room = new NWTCRoom();
     foreach(auto u, queue.values()){
-        room.Add(u);
-        if(room.Size()>=cnt){
+        room->Add(u);
+        if(room->Size()>=cnt){
             break;
         }
     }
-    room.AssignRoomID();
+    room->AssignRoomID();
 
-    qDebug()<<__FUNCTION__<<"Game Start"<<room.Print();
-    auto memberList = room.GetMembers();
-    auto subNetP2pMsg = SV_CMD_LOBBY_NET + lobbyNet.getSubnetMemberListString(memberList);
+    qDebug()<<__FUNCTION__<<"Game Start"<<room->Print();
+    auto memberList = room->GetMembers();
+    auto subNetP2pMsg = SV_CMD_GAME_NET + lobbyNet.getSubnetMemberListString(memberList);
     foreach(auto member, memberList){
         NTcpNetwork::SendMsg(clientSockets[member],subNetP2pMsg);
     }
 
-    //room.Start(&tcp);
+    room->Start();
+    soloRooms.insert(room->GetHash(),room);
 }
 
 void NLobbyServer::GameOver(QString dat)
@@ -97,7 +98,7 @@ void NLobbyServer::GameOver(QString dat)
     //TODO::共识结果并推入主链
 }
 
-void NLobbyServer::RmvRoomMemberInQueue(NWTCRoom room, QHash<QString, NWTCUser> &queue)
+void NLobbyServer::RmvRoomMemberInQueue(NWTCRoom room, QMap<QString, NWTCUser> &queue)
 {
     foreach(auto m, room.GetMembers()){
         queue.remove(m);

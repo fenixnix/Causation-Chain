@@ -11,6 +11,8 @@ NetSync::NetSync(QObject *parent) : QObject(parent)
 void NetSync::Init(QString secKey, QString pubKey)
 {
     p2p.Init(secKey, pubKey);
+    ecDsa.SetSecKey(secKey);
+    ecDsa.SetPubKey(pubKey);
 }
 
 void NetSync::Init()
@@ -135,6 +137,7 @@ void NetSync::RcvP2pMsg(QString signedMsg)
     auto pubKey = jDom["PubKey"].toString();
     auto sign = jDom["Sign"].toString();
     if(!ecDsa.VerifyMsg(pubKey,msg,sign)){
+        qDebug()<<pubKey<<msg<<sign;
         return;
     }
 

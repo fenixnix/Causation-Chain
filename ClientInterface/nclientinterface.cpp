@@ -30,11 +30,9 @@ void NClientInterface::Init()
         cryptoSetting.setValue("PubKey", ecc.publicKeyString);
         cryptoSetting.sync();
     }
-
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     Init(secKey, pubKey);
-
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -45,10 +43,10 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
-    QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
 
+    //QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
     //server.Init(local, p2pServer);
-    tcpServer.InitClient(QIPEndPoint(QHostAddress::LocalHost,9999));
+    //tcpServer.InitClient(QIPEndPoint(QHostAddress::LocalHost,9999));
 
     p2p.Init(crypto.getAddr(),natServer,local);
     SetPort(StartPort);
@@ -97,12 +95,12 @@ void NClientInterface::StartTest()
 void NClientInterface::Enter_Lobby()
 {
     QString msg = SV_CMD_ENTER + p2p.getLocalInfoString();
-    tcpServer.Send2Server(msg);
+    //tcpServer.Send2Server(msg);
 }
 
 void NClientInterface::JoinTank()
 {
-    //onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+    onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 }
 
 void NClientInterface::OnInit(QString msg)
@@ -166,13 +164,9 @@ void NClientInterface::OnRcvNet(quint64 timeStamp, QString addr, QString msg)
     }
 }
 
-void NClientInterface::OnLobbyNet(QString dat)
+void NClientInterface::OnSubNet(QString dat)
 {
-    p2p.SetP2PList(dat);
-}
-
-void NClientInterface::OnGameNet(QString dat)
-{
+    qDebug()<<__FUNCTION__<<__LINE__<<dat;
     p2p.SetP2PList(dat);
 }
 
@@ -184,6 +178,7 @@ void NClientInterface::OnGameStart(QString dat)
 
 void NClientInterface::OnGameTick(QString dat)
 {
+    //qDebug()<<__FUNCTION__<<__LINE__<<dat;
     OnTick(0);
 }
 
@@ -198,21 +193,20 @@ QString JsonPackCmd(QString data){
     QJsonObject root;
     QJsonArray arr;
     arr.append(obj);
-    root.insert("cmds",arr);
+    root.insert("msg",arr);
     return QString(QJsonDocument(root).toJson(QJsonDocument::Compact));
 }
 
 void NClientInterface::RcvLocalCause(QString data)
 {
     //2.获取到当前帧收集到的本地控制命令，广播
+    //qDebug()<<__FUNCTION__<<__LINE__<<data;
 
-    //Send to ONN Server
 #ifdef TEST
-    //onn.SendMsg(data);
+    //Send to ONN Server
+    onn.SendMsg(data);
     QString packString = JsonPackCmd(data);
-    SendLocalMsg("CAU",packString);//TestCode
-
-    //SendLocalMsg("CAU",data);
+    //SendLocalMsg("CAU",packString);//TestCode
 #endif
 
     QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
@@ -226,6 +220,7 @@ void NClientInterface::RcvLocalCause(QString data)
     sobj.insert("addr",getID());
     sobj.insert("cmd","cause");
     sobj.insert("data",dataString);
+
     CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地控制命令
 }
 
@@ -264,8 +259,9 @@ void NClientInterface::OnRcvServerMsg(QString msg)
 
 void NClientInterface::OnRcvServerCmdMsg(QString cmd, QString msg)
 {
-    if(cmd == SV_CMD_LOBBY_NET) OnLobbyNet(msg);
-    if(cmd == SV_CMD_GAME_NET) OnGameNet(msg);
+    //qDebug()<<__FUNCTION__<<__LINE__<<cmd<<msg;
+    if(cmd == SV_CMD_LOBBY_NET) OnSubNet(msg);
+    if(cmd == SV_CMD_GAME_NET) OnSubNet(msg);
     if(cmd == SV_CMD_GAME_START) OnGameStart(msg);
     if(cmd == SV_CMD_TICK) OnGameTick(msg);
 }
@@ -281,7 +277,7 @@ void NClientInterface::OnReadyJoin()
 
 void NClientInterface::OnOnnMsg(QString msg)
 {
-    qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
     auto res = QJsonDocument::fromJson(msg.toLatin1()).array();
     if(res.count()<=0){
         qDebug()<<__FUNCTION__<<__LINE__;
@@ -303,13 +299,27 @@ void NClientInterface::OnOnnMsg(QString msg)
     auto method = obj["method"].toString();
 
     if(method == "startGame"){
+        qDebug()<<__FUNCTION__<<__LINE__;
+        obj["owner"] = crypto.getEthAddr();
         QString jsonMsg = QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
         SendGameInitInfo(jsonMsg);
     }
 
     if(method == "timeout"){
+        QJsonObject timeOutObj;
+        QJsonArray srcArray = obj["msg"].toArray();
+        QJsonArray dstArray;
+        for(int i = 0;i<srcArray.size();i++){
+            dstArray.append(QJsonDocument::fromJson(srcArray[i].toString().toLatin1()).object());
+        }
+        timeOutObj["msg"] = dstArray;
+        QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
+        SendLocalMsg("CAU", jsonMsg);
         OnTick(0);
-        //ipc.Send("CAU" + msg);
+        //        while(jsonMsg.contains("\\")){
+        //            jsonMsg.remove("\\");
+        //        }
+        //        qDebug()<<__FUNCTION__<<__LINE__<<jsonMsg;
     }
 }
 
@@ -325,12 +335,12 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
 void NClientInterface::Queue_Solo()
 {
     QString msg = SV_CMD_QUEUE_SOLO + getID()+";"+crypto.getPubKeyStr();
-    tcpServer.Send2Server(msg);
+    //tcpServer.Send2Server(msg);
 }
 
 void NClientInterface::Game_Over(QString Result)
 {
-    tcpServer.Send2Server(SV_CMD_GAMEOVER + Result);
+    //tcpServer.Send2Server(SV_CMD_GAMEOVER + Result);
 }
 
 void NClientInterface::SendGameInitInfo(QString data)

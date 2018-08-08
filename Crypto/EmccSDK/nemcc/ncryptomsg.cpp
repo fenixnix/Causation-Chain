@@ -34,6 +34,11 @@ QString NCryptoMsg::getAddr()
     return ecc.address;
 }
 
+QString NCryptoMsg::getEthAddr()
+{
+    return ecc.ethAddr;
+}
+
 QString NCryptoMsg::getPubKeyStr()
 {
     return ecc.publicKeyString;

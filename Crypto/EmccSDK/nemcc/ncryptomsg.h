@@ -12,6 +12,7 @@ public:
     void SetKey(QString secKey, QString pubKey);
     void LoadConfigFile(QString fileName);
     QString getAddr();
+    QString getEthAddr();
     QString getPubKeyStr();
     QByteArray getSecKey();
     QByteArray getPubKey();
