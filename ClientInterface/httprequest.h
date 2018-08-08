@@ -102,7 +102,7 @@ public:
 #define IP "http://47.75.190.195:3000"
 //#define IP "http://192.168.1.156:3000"
 
-    static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK2", QString url = IP){
+    static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK3", QString url = IP){
         QString block = pContract+"$"+pMethod+"$"+pArg+"$"+pubKey;
         //BUG << block;
         QByteArray result = qtGet(url+"/"+block);
@@ -112,7 +112,7 @@ public:
         return jsonArr;
     }
 
-    static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK2", QString url = IP){
+    static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK3", QString url = IP){
         //BUG << pubKey<<QByteArray::fromHex(pArg.toLatin1());
         QString block = docmd("method",pubKey,secKey,pContract,pMethod,pArg);
         //BUG << url << block;
