@@ -46,12 +46,12 @@ void WTCMainWindow::onP2pMsg(QString addr, QString msg)
 
 void WTCMainWindow::on_actionEnter_Lobby_triggered()
 {
-    interface.EnterLobby();
+    interface.Enter_Lobby();
 }
 
 void WTCMainWindow::on_actionStart_Solo_triggered()
 {
-    interface.StartSoloQueue();
+    interface.Queue_Solo();
 }
 
 void WTCMainWindow::on_actionJoin_Tank_triggered()

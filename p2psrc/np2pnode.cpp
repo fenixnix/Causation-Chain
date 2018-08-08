@@ -49,14 +49,15 @@ void NP2PNode::bindLocalEndPoint(QIPEndPoint localEndPoint)
     nat.Listen(localEndPoint.IP(),localEndPoint.Port());
 }
 
-void NP2PNode::join(QIPEndPoint endPoint)
+void NP2PNode::join(QIPEndPoint ep)
 {
     //    if(endPoint.IP() == nat.getRcvAddr()){
     //        natEndPoint.Init(endPoint.IP().toString(),nat.getSendPort());
     //        RequireJoin();
     //    }else{
-    qDebug()<<__FUNCTION__<<__LINE__<<endPoint.ToString();
-    nat.Send(endPoint.IP(),endPoint.Port(),ID);
+    qDebug()<<__FUNCTION__<<__LINE__<<ep.ToString();
+    natServer.Init(ep.ToString());
+    nat.Send(natServer.IP(),natServer.Port(),ID);
     //    }
 
     heartbeatTimer.start(HeartBeatInterval*1000);
@@ -169,6 +170,8 @@ void NP2PNode::OnHeartbeat()
         Ping(memberID);
     }
     emit neighbourListUpdate(neighbourList());
+
+    nat.Send(natServer.IP(),natServer.Port(),ID);//heartBeat to nat server
 }
 
 void NP2PNode::Ping(QString addr)

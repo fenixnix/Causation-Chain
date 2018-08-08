@@ -28,7 +28,7 @@ public:
     QString getID() const;
 
     void bindLocalEndPoint(QIPEndPoint localEndPoint);//Set local EndPoint
-    void join(QIPEndPoint endPoint);
+    void join(QIPEndPoint ep);
 
     QStringList neighbourList();
     void sendMsg(QString msg,QString ID);
@@ -58,7 +58,7 @@ private:
     void sendbyAddr(QString msg, QString ID);
 
     QString ID;
-    //QIPEndPoint natServer;//!!! nat server addr init
+    QIPEndPoint natServer;//!!! nat server addr init
     QIPEndPoint natEndPoint;//
     UdpNetwork nat;
 

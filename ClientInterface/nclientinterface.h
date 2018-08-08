@@ -33,13 +33,10 @@ public:
     void Queue_Solo();//local addr
     void Game_Over(QString Result);//local game result
 
-
     void SendGameInitInfo(QString data);
 
     //Test Code
     void StartTest();
-    void EnterLobby();
-    void StartSoloQueue();
     void JoinTank();
 
 signals:
@@ -65,7 +62,8 @@ private slots:
 
     void OnCauseTimeOut();
     void OnRcvP2P(QString msg);
-    void OnRcvServerMsg(QString cmd, QString msg);
+    void OnRcvServerMsg(QString msg);
+    void OnRcvServerCmdMsg(QString cmd, QString msg);
 
     void OnReadyJoin();
     void OnOnnMsg(QString msg);
@@ -90,7 +88,7 @@ private:
 
     NCryptoMsg crypto;
     NP2PNode p2p;
-    NP2PServerInterface server;
+    //NP2PServerInterface server;
     NTcpNetwork tcpServer;
 
     UdpNetwork ipc;

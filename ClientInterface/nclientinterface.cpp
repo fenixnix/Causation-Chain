@@ -9,7 +9,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
     connect(&p2p, &NP2PNode::RequireJoin, this, &NClientInterface::OnReadyJoin);
     connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvP2P);
-    connect(&server, &NP2PServerInterface::ServerMsg, this, &NClientInterface::OnRcvServerMsg);
+    connect(&tcpServer, &NTcpNetwork::ClientRcvMsg, this, &NClientInterface::OnRcvServerMsg);
     connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
 
 #ifdef TEST
@@ -46,7 +46,8 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
-    server.Init(local, p2pServer);
+
+    //server.Init(local, p2pServer);
     tcpServer.InitClient(QIPEndPoint(QHostAddress::LocalHost,9999));
 
     p2p.Init(crypto.getAddr(),natServer,local);
@@ -54,7 +55,7 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     timeOut.setSingleShot(true);
 
 #ifdef TEST
-    timeSync.StartTestSync(150);//Timer Simulation Test
+    //timeSync.StartTestSync(150);//Timer Simulation Test
     //timeSync.StartTestSync(1000);//Timer Simulation Test
 #endif
 }
@@ -93,14 +94,10 @@ void NClientInterface::StartTest()
     timeSync.StartTestSync(3000);
 }
 
-void NClientInterface::EnterLobby()
+void NClientInterface::Enter_Lobby()
 {
-    server.Query(SV_CMD_ENTER+p2p.getLocalInfoString() + ";" + crypto.getPubKeyStr());
-}
-
-void NClientInterface::StartSoloQueue()
-{
-    server.Query(SV_CMD_QUEUE_SOLO+getID()+";"+crypto.getPubKeyStr());
+    QString msg = SV_CMD_ENTER + p2p.getLocalInfoString();
+    tcpServer.Send2Server(msg);
 }
 
 void NClientInterface::JoinTank()
@@ -255,7 +252,17 @@ void NClientInterface::OnRcvP2P(QString msg)
     }
 }
 
-void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
+void NClientInterface::OnRcvServerMsg(QString msg)
+{
+    MessageProtocol mp;
+    auto cmd = mp.Decode(msg);
+    if(cmd==""){
+        return;
+    }
+    OnRcvServerCmdMsg(cmd, mp.getData());
+}
+
+void NClientInterface::OnRcvServerCmdMsg(QString cmd, QString msg)
 {
     if(cmd == SV_CMD_LOBBY_NET) OnLobbyNet(msg);
     if(cmd == SV_CMD_GAME_NET) OnGameNet(msg);
@@ -263,9 +270,13 @@ void NClientInterface::OnRcvServerMsg(QString cmd, QString msg)
     if(cmd == SV_CMD_TICK) OnGameTick(msg);
 }
 
+bool joined  = false;
 void NClientInterface::OnReadyJoin()
 {
-    EnterLobby();
+    if(!joined){
+        Enter_Lobby();
+        joined = true;
+    }
 }
 
 void NClientInterface::OnOnnMsg(QString msg)
@@ -311,19 +322,15 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
     ipc.Send(cmd+msg);
 }
 
-void NClientInterface::Enter_Lobby()
-{
-    server.Query(SV_CMD_ENTER + p2p.getLocalInfoString());
-}
-
 void NClientInterface::Queue_Solo()
 {
-    server.Query(SV_CMD_QUEUE_SOLO + getID());
+    QString msg = SV_CMD_QUEUE_SOLO + getID()+";"+crypto.getPubKeyStr();
+    tcpServer.Send2Server(msg);
 }
 
 void NClientInterface::Game_Over(QString Result)
 {
-    server.Query(SV_CMD_GAMEOVER+Result);
+    tcpServer.Send2Server(SV_CMD_GAMEOVER + Result);
 }
 
 void NClientInterface::SendGameInitInfo(QString data)

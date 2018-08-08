@@ -24,7 +24,7 @@ void NLobbyServer::SelfTest()
 
 void NLobbyServer::OnRcvMsg(QString msg, QTcpSocket *socket)
 {
-    qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
     MessageProtocol mp;
     auto cmd = mp.Decode(msg);
     if(cmd.size()==0){
