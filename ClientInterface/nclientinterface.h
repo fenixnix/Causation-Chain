@@ -34,8 +34,8 @@ public:
     void Queue_Solo();//local addr
     void Game_Over(QString Result);//local game result
     //Onn Test Code
-    void SendGameInitInfo(QString data);
     void JoinTank();
+    void OnnInputs(int frame, QString msg);
 
 signals:
     void RcvCause(QString cause);
@@ -43,6 +43,7 @@ signals:
     void RcvMsg(QString id, QString msg);
 
 public slots:
+    void OnStartGame(QString jsonArrayMembers);
     void OnTick(int frameNo);//Tick
 
     void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
@@ -51,7 +52,6 @@ public slots:
 private slots:
     //Fram Lobby
     void OnSubNet(QString dat);
-    void OnGameStart(QString dat);
     void OnGameTick(QString dat);
 
     void OnRcvP2P(QString msg);
@@ -59,9 +59,12 @@ private slots:
     void OnRcvServerCmdMsg(QString cmd, QString msg);
 
     void OnReadyJoin();
-    void OnOnnMsg(QString msg);
+
+    void OnOnnTimer();
 
 private:
+    void SendGameInitInfo(QString data);
+
     void BroadcastCause();
     void RcvStart(QString data);
     void RcvLocalCause(QString data);
@@ -74,20 +77,21 @@ private:
     void CryptoSend(QString id, QString msg);
     void CryptoBroadcast(QString msg);
 
-    QList<QString> articipators;
-    QMap<QString, QString> neighbourKeyMap;
+    OnnConnector onn;
+    QTimer onnTimer;
+    int onnFrame = 1;
 
-    NCryptoMsg crypto;
     NP2PNode p2p;
     NTcpNetwork tcpServer;
-
     UdpNetwork ipc;
-
-    OnnConnector onn;
 
     NCmdPacker packer;
     NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
     NTimeSync timeSync;
+    //for consensus
+    NCryptoMsg crypto;
+    QList<QString> articipators;
+    QMap<QString, QString> neighbourKeyMap;
 };
 
 #endif // NCLIENTINTERFACE_H
