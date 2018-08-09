@@ -1,5 +1,6 @@
 #include "onnconnector.h"
 #include "httprequest.h"
+#include <QSettings>
 
 OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
 {
@@ -9,6 +10,10 @@ OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
 
 void OnnConnector::Init()
 {
+    QSettings onnCfg("onn.cfg",QSettings::IniFormat);
+    onnCfg.value("Contract");
+    onnCfg.value("WebSocket");
+    onnCfg.value("Http");
     ws.createDataRecvWS();
 }
 

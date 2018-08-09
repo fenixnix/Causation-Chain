@@ -99,8 +99,8 @@ public:
         return block;
     }
 
-#define IP "http://47.75.190.195:3000"
-//#define IP "http://192.168.1.156:3000"
+//#define IP "http://47.75.190.195:3000"
+#define IP "http://192.168.1.145:3000"
 
     static QJsonArray doMethodGet(QByteArray pubKey, QString pMethod = "", QString pArg = "null", QString pContract = "TANK3", QString url = IP){
         QString block = pContract+"$"+pMethod+"$"+pArg+"$"+pubKey;
