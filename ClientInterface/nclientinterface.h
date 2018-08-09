@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include "ncausationconsensus.h"
+#include "np2pserverinterface.h"
 #include "ncmdpacker.h"
 #include "np2pnode.h"
 #include "ncryptomsg.h"
-#include "np2pserverinterface.h"
-#include "udpnetwork.h"
 #include "ntimesync.h"
 #include "onnconnector.h"
+#include "udpnetwork.h"
 #include "ntcpnetwork.h"
 
 #define StartPort 8890

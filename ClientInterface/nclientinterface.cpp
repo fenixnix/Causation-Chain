@@ -1,8 +1,6 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
 
-#define TEST
-
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
@@ -172,12 +170,8 @@ void NClientInterface::RcvLocalCause(QString data)
     //2.获取到当前帧收集到的本地控制命令，广播
     qDebug()<<__FUNCTION__<<__LINE__<<data;
 
-#ifdef TEST
     //Send to ONN Server
     //onn.PlayGame(data);
-    //QString packString = JsonPackCmd(data);
-    //SendLocalMsg("CAU",packString);//TestCode
-#endif
 
 //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
 //    quint64 frame = obj["frm"].toDouble();

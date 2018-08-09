@@ -16,7 +16,7 @@ void OnnConnector::GenerateDefaultConfigFile()
     onnCfg.clear();
     onnCfg.setValue("Contract","TANK3");
     onnCfg.setValue("Http","http://47.75.190.195:3000");
-    onnCfg.setValue("WebSocket","ws://47.75.190.195:3001");
+    //onnCfg.setValue("WebSocket","ws://47.75.190.195:3001");
     onnCfg.sync();
 }
 
@@ -29,8 +29,8 @@ void OnnConnector::Init()
     QSettings onnCfg(cfg,QSettings::IniFormat);
     contract = onnCfg.value("Contract").toString();
     http = onnCfg.value("Http").toString();
-    QString webSocket = onnCfg.value("WebSocket").toString();
-    ws.createDataRecvWS(webSocket);
+    //QString webSocket = onnCfg.value("WebSocket").toString();
+    //ws.createDataRecvWS(webSocket);
 }
 
 void OnnConnector::JoinGame(QByteArray secKey, QByteArray pubKey)

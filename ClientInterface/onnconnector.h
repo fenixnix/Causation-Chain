@@ -2,7 +2,7 @@
 #define ONNCONNECTOR_H
 
 #include <QObject>
-#include "nwsnetwork.h"
+//#include "nwsnetwork.h"
 
 class OnnConnector : public QObject
 {
@@ -13,12 +13,12 @@ public:
     void Init();
     void JoinGame(QByteArray secKey, QByteArray pubKey);
     void PlayGame(QString msg);
+    QString GetTick(int frame);
 
 signals:
     void RcvMsg(QString msg);
 
 private:
-    NWsNetwork ws;
     QByteArray secKey;
     QByteArray pubKey;
     QString contract;
