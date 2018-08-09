@@ -37,6 +37,8 @@ private slots:
 
     void on_actionInit_Game_triggered();
 
+    void on_tickBtn_clicked();
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;

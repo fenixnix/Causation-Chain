@@ -13,6 +13,8 @@
 #include "ntcpnetwork.h"
 
 #define StartPort 8890
+#define CHECK_RETURN(X) if(X){qDebug()<<__FUNCTION__<<__LINE__;return;}
+#define JSON2STRING(X) QString(QJsonDocument(obj).toJson(QJsonDocument::Compact))
 
 class NClientInterface : public QObject
 {
@@ -21,7 +23,6 @@ public:
     explicit NClientInterface(QObject *parent = nullptr);
     void Init();
     void Init(QString secKey, QString pubKey);
-    void SetPort(int port);
     QString getID();
     QStringList GetMemberList();
     void SetLocalID(QString ID);
@@ -32,23 +33,17 @@ public:
     void Enter_Lobby();//local nat
     void Queue_Solo();//local addr
     void Game_Over(QString Result);//local game result
-
+    //Onn Test Code
     void SendGameInitInfo(QString data);
-
-    //Test Code
-    void StartTest();
     void JoinTank();
 
 signals:
     void RcvCause(QString cause);
     void RcvResult(QString result);
     void RcvMsg(QString id, QString msg);
-    //void RcvResultHash(QByteArray resultHash);
 
 public slots:
-    void OnInit(QString msg);//功能业务初始化 业务Server
-    void OnFinish(QString msg);//功能业务结束 业务Server
-    void OnTick(int frameNo);
+    void OnTick(int frameNo);//Tick
 
     void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
     void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
@@ -59,7 +54,7 @@ private slots:
     void OnGameStart(QString dat);
     void OnGameTick(QString dat);
 
-    void OnCauseTimeOut();
+    //void OnCauseTimeOut();
     void OnRcvP2P(QString msg);
     void OnRcvServerMsg(QString msg);
     void OnRcvServerCmdMsg(QString cmd, QString msg);
@@ -83,7 +78,7 @@ private:
     QList<QString> articipators;
     QMap<QString, QString> neighbourKeyMap;
 
-    QTimer timeOut;
+    //QTimer timeOut;
 
     NCryptoMsg crypto;
     NP2PNode p2p;

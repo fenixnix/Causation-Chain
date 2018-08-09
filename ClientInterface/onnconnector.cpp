@@ -8,23 +8,40 @@ OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
     Init();
 }
 
+const QString cfg = "onn.cfg";
+
+void OnnConnector::GenerateDefaultConfigFile()
+{
+    qDebug()<<__FUNCTION__<<__LINE__;
+    QSettings onnCfg(cfg,QSettings::IniFormat);
+    onnCfg.clear();
+    onnCfg.setValue("Contract","TANK3");
+    onnCfg.setValue("Http","http://47.75.190.195:3000");
+    onnCfg.setValue("WebSocket","ws://47.75.190.195:3001");
+    onnCfg.sync();
+}
+
 void OnnConnector::Init()
 {
-    QSettings onnCfg("onn.cfg",QSettings::IniFormat);
-    onnCfg.value("Contract");
-    onnCfg.value("WebSocket");
-    onnCfg.value("Http");
-    ws.createDataRecvWS();
+    if(!QFile(cfg).exists()){
+        qDebug()<<"Not find: "<<cfg<<" !!";
+        GenerateDefaultConfigFile();
+    }
+    QSettings onnCfg(cfg,QSettings::IniFormat);
+    contract = onnCfg.value("Contract").toString();
+    http = onnCfg.value("Http").toString();
+    QString webSocket = onnCfg.value("WebSocket").toString();
+    ws.createDataRecvWS(webSocket);
 }
 
 void OnnConnector::JoinGame(QByteArray secKey, QByteArray pubKey)
 {
     this->secKey = secKey;
     this->pubKey = pubKey;
-    HttpRequest::doMethodSet(secKey,pubKey);
+    HttpRequest::doMethodSet(secKey,pubKey,"joinGame","null",contract,http);
 }
 
-void OnnConnector::SendMsg(QString msg)
+void OnnConnector::PlayGame(QString msg)
 {
-    HttpRequest::doMethodSet(secKey,pubKey,"play",msg.toLatin1().toHex());
+    HttpRequest::doMethodSet(secKey,pubKey,"play",msg.toLatin1().toHex(),contract,http);
 }

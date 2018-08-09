@@ -67,3 +67,10 @@ void WTCMainWindow::on_actionInit_Game_triggered()
     jsonString += "\",\"msg\":[\"P11\",\"P22\",\"P33\"],\"result\":true,\"symbol\":\"TANK\"}";
     interface.SendGameInitInfo(jsonString);
 }
+
+int frm = 0;
+void WTCMainWindow::on_tickBtn_clicked()
+{
+    interface.OnTick(frm);
+    frm++;
+}

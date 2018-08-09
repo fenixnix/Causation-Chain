@@ -9,9 +9,10 @@ class OnnConnector : public QObject
     Q_OBJECT
 public:
     explicit OnnConnector(QObject *parent = nullptr);
+    static void GenerateDefaultConfigFile();
     void Init();
     void JoinGame(QByteArray secKey, QByteArray pubKey);
-    void SendMsg(QString msg);
+    void PlayGame(QString msg);
 
 signals:
     void RcvMsg(QString msg);
@@ -20,6 +21,8 @@ private:
     NWsNetwork ws;
     QByteArray secKey;
     QByteArray pubKey;
+    QString contract;
+    QString http;
 };
 
 #endif // ONNCONNECTOR_H
