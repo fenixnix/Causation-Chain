@@ -14,7 +14,7 @@
 
 #define StartPort 8890
 #define CHECK_RETURN(X) if(X){qDebug()<<__FUNCTION__<<__LINE__;return;}
-#define JSON2STRING(X) QString(QJsonDocument(obj).toJson(QJsonDocument::Compact))
+#define JSON2STRING(X) QString(QJsonDocument(X).toJson(QJsonDocument::Compact))
 
 class NClientInterface : public QObject
 {
@@ -54,7 +54,6 @@ private slots:
     void OnGameStart(QString dat);
     void OnGameTick(QString dat);
 
-    //void OnCauseTimeOut();
     void OnRcvP2P(QString msg);
     void OnRcvServerMsg(QString msg);
     void OnRcvServerCmdMsg(QString cmd, QString msg);
@@ -68,7 +67,7 @@ private:
     void RcvLocalCause(QString data);
     void RcvLocalResult(QString data);
 
-    void RcvNetCause(quint64 frame, QString addr, QString data);
+    void RcvNetCause(quint64 frm, QString addr, QString data);
     void RcvNetCausePack(quint64 frame, QString addr, QString data);
     void RcvNetResult(quint64 frame, QString addr, QString data);
 
@@ -77,8 +76,6 @@ private:
 
     QList<QString> articipators;
     QMap<QString, QString> neighbourKeyMap;
-
-    //QTimer timeOut;
 
     NCryptoMsg crypto;
     NP2PNode p2p;

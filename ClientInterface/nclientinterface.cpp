@@ -10,12 +10,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&p2p, &NP2PNode::RequireJoin, this, &NClientInterface::OnReadyJoin);
     connect(&p2p, &NP2PNode::RcvMsg, this, &NClientInterface::OnRcvP2P);
     connect(&tcpServer, &NTcpNetwork::ClientRcvMsg, this, &NClientInterface::OnRcvServerMsg);
-    //connect(&timeOut, &QTimer::timeout, this, &NClientInterface::OnCauseTimeOut);
-
-#ifdef TEST
     connect(&onn, &OnnConnector::RcvMsg, this, &NClientInterface::OnOnnMsg);
-#endif
-
     Init();
 }
 
@@ -34,6 +29,7 @@ void NClientInterface::Init()
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     Init(secKey, pubKey);
+    //onn.Init();
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -97,8 +93,11 @@ void NClientInterface::OnTick(int frameNo)
     if(isEven){
         //1.向客户端请求本地CMD,和上一帧输入共识
         packer.frame = frm;
-        //TODO:输入共识
+        //TODO: 输入共识：if(consensus)
+        //ipc.Send("CAU",consensus.ReachCauseConsensus(););
         SendLocalMsg("REQ",frameString(frm));
+    }else{
+        BroadcastCause();
     }
 }
 
@@ -175,42 +174,37 @@ void NClientInterface::RcvLocalCause(QString data)
 
 #ifdef TEST
     //Send to ONN Server
-    onn.PlayGame(data);
+    //onn.PlayGame(data);
     //QString packString = JsonPackCmd(data);
     //SendLocalMsg("CAU",packString);//TestCode
 #endif
 
-    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
-    quint64 frame = obj["frm"].toDouble();
-    QString dataString = obj["data"].toString();
-    packer.Push(getID(),dataString);
+//    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
+//    quint64 frame = obj["frm"].toDouble();
+//    QString dataString = obj["data"].toString();
+    packer.Push(getID(),data);
     //timeOut.start(500);
 
     QJsonObject sobj;
     sobj.insert("frm",packer.frame);
     sobj.insert("id",getID());
     sobj.insert("dat",data);
-
+    p2p.broadcastMsg(JSON2STRING(sobj));
     //CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地控制命令
 }
 
-void NClientInterface::RcvNetCause(quint64 frame, QString addr, QString data)
+void NClientInterface::RcvNetCause(quint64 frm, QString addr, QString data)
 {
     //3.1收集其他节点的控制命令，在收集全部参与者的控制命令
-    packer.Push(addr,data);
-    if(packer.Size()==articipators.size()){
-        BroadcastCause();
+    qDebug()<<__FUNCTION__<<__LINE__<<frm;
+    if(packer.frame == frm){
+        packer.Push(addr,data);
     }
 }
 
-//void NClientInterface::OnCauseTimeOut()
-//{
-//    //3.2收集参与者控制命令 超时
-//    BroadcastCause();
-//}
-
 void NClientInterface::OnRcvP2P(QString msg)
 {
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
     auto res = crypto.decode(msg,neighbourKeyMap);
     if(res.size()>=3){
         OnRcvNet(res[0].toInt(),res[1],res[2]);
@@ -304,25 +298,25 @@ void NClientInterface::SendGameInitInfo(QString data)
 
 void NClientInterface::BroadcastCause()
 {
-    //4.广播接收到的打包操作命令
-    //timeOut.stop();
+    //4.广播接收到的打包输入命令
+    qDebug()<<__FUNCTION__<<__LINE__;
     auto jsonDat = packer.PackJsonString();
     auto frame = packer.frame;
     consensus.RcvCause(frame,getID(),jsonDat);//本地操作命令参与共识
     QJsonObject obj;
-    obj.insert("frame",frame);
-    obj.insert("addr",getID());
+    obj.insert("frm",frame);
+    obj.insert("id",getID());
     obj.insert("cmd","causePark");
-    obj.insert("data",jsonDat);
-    CryptoBroadcast(QString(QJsonDocument(obj).toJson()));
+    obj.insert("dat",jsonDat);
+    p2p.broadcastMsg(JSON2STRING(obj));
+    //CryptoBroadcast(QString(QJsonDocument(obj).toJson()));
 }
 
 void NClientInterface::RcvNetCausePack(quint64 frame, QString addr, QString data)
 {
-    //5.共识输入达成50%以上时执行。
+    //5.接收消息并 共识输入达成50%以上时执行。
+    qDebug()<<__FUNCTION__<<__LINE__;
     consensus.RcvCause(frame,addr,data);
-    //TODO: 输入共识：if(consensus)
-    //ipc.Send("CAU",consensus.ReachCauseConsensus(););
 }
 
 void NClientInterface::RcvLocalResult(QString data)

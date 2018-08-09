@@ -5,7 +5,6 @@
 OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
 {
     connect(&ws, &NWsNetwork::RcvMsg, this, &OnnConnector::RcvMsg);
-    Init();
 }
 
 const QString cfg = "onn.cfg";
