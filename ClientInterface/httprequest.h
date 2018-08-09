@@ -108,7 +108,7 @@ public:
         //QJsonDocument jsonDoc = QJsonDocument::fromJson(result);
         //QJsonArray    jsonArr = jsonDoc.array();
         //BUG << jsonArr;
-        return block;
+        return url+"/"+block;
     }
 
     static QByteArray doMethodSet(QByteArray secKey, QByteArray pubKey,QString pMethod = "joinGame",QString pArg = "null" ,QString pContract = "TANK", QString url = IP){
@@ -140,10 +140,10 @@ public slots:
             QByteArray buffer = reply->readAll();
             //QString str = QString::fromUtf8(buffer);
             //qDebug()<<str;
-            BUG << buffer;
+            //BUG << buffer;
             emit doGetData(buffer);
         } else {
-            BUG<<reply->errorString();
+            //BUG<<reply->errorString();
         }
         reply->deleteLater();
     }

@@ -52,15 +52,15 @@ void OnnConnector::PlayGame(QString msg)
     //qDebug()<<"ping:"<<(float)ping/1000000.0f<<"ms";
 }
 
-QString OnnConnector::GetState()
+void OnnConnector::GetState()
 {
-    emit doGet(QUrl(HttpRequest::doMethodGet(
+    httpGet.onGet(QUrl(HttpRequest::doMethodGet(
                         pubKey,"getStat","null",contract,http)));
 }
 
-QString OnnConnector::GetTick(int frame)
+void OnnConnector::GetTick(int frame)
 {
-    emit doGet(QUrl(HttpRequest::doMethodGet(
+    httpGet.onGet(QUrl(HttpRequest::doMethodGet(
                         pubKey,"getTick",QByteArray::number(frame).toHex(),contract,http)));
 }
 
@@ -71,9 +71,31 @@ void OnnConnector::StopGame()
 
 void OnnConnector::OnTime()
 {
-    auto res = GetState();
-    if(res!="null"){
-        emit StartGame(res);
+    GetState();
+}
+
+void OnnConnector::OnRcvHttpGet(QString msg)
+{
+    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    if(msg == "null"){
+        return;
+    }
+
+    auto obj = QJsonDocument::fromJson(msg.toLatin1()).object();
+    auto method = obj["method"];
+
+    if(method == "getStat"){
+        auto array = obj["data"].toArray();
+        auto jsonString = QString(QJsonDocument(array).toJson(QJsonDocument::Compact));
+        emit StartGame(jsonString);
         timer.stop();
+    }
+
+    if(method == "getTick"){
+        auto tick  = obj["index"].toInt();
+        auto array = obj["data"].toArray();
+        auto jsonString = QString(QJsonDocument(array).toJson(QJsonDocument::Compact));
+        emit Tick(tick, jsonString);
+        //qDebug()<<__FUNCTION__<<__LINE__<<jsonString;
     }
 }

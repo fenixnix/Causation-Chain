@@ -61,6 +61,7 @@ private slots:
     void OnReadyJoin();
 
     void OnOnnTimer();
+    void OnOnnTick(int frame, QString msg);
 
 private:
     void SendGameInitInfo(QString data);

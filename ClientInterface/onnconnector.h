@@ -14,20 +14,19 @@ public:
     void Init();
     void JoinGame(QByteArray secKey, QByteArray pubKey);
     void PlayGame(QString msg);
-    QString GetTick(int frame);//null or JsonArray for inputs;
+    void GetTick(int frame);//null or JsonArray for inputs;
     void StopGame();
 
 signals:
     void StartGame(QString membersJsonString);
-    void doGetState(QUrl url);
-    void doGetTick(QUrl url);
+    void Tick(int frame, QString msg);
 
 private slots:
     void OnTime();
     void OnRcvHttpGet(QString msg);
 
 private:
-    QString GetState();//null or JsonArray for members;
+    void GetState();//null or JsonArray for members;
 
     HttpGet httpGet;
 

@@ -10,6 +10,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&tcpServer, &NTcpNetwork::ClientRcvMsg, this, &NClientInterface::OnRcvServerMsg);
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
+    connect(&onn, &OnnConnector::Tick, this, &NClientInterface::OnOnnTick);
     connect(&onnTimer, &QTimer::timeout, this, &NClientInterface::OnOnnTimer);
 
     Init();
@@ -238,13 +239,13 @@ void NClientInterface::OnReadyJoin()
 
 void NClientInterface::OnOnnTimer()
 {
-    qDebug()<<__FUNCTION__<<__LINE__;
-    auto res = onn.GetTick(onnFrame);
-    qDebug()<<__FUNCTION__<<__LINE__<<res;
-    if(res!="null"){
-        OnnInputs(onnFrame,res);
-        onnFrame++;
-    }
+    onn.GetTick(onnFrame);
+}
+
+void NClientInterface::OnOnnTick(int frame, QString msg)
+{
+    OnnInputs(frame,msg);
+    onnFrame++;
 }
 
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
@@ -259,7 +260,7 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
 
     //for ONN
     onnFrame = 1;
-    onnTimer.start(50);
+    onnTimer.start(500);
 }
 
 void NClientInterface::SendLocalMsg(QString cmd, QString msg)
