@@ -1,5 +1,3 @@
-QT += websockets
-
 INCLUDEPATH += \
     $$PWD/
 
@@ -9,9 +7,9 @@ HEADERS += \
     $$PWD/ntimesynctester.h \
     $$PWD/ncmdpacker.h \
     $$PWD/wtccmddefine.h \
-    $$PWD/httprequest.h \
     $$PWD/onnconnector.h \
-    $$PWD/onnrequest.h
+    $$PWD/onnrequest.h \
+    $$PWD/utility.h
 
 SOURCES += \
     $$PWD/nclientinterface.cpp \
@@ -19,4 +17,5 @@ SOURCES += \
     $$PWD/ntimesynctester.cpp \
     $$PWD/ncmdpacker.cpp \
     $$PWD/onnconnector.cpp \
-    $$PWD/onnrequest.cpp
+    $$PWD/onnrequest.cpp \
+    $$PWD/utility.cpp

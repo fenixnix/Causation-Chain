@@ -18,7 +18,12 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
 
-    //Init();
+    Init();
+}
+
+NClientInterface::~NClientInterface()
+{
+    onn.terminate();
 }
 
 void NClientInterface::Init()
@@ -39,9 +44,8 @@ void NClientInterface::Init()
 
     onn.moveToThread(&onn);
     onn.start();
-    qDebug()<<__FUNCTION__<<this->thread();
-    emit OnnInitSign();
     //onn.Init();
+    emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -89,7 +93,7 @@ void NClientInterface::Enter_Lobby()
 void NClientInterface::JoinTank()
 {
     //onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
-    emit OnnJoinSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+    emit OnnJoinSign();
 }
 
 void NClientInterface::OnnInputs(int frame, QString msg)

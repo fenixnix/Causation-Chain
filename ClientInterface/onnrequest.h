@@ -11,8 +11,8 @@ public:
     void Init(QString secKey, QString pubKey);
     void SetUrlContract(QString Url, QString contract);
 
-    QString Get(QString method, QString arg);
-    QString Post(QString method, QString arg);
+    QString Get(QString method, QString arg = "null");
+    QString Post(QString method, QString arg = "null");
 
     QString Url;
 

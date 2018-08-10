@@ -20,7 +20,9 @@ void NHttpRequest::Get(QString url)
 
 void NHttpRequest::Post(QString url, QByteArray data)
 {
-    QNetworkReply *reply = qnam.post(QNetworkRequest(QUrl(url)),data);
+    auto req = QNetworkRequest(QUrl(url));
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/x-www-form-urlencoded");
+    QNetworkReply *reply = qnam.post(req,data);
     connect(reply, &QNetworkReply::finished, this, &NHttpRequest::OnFinish);
     connect(reply, &QIODevice::readyRead, this, &NHttpRequest::OnReadReady);
 }

@@ -11,16 +11,16 @@
 #include "udpnetwork.h"
 #include "ntcpnetwork.h"
 #include "onnconnector.h"
+#include "utility.h"
 
 #define StartPort 8890
-#define CHECK_RETURN(X) if(X){qDebug()<<__FUNCTION__<<__LINE__;return;}
-#define JSON2STRING(X) QString(QJsonDocument(X).toJson(QJsonDocument::Compact))
 
 class NClientInterface : public QObject
 {
     Q_OBJECT
 public:
     explicit NClientInterface(QObject *parent = nullptr);
+    ~NClientInterface();
     void Init();
     void Init(QString secKey, QString pubKey);
     QString getID();
@@ -43,8 +43,8 @@ signals:
     void RcvMsg(QString id, QString msg);
     void TrigOnnTick(int frame);
 
-    void OnnInitSign();
-    void OnnJoinSign(QByteArray secKey, QByteArray pubKey);
+    void OnnInitSign(QByteArray secKey, QByteArray pubKey);
+    void OnnJoinSign();
     void OnnPlaySign(QString dat);
 
 public slots:

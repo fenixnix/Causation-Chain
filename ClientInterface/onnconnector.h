@@ -3,13 +3,15 @@
 
 #include <QObject>
 #include <QTimer>
-#include "httprequest.h"
+#include "onnrequest.h"
+#include "nhttprequest.h"
 
 class OnnConnector : public QThread
 {
     Q_OBJECT
 public:
     explicit OnnConnector(QThread *parent = nullptr);
+    ~OnnConnector();
     static void GenerateDefaultConfigFile();
 
 signals:
@@ -19,8 +21,8 @@ signals:
 
 public slots:
     void GetTick(int frame);//null or JsonArray for inputs;
-    void Init();
-    void JoinGame(QByteArray secKey, QByteArray pubKey);
+    void Init(QByteArray secKey, QByteArray pubKey);
+    void JoinGame();
     void PlayGame(QString msg);
     void StopGame();
 
@@ -31,13 +33,9 @@ private slots:
 private:
     void GetState();//null or JsonArray for members;
 
-    HttpGet* httpGet;
-
-    QByteArray secKey;
-    QByteArray pubKey;
-    QString contract;
-    QString http;
-    QTimer timer;
+    QTimer* timer;
+    NHttpRequest* http;
+    OnnRequest onnReq;
 };
 
 #endif // ONNCONNECTOR_H

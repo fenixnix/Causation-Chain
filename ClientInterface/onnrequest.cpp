@@ -1,4 +1,5 @@
 #include "onnrequest.h"
+#include <QStringList>
 
 OnnRequest::OnnRequest()
 {
