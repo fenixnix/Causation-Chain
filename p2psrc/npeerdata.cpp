@@ -5,9 +5,24 @@ NPeerData::NPeerData()
     pingTime = steady_clock::now();
 }
 
+NPeerData::NPeerData(QString jsonString)
+{
+    pingTime = steady_clock::now();
+    SetDataJson(jsonString);
+}
+
 NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
 {
     SetData(id,loc,nat);
+}
+
+bool NPeerData::SetDataJson(QString data)
+{
+    auto obj = QJsonDocument::fromJson(data).object();
+    addrID = obj["id"].toString().toLatin1().toHex();
+    loc = QIPEndPoint(obj["locEP"].toString());
+    nat = QIPEndPoint(obj["natEP"].toString());
+    return true;
 }
 
 bool NPeerData::SetData(QString data)
@@ -27,7 +42,7 @@ bool NPeerData::SetData(QString data)
 void NPeerData::SetData(QString id,QIPEndPoint loc, QIPEndPoint nat)
 {
     this->id = id;
-    this->addr = id.toLatin1().toHex();
+    this->addrID = id.toLatin1().toHex();
     this->loc = loc;
     this->nat = nat;
 }
@@ -77,5 +92,5 @@ QString NPeerData::getId() const
 void NPeerData::setId(const QString &value)
 {
     id = value;
-    addr = QByteArray::fromHex(value.toLatin1());
+    addrID = QByteArray::fromHex(value.toLatin1());
 }

@@ -11,7 +11,9 @@ class NPeerData
 {
 public:
     NPeerData();
+    NPeerData(QString jsonString);
     NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat);
+    bool SetDataJson(QString data);
     bool SetData(QString data);
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 
@@ -21,8 +23,7 @@ public:
     bool CheckAlive();
     QString ToString();
 
-    QByteArray addr;
-
+    QByteArray addrID;
     QIPEndPoint loc;
     QIPEndPoint nat;
 

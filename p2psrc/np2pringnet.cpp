@@ -7,12 +7,12 @@ NP2PRingNet::NP2PRingNet(QObject *parent) : QObject(parent)
 
 void NP2PRingNet::peerJoinCall(NPeerData peerInfo)
 {
-    if(peerInfoHashMap.contains(peerInfo.addr)){
-        peerInfoHashMap[peerInfo.addr].RcvPing();
+    if(peerInfoHashMap.contains(peerInfo.addrID)){
+        peerInfoHashMap[peerInfo.addrID].RcvPing();
         return;
     }
-    peerAddrList.append(peerInfo.addr);
-    peerInfoHashMap.insert(peerInfo.addr,peerInfo);
+    peerAddrList.append(peerInfo.addrID);
+    peerInfoHashMap.insert(peerInfo.addrID,peerInfo);
 }
 
 void NP2PRingNet::update()

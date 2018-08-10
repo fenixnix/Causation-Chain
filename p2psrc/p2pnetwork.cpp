@@ -20,7 +20,7 @@ void P2PNetwork::Join(QString data, QIPEndPoint nat)
     if(!info.SetData(data)) return;
 
     ringNet.peerJoinCall(info);
-    peers.insert(info.addr,nat);
+    peers.insert(info.addrID,nat);
 }
 
 QStringList P2PNetwork::getNodeInfoListbyAddr(QString data)

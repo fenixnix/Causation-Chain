@@ -2,14 +2,16 @@
 #define NCLIENTINTERFACE_H
 
 #include <QObject>
+
+#include "ntcpnetwork.h"
 #include "ncausationconsensus.h"
 #include "np2pserverinterface.h"
-#include "ncmdpacker.h"
+#include "ncausepacker.h"
 #include "np2pnode.h"
 #include "ncryptomsg.h"
 #include "ntimesync.h"
+
 #include "udpnetwork.h"
-#include "ntcpnetwork.h"
 #include "onnconnector.h"
 #include "utility.h"
 
@@ -55,7 +57,7 @@ public slots:
     void OnRcvNet(quint64 timeStamp, QString addr, QString msg);
 
 private slots:
-    //Fram Lobby
+    //From Lobby
     void OnSubNet(QString dat);
     void OnGameTick(QString dat);
 
@@ -91,7 +93,7 @@ private:
     NTcpNetwork tcpServer;
     UdpNetwork ipc;
 
-    NCmdPacker packer;
+    NCausePacker packer;
     NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
     NTimeSync timeSync;
     //for consensus

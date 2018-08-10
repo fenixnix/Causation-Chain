@@ -1,11 +1,11 @@
-#include "ncmdpacker.h"
+#include "ncausepacker.h"
 
-NCmdPacker::NCmdPacker()
+NCausePacker::NCausePacker()
 {
 
 }
 
-void NCmdPacker::Push(QString addr, QString cmd)
+void NCausePacker::Push(QString addr, QString cmd)
 {
     if(cmdPack.contains(addr)){
         return;
@@ -13,19 +13,19 @@ void NCmdPacker::Push(QString addr, QString cmd)
     cmdPack.insert(addr, cmd);
 }
 
-void NCmdPacker::Clear()
+void NCausePacker::Clear()
 {
     cmdPack.clear();
 }
 
-int NCmdPacker::Size()
+int NCausePacker::Size()
 {
     return cmdPack.size();
 }
 
 #include <QJsonDocument>
 #include <QJsonObject>
-QString NCmdPacker::PackJsonString()
+QString NCausePacker::PackJsonString()
 {
     QJsonObject obj;
     foreach(auto cmd, cmdPack.keys()){
@@ -34,10 +34,10 @@ QString NCmdPacker::PackJsonString()
     return QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
 }
 
-void NCmdPacker::SelfTest()
+void NCausePacker::SelfTest()
 {
     qDebug()<<__FUNCTION__;
-    NCmdPacker packer;
+    NCausePacker packer;
     packer.Push("0","a");
     packer.Push("1","b");
     packer.Push("2","c");

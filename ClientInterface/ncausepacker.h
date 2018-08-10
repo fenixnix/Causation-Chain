@@ -4,10 +4,10 @@
 #include <QHash>
 #include <QDebug>
 
-class NCmdPacker
+class NCausePacker
 {
 public:
-    NCmdPacker();
+    NCausePacker();
     void Push(QString addr, QString cmd);//every addr only can push once at first time
     void Clear();
     int Size();

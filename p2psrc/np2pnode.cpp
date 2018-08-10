@@ -34,6 +34,11 @@ void NP2PNode::SetP2PList(QString data)
     }
 }
 
+void NP2PNode::AddPeerJson(QString jsonInfo)
+{
+    net.enter(NPeerData(jsonInfo));
+}
+
 void NP2PNode::setID(QString id)
 {
     this->ID = id;

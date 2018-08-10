@@ -23,6 +23,7 @@ public:
     ~NP2PNode();
     void Init(QString id, QIPEndPoint natServer, QIPEndPoint local);
     void SetP2PList(QString data);
+    void AddPeerJson(QString jsonInfo);
 
     void setID(QString ID);//ID addr
     QString getID() const;
