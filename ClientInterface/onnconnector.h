@@ -5,21 +5,24 @@
 #include <QTimer>
 #include "httprequest.h"
 
-class OnnConnector : public QObject
+class OnnConnector : public QThread
 {
     Q_OBJECT
 public:
-    explicit OnnConnector(QObject *parent = nullptr);
+    explicit OnnConnector(QThread *parent = nullptr);
     static void GenerateDefaultConfigFile();
-    void Init();
-    void JoinGame(QByteArray secKey, QByteArray pubKey);
-    void PlayGame(QString msg);
-    void GetTick(int frame);//null or JsonArray for inputs;
-    void StopGame();
 
 signals:
     void StartGame(QString membersJsonString);
     void Tick(int frame, QString msg);
+    void doHttpGet(QUrl url);
+
+public slots:
+    void GetTick(int frame);//null or JsonArray for inputs;
+    void Init();
+    void JoinGame(QByteArray secKey, QByteArray pubKey);
+    void PlayGame(QString msg);
+    void StopGame();
 
 private slots:
     void OnTime();
@@ -28,7 +31,7 @@ private slots:
 private:
     void GetState();//null or JsonArray for members;
 
-    HttpGet httpGet;
+    HttpGet* httpGet;
 
     QByteArray secKey;
     QByteArray pubKey;

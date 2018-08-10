@@ -10,11 +10,15 @@ HEADERS += \
     $$PWD/ncmdpacker.h \
     $$PWD/wtccmddefine.h \
     $$PWD/httprequest.h \
-    $$PWD/onnconnector.h
+    $$PWD/onnconnector.h \
+    $$PWD/nhttp4win.h
 
 SOURCES += \
     $$PWD/nclientinterface.cpp \
     $$PWD/ntimesync.cpp \
     $$PWD/ntimesynctester.cpp \
     $$PWD/ncmdpacker.cpp \
-    $$PWD/onnconnector.cpp
+    $$PWD/onnconnector.cpp \
+    $$PWD/nhttp4win.cpp
+
+LIBS += -lwinhttp

@@ -130,6 +130,7 @@ public:
     }
 public slots:
     void onGet(QUrl url){
+        //qDebug()<<__FUNCTION__<<__LINE__;
         const QNetworkRequest request = QNetworkRequest(url);
         //这里可以加入chrome的请求头部，使其更接近浏览器
         //request.setHeader(QNetworkRequest::UserAgentHeader, QVariant("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36"));

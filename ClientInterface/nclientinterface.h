@@ -41,6 +41,11 @@ signals:
     void RcvCause(QString cause);
     void RcvResult(QString result);
     void RcvMsg(QString id, QString msg);
+    void TrigOnnTick(int frame);
+
+    void OnnInitSign();
+    void OnnJoinSign(QByteArray secKey, QByteArray pubKey);
+    void OnnPlaySign(QString dat);
 
 public slots:
     void OnStartGame(QString jsonArrayMembers);

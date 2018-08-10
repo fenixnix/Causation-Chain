@@ -5,10 +5,10 @@
 
 using namespace std::chrono;
 
-OnnConnector::OnnConnector(QObject *parent) : QObject(parent)
+OnnConnector::OnnConnector(QThread *parent) : QThread(parent)
 {
-    connect(&httpGet, &HttpGet::doGetData, this, &OnnConnector::OnRcvHttpGet);
-    connect(&timer, &QTimer::timeout, this, &OnnConnector::OnTime);
+    QObject::connect(&timer, &QTimer::timeout, this, &OnnConnector::OnTime, Qt::QueuedConnection);
+    timer.start(500);
 }
 
 const QString cfg = "onn.cfg";
@@ -18,19 +18,23 @@ void OnnConnector::GenerateDefaultConfigFile()
     qDebug()<<__FUNCTION__<<__LINE__;
     QSettings onnCfg(cfg,QSettings::IniFormat);
     onnCfg.clear();
-    onnCfg.setValue("Contract","TANK4");
+    onnCfg.setValue("Contract","TANK9");
     onnCfg.setValue("Http","http://47.75.190.195:3000");
     onnCfg.sync();
 }
 
 void OnnConnector::Init()
 {
+    qDebug()<<this->thread();
     if(!QFile(cfg).exists()){
         qDebug()<<"Not find: "<<cfg<<" !!";
         GenerateDefaultConfigFile();
     }
     QSettings onnCfg(cfg,QSettings::IniFormat);
     contract = onnCfg.value("Contract").toString();
+    httpGet = new HttpGet();
+    QObject::connect(httpGet, &HttpGet::doGetData, this, &OnnConnector::OnRcvHttpGet, Qt::QueuedConnection);
+    QObject::connect(this, &OnnConnector::doHttpGet, httpGet, &HttpGet::onGet, Qt::QueuedConnection);
     http = onnCfg.value("Http").toString();
 }
 
@@ -39,13 +43,15 @@ void OnnConnector::JoinGame(QByteArray secKey, QByteArray pubKey)
     this->secKey = secKey;
     this->pubKey = pubKey;
     HttpRequest::doMethodSet(secKey,pubKey,"joinGame","null",contract,http);
-    timer.start(500);
 }
 
 void OnnConnector::PlayGame(QString msg)
 {
     //auto tp = steady_clock::now();
+
+
     HttpRequest::doMethodSet(secKey,pubKey,"play",msg.toLatin1().toHex(),contract,http);
+
     //auto lastUpdateTime = steady_clock::now();
     //auto difT = lastUpdateTime - tp;
     //auto ping = difT.count();
@@ -54,13 +60,14 @@ void OnnConnector::PlayGame(QString msg)
 
 void OnnConnector::GetState()
 {
-    httpGet.onGet(QUrl(HttpRequest::doMethodGet(
+    //qDebug()<<__FUNCTION__<<__LINE__;
+    emit doHttpGet(QUrl(HttpRequest::doMethodGet(
                         pubKey,"getStat","null",contract,http)));
 }
 
 void OnnConnector::GetTick(int frame)
 {
-    httpGet.onGet(QUrl(HttpRequest::doMethodGet(
+    emit doHttpGet(QUrl(HttpRequest::doMethodGet(
                         pubKey,"getTick",QByteArray::number(frame).toHex(),contract,http)));
 }
 
@@ -85,6 +92,7 @@ void OnnConnector::OnRcvHttpGet(QString msg)
     auto method = obj["method"];
 
     if(method == "getStat"){
+        //qDebug()<<__FUNCTION__<<__LINE__;
         auto array = obj["data"].toArray();
         auto jsonString = QString(QJsonDocument(array).toJson(QJsonDocument::Compact));
         emit StartGame(jsonString);

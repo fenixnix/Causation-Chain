@@ -12,6 +12,10 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
     connect(&onn, &OnnConnector::Tick, this, &NClientInterface::OnOnnTick);
     connect(&onnTimer, &QTimer::timeout, this, &NClientInterface::OnOnnTimer);
+    connect(this, &NClientInterface::TrigOnnTick, &onn, &OnnConnector::GetTick,Qt::QueuedConnection);
+    connect(this, &NClientInterface::OnnInitSign, &onn, &OnnConnector::Init,Qt::QueuedConnection);
+    connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
+    connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
 
     Init();
 }
@@ -31,7 +35,12 @@ void NClientInterface::Init()
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     Init(secKey, pubKey);
-    onn.Init();
+
+    onn.moveToThread(&onn);
+    onn.start();
+    qDebug()<<__FUNCTION__<<this->thread();
+    emit OnnInitSign();
+    //onn.Init();
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -78,7 +87,8 @@ void NClientInterface::Enter_Lobby()
 
 void NClientInterface::JoinTank()
 {
-    onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+    //onn.JoinGame(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+    emit OnnJoinSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 }
 
 void NClientInterface::OnnInputs(int frame, QString msg)
@@ -91,8 +101,10 @@ void NClientInterface::OnnInputs(int frame, QString msg)
     }
     timeOutObj["msg"] = dstArray;
     QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
+    //qDebug()<<__FUNCTION__<<__LINE__<<jsonMsg;
     SendLocalMsg("CAU", jsonMsg);
     SendLocalMsg("REQ",frameString(frame));
+    //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
 void NClientInterface::OnTick(int frameNo)
@@ -175,7 +187,9 @@ void NClientInterface::RcvLocalCause(QString data)
     //2.broadcast local cause input
     //qDebug()<<__FUNCTION__<<__LINE__<<data;
     //Send to ONN Server
-    onn.PlayGame(data);
+    //onn.PlayGame(data);
+
+    emit OnnPlaySign(data);
 
     //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     //    quint64 frame = obj["frm"].toDouble();
@@ -239,13 +253,18 @@ void NClientInterface::OnReadyJoin()
 
 void NClientInterface::OnOnnTimer()
 {
-    onn.GetTick(onnFrame);
+    //onn.GetTick(onnFrame);
+    emit TrigOnnTick(onnFrame);
 }
 
 void NClientInterface::OnOnnTick(int frame, QString msg)
 {
+    //qDebug()<<__FUNCTION__<<__LINE__<<frame;
     OnnInputs(frame,msg);
-    onnFrame++;
+    if(frame == onnFrame){
+        onnFrame++;
+    }
+    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
 }
 
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
@@ -260,7 +279,7 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
 
     //for ONN
     onnFrame = 1;
-    onnTimer.start(500);
+    onnTimer.start(200);
 }
 
 void NClientInterface::SendLocalMsg(QString cmd, QString msg)
