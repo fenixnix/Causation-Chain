@@ -8,9 +8,9 @@
 #include "np2pnode.h"
 #include "ncryptomsg.h"
 #include "ntimesync.h"
-#include "onnconnector.h"
 #include "udpnetwork.h"
 #include "ntcpnetwork.h"
+#include "onnconnector.h"
 
 #define StartPort 8890
 #define CHECK_RETURN(X) if(X){qDebug()<<__FUNCTION__<<__LINE__;return;}

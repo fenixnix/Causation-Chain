@@ -1,5 +1,6 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
+#include "nhttprequest.h"
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -17,7 +18,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
 
-    Init();
+    //Init();
 }
 
 void NClientInterface::Init()
@@ -189,7 +190,17 @@ void NClientInterface::RcvLocalCause(QString data)
     //Send to ONN Server
     //onn.PlayGame(data);
 
+#ifdef ONN
     emit OnnPlaySign(data);
+#else
+//    auto obj = QJsonDocument::fromJson(data).object();
+//    QJsonArray array;
+//    array.append(obj);
+//    QJsonObject jobj["msg"] = array;
+//    auto jsonMsg = QString(QJsonDocument(jobj).toJson());
+//    SendLocalMsg("CAU", jsonMsg);
+//    SendLocalMsg("REQ","";
+#endif
 
     //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     //    quint64 frame = obj["frm"].toDouble();

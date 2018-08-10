@@ -60,7 +60,7 @@ void OnnConnector::PlayGame(QString msg)
 
 void OnnConnector::GetState()
 {
-    //qDebug()<<__FUNCTION__<<__LINE__;
+    qDebug()<<__FUNCTION__<<__LINE__<<pubKey;
     emit doHttpGet(QUrl(HttpRequest::doMethodGet(
                         pubKey,"getStat","null",contract,http)));
 }
@@ -83,8 +83,8 @@ void OnnConnector::OnTime()
 
 void OnnConnector::OnRcvHttpGet(QString msg)
 {
-    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
-    if(msg == "null"){
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    if((msg == "null")||(msg.isEmpty())){
         return;
     }
 

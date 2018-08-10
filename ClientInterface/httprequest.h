@@ -35,20 +35,21 @@ public:
 
     static QByteArray qtGet(const QString &strUrl)
     {
-        //BUG << strUrl;
+        BUG << strUrl;
 
         const QUrl url = QUrl::fromUserInput(strUrl);
         QNetworkAccessManager m_qnam;
         QByteArray replyData;
 
+        //QEventLoop eventLoop;
         QNetworkRequest qnr(url);
         QNetworkReply* reply = m_qnam.get(qnr); //m_qnam是QNetworkAccessManager对象
 
-        QEventLoop eventLoop;
-        QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        //QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
         //eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
-        eventLoop.exec();
-
+        //eventLoop.exec();
+        //reply->waitForReadyRead(500);
+        QThread::msleep(1000);
         replyData = reply->readAll();
 
         reply->deleteLater();
@@ -59,20 +60,20 @@ public:
 
     static QByteArray qtPost(const QString &strUrl,QByteArray pData)
     {
-        //BUG;
+        BUG;
 
         const QUrl url = QUrl::fromUserInput(strUrl);
         QNetworkAccessManager m_qnam;
         QByteArray replyData;
 
+        //QEventLoop eventLoop;
         QNetworkRequest qnr(url);
         qnr.setHeader(QNetworkRequest::ContentTypeHeader,"application/x-www-form-urlencoded");
         QNetworkReply* reply = m_qnam.post(qnr,pData); //m_qnam是QNetworkAccessManager对象
-
-        QEventLoop eventLoop;
-        QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        reply->waitForReadyRead(50);
+        //QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));
         //eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
-        eventLoop.exec();
+        //eventLoop.exec();
 
         replyData = reply->readAll();
 
@@ -81,6 +82,7 @@ public:
 
         return replyData;
     }
+
 
     static QString getTaget(QString type,QString pubkey,QString name,QString code,QString arg,QString sig) {
         QString data = type + "$" + pubkey + "$" + name + "$" + code + "$" + arg;
@@ -108,6 +110,7 @@ public:
         //QJsonDocument jsonDoc = QJsonDocument::fromJson(result);
         //QJsonArray    jsonArr = jsonDoc.array();
         //BUG << jsonArr;
+        BUG<<url+"/"+block;
         return url+"/"+block;
     }
 
@@ -125,16 +128,15 @@ class HttpGet : public QObject
     Q_OBJECT
 public:
     explicit HttpGet(){
-            networkAccessManager = new QNetworkAccessManager(this);
-            QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(finishedSlot(QNetworkReply *)),Qt::QueuedConnection);
+        networkAccessManager = new QNetworkAccessManager(this);
+        QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(finishedSlot(QNetworkReply *)),Qt::QueuedConnection);
     }
+    static QString doRequest(QString pAddr,QString pPort,QString pType,QString pData);
+
 public slots:
     void onGet(QUrl url){
-        //qDebug()<<__FUNCTION__<<__LINE__;
-        const QNetworkRequest request = QNetworkRequest(url);
-        //这里可以加入chrome的请求头部，使其更接近浏览器
-        //request.setHeader(QNetworkRequest::UserAgentHeader, QVariant("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36"));
-        networkAccessManager->get(request);
+        emit doGetData(HttpRequest::qtGet(url.toString()));
+        //qDebug()<<__FUNCTION__<<__LINE__<<url.host()<<QString::number(url.port())<<url.query();
     }
     void finishedSlot(QNetworkReply *reply){
         if(reply->error() == QNetworkReply::NoError) {
@@ -153,5 +155,8 @@ signals:
 private:
     QNetworkAccessManager *networkAccessManager;
 };
+
+
+
 
 #endif // HTTPREQUEST_H
