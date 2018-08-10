@@ -3,21 +3,28 @@
 
 #include <QHash>
 #include <QDebug>
+#include <QJsonObject>
 
 class NCausePacker
 {
 public:
     NCausePacker();
-    void Push(QString addr, QString cmd);//every addr only can push once at first time
+    void Push(QJsonObject obj);
+    void Push(int frame, QString addrID, QString cause);//every addr only can push once at first time
     void Clear();
     int Size();
     int frame = 0;
     QString PackJsonString();
+    QJsonArray PackJson();
 
     static void SelfTest();//test pack hash order
 
 private:
     QHash<QString, QString> cmdPack;
+    QMap<QString, QJsonObject> jsonPack;
+
+    QStringList list;
+    QJsonArray jsonArray;
 
 };
 

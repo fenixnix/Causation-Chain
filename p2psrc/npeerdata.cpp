@@ -11,6 +11,12 @@ NPeerData::NPeerData(QString jsonString)
     SetDataJson(jsonString);
 }
 
+NPeerData::NPeerData(QJsonObject json)
+{
+    pingTime = steady_clock::now();
+    SetDataJson(json);
+}
+
 NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
 {
     SetData(id,loc,nat);
@@ -19,6 +25,11 @@ NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
 bool NPeerData::SetDataJson(QString data)
 {
     auto obj = QJsonDocument::fromJson(data).object();
+    return SetDataJson(obj);
+}
+
+bool NPeerData::SetDataJson(QJsonObject obj)
+{
     addrID = obj["id"].toString().toLatin1().toHex();
     loc = QIPEndPoint(obj["locEP"].toString());
     nat = QIPEndPoint(obj["natEP"].toString());

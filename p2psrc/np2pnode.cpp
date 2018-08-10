@@ -34,7 +34,12 @@ void NP2PNode::SetP2PList(QString data)
     }
 }
 
-void NP2PNode::AddPeerJson(QString jsonInfo)
+void NP2PNode::AddPeerJson(QString jsonString)
+{
+    net.enter(NPeerData(jsonString));
+}
+
+void NP2PNode::AddPeerJson(QJsonObject json)
 {
     net.enter(NPeerData(jsonInfo));
 }

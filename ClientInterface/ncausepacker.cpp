@@ -5,17 +5,26 @@ NCausePacker::NCausePacker()
 
 }
 
-void NCausePacker::Push(QString addr, QString cmd)
+void NCausePacker::Push(QJsonObject obj)
 {
-    if(cmdPack.contains(addr)){
+    auto id = obj["id"];
+    if(list.contains(id))return;
+    jsonArray<<obj;
+}
+
+void NCausePacker::Push(int frame, QString addrID, QString cause)
+{
+    if(cmdPack.contains(addrID)){
         return;
     }
-    cmdPack.insert(addr, cmd);
+    cmdPack.insert(addrID, cause);
 }
 
 void NCausePacker::Clear()
 {
     cmdPack.clear();
+    list.clear();
+    jsonArray.clear();
 }
 
 int NCausePacker::Size()
@@ -32,6 +41,11 @@ QString NCausePacker::PackJsonString()
         obj.insert(cmd,cmdPack[cmd]);
     }
     return QString(QJsonDocument(obj).toJson(QJsonDocument::Compact));
+}
+
+QJsonArray NCausePacker::PackJson()
+{
+    return jsonArray;
 }
 
 void NCausePacker::SelfTest()

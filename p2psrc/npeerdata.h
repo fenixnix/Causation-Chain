@@ -12,8 +12,10 @@ class NPeerData
 public:
     NPeerData();
     NPeerData(QString jsonString);
+    NPeerData(QJsonObject json);
     NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat);
     bool SetDataJson(QString data);
+    bool SetDataJson(QJsonObject obj);
     bool SetData(QString data);
     void SetData(QString id, QIPEndPoint loc, QIPEndPoint nat);
 
