@@ -3,7 +3,7 @@
 
 #define CHECK_RETURN(X) if(X){qDebug()<<__FUNCTION__<<__LINE__;return;}
 #define JSON2STRING(X) QString(QJsonDocument(X).toJson(QJsonDocument::Compact))
-#define STRING2JSON(X) QJsonDocument::fromJson(msg).object()
+#define STRING2JSON(X) QJsonDocument::fromJson(X.toLatin1()).object()
 
 #include <chrono>
 using namespace std::chrono;

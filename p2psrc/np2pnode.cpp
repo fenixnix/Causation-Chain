@@ -41,7 +41,7 @@ void NP2PNode::AddPeerJson(QString jsonString)
 
 void NP2PNode::AddPeerJson(QJsonObject json)
 {
-    net.enter(NPeerData(jsonInfo));
+    net.enter(NPeerData(json));
 }
 
 void NP2PNode::setID(QString id)

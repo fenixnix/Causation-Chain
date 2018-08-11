@@ -3,7 +3,9 @@
 
 #include <QHash>
 #include <QDebug>
+#include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 class NCausePacker
 {
@@ -24,8 +26,7 @@ private:
     QMap<QString, QJsonObject> jsonPack;
 
     QStringList list;
-    QJsonArray jsonArray;
-
+    QJsonArray jsonArr;
 };
 
 #endif // NCMDPACKER_H

@@ -24,7 +24,7 @@ NPeerData::NPeerData(QString id, QIPEndPoint loc, QIPEndPoint nat)
 
 bool NPeerData::SetDataJson(QString data)
 {
-    auto obj = QJsonDocument::fromJson(data).object();
+    auto obj = QJsonDocument::fromJson(data.toLatin1()).object();
     return SetDataJson(obj);
 }
 

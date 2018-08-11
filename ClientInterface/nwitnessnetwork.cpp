@@ -8,16 +8,16 @@ NWitnessNetwork::NWitnessNetwork(QObject *parent) : QObject(parent)
 
 void NWitnessNetwork::Init(QString jsonString)//members: id,pubKey,locEP,natEP
 {
-    auto array = QJsonDocument::fromJson(jsonString).array();
-    Init(json);
+    auto array = QJsonDocument::fromJson(jsonString.toLatin1()).array();
+    Init(array);
 }
 
 void NWitnessNetwork::Init(QJsonArray json)
 {
     foreach(auto obj, json){
-        p2p.AddPeerJson(obj);
-        auto id = obj["id"];
-        auto pubKey = obj["pubKey"];
+        p2p.AddPeerJson(obj.toObject());
+        auto id = obj["id"].toString();
+        auto pubKey = obj["pubKey"].toString();
         articipatorsKeyMap.insert(id, pubKey);
     }
 }
@@ -34,7 +34,9 @@ void NWitnessNetwork::SetLocalCause(int frame, QString cause)
     obj["frm"] = frame;
     obj["id"] = crypto.getAddr();
     obj["dat"] = cause;
-    packer.Push(QJsonObject(obj).remove("cmd"));
+    QJsonObject objs(obj);
+    objs.remove("cmd");
+    packer.Push(objs);
     auto jsonString = JSON2STRING(obj);
     p2p.broadcastMsg(jsonString);
 }
@@ -56,11 +58,13 @@ void NWitnessNetwork::OnRcvMsg(QString msg)
     auto obj = STRING2JSON(msg);
     auto cmd = obj["cmd"];
     if(cmd == "input"){
-        packer.Push(QJsonObject(obj).remove("cmd"));
+        QJsonObject objs(obj);
+        objs.remove("cmd");
+        packer.Push(objs);
     }
     if(cmd == "inputPack"){
         //TODO:check data
-        consensus.RcvCause(frm,id,data);
+        //consensus.RcvCause(frm,id,data);
         //TODO:make consensus;
     }
 }

@@ -29,29 +29,12 @@ void WTCMainWindow::on_actionSend_Result_triggered()
 
 void WTCMainWindow::on_actionRefresh_triggered()
 {
-    ui->listWidget->clear();
-    ui->listWidget->addItems(interface.GetMemberList());
     this->setWindowTitle(interface.getID());
-}
-
-void WTCMainWindow::on_sendMsgBtn_clicked()
-{
-    interface.SendChatMsg(ui->listWidget->currentIndex().data().toString(),ui->lineEditMsg->text());
 }
 
 void WTCMainWindow::onP2pMsg(QString addr, QString msg)
 {
     ui->plainTextEdit->appendPlainText(addr + ":" + msg);
-}
-
-void WTCMainWindow::on_actionEnter_Lobby_triggered()
-{
-    interface.Enter_Lobby();
-}
-
-void WTCMainWindow::on_actionStart_Solo_triggered()
-{
-    interface.Queue_Solo();
 }
 
 void WTCMainWindow::on_actionJoin_Tank_triggered()

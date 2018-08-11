@@ -25,13 +25,7 @@ private slots:
 
     void on_actionRefresh_triggered();
 
-    void on_sendMsgBtn_clicked();
-
     void onP2pMsg(QString addr, QString msg);
-
-    void on_actionEnter_Lobby_triggered();
-
-    void on_actionStart_Solo_triggered();
 
     void on_actionJoin_Tank_triggered();
 

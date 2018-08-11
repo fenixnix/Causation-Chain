@@ -3,11 +3,11 @@
 
 #include <QObject>
 #include "ntcpnetwork.h"
-#include "ncausationconsensus.h"
 #include "np2pserverinterface.h"
-#include "ncausepacker.h"
 #include "np2pnode.h"
 #include "ncryptomsg.h"
+#include "ncausepacker.h"
+#include "ncausationconsensus.h"
 #include "ntimesync.h"
 
 class NWitnessNetwork : public QObject
@@ -30,7 +30,6 @@ private:
     NCausePacker packer;
     NCausationConsensus consensus;//操作共识需要逐条共识，抛弃不确定操作
     //for consensus
-    NCryptoMsg crypto;
     QMap<QString, QString> articipatorsKeyMap;
 
     NCryptoMsg crypto;//for crypto
