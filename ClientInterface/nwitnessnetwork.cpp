@@ -24,7 +24,7 @@ void NWitnessNetwork::Init(QJsonArray json)
 
 QString NWitnessNetwork::GetConsensusCause(int frame)
 {
-
+    return consensus.CauseConsensus(frame);
 }
 
 void NWitnessNetwork::SetLocalCause(int frame, QString cause)
@@ -47,6 +47,8 @@ void NWitnessNetwork::Sync(int frame)
     obj["dat"] = packer.PackJson();
     auto jsonString = JSON2STRING(obj);
     p2p.broadcastMsg(jsonString);
+    //TODO:check data
+    consensus.RcvCause(frame, crypto.getAddr(), jsonString);
 }
 
 void NWitnessNetwork::OnRcvMsg(QString msg)
@@ -57,7 +59,8 @@ void NWitnessNetwork::OnRcvMsg(QString msg)
         packer.Push(QJsonObject(obj).remove("cmd"));
     }
     if(cmd == "inputPack"){
+        //TODO:check data
+        consensus.RcvCause(frm,id,data);
         //TODO:make consensus;
-        //consensus.Push
     }
 }
