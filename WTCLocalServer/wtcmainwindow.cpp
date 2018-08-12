@@ -44,7 +44,7 @@ void WTCMainWindow::on_actionJoin_Tank_triggered()
 
 void WTCMainWindow::on_actionInit_Game_triggered()
 {
-    interface.OnStartGame("[\"83ff259f5e5eb75738e1fb65e7f5212b444c6d00\",\"User2\"]");
+    interface.OnStartGame("[\"P1\",\"P2\"]");
 }
 
 int frm = 0;
@@ -52,4 +52,9 @@ void WTCMainWindow::on_tickBtn_clicked()
 {
     interface.OnTick(frm);
     frm++;
+}
+
+void WTCMainWindow::on_tstTickBtn_clicked()
+{
+    interface.StartTestTick();
 }

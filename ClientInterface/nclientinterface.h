@@ -6,6 +6,7 @@
 #include "onnconnector.h"
 #include "utility.h"
 #include "ncryptomsg.h"
+#include "ntimesync.h"
 
 #define StartPort 8890
 
@@ -20,6 +21,7 @@ public:
     QString getID();
     void SendLocalMsg(QString cmd, QString msg);
 
+    void StartTestTick();
     //Onn Test Code
     void JoinTank();
     void OnnInputs(int frame, QString msg);
@@ -34,7 +36,7 @@ signals:
 
 public slots:
     void OnStartGame(QString jsonArrayMembers);
-    void OnTick(int frameNo);//Tick
+    void OnTick(int frm);//Tick
     void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
 
 private slots:
@@ -43,7 +45,6 @@ private slots:
     void OnOnnTick(int frame, QString msg);
 
 private:
-    void SendGameInitInfo(QString data);
     void RcvLocalCause(QString data);
 
     OnnConnector onn;
@@ -53,6 +54,8 @@ private:
     NCryptoMsg crypto;
 
     UdpNetwork ipc;
+
+    NTimeSync timeSync;
 };
 
 #endif // NCLIENTINTERFACE_H

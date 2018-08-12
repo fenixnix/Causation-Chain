@@ -2,7 +2,7 @@
 #include "wtccmddefine.h"
 #include "nhttprequest.h"
 
-#define ONN
+//#define ONN
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -15,6 +15,8 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(this, &NClientInterface::OnnInitSign, &onn, &OnnConnector::Init,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
+
+    connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
 
     Init();
 }
@@ -39,11 +41,11 @@ void NClientInterface::Init()
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
     Init(secKey, pubKey);
-
+#ifdef ONN
     onn.moveToThread(&onn);
     onn.start();
-    //onn.Init();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
+#endif
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -64,7 +66,10 @@ QString frameString(int frm){
 
 QString NClientInterface::getID()
 {
+#ifdef ONN
     return crypto.getAddr();
+#endif
+    return "P1";
 }
 
 void NClientInterface::JoinTank()
@@ -88,29 +93,30 @@ void NClientInterface::OnnInputs(int frame, QString msg)
     //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
-void NClientInterface::OnTick(int frameNo)
+void NClientInterface::OnTick(int frm)
 {
-    bool isEven = !(frameNo&0x1);
-    int frm = frameNo>>1;
-    if(isEven){
-        //1.向客户端请求本地CMD,和上一帧输入共识
-        //packer.frame = frm;
-        //TODO: 输入共识：if(consensus)
-        //ipc.Send("CAU",consensus.ReachCauseConsensus(););
-        SendLocalMsg("REQ",frameString(frm));
-    }else{
-        //BroadcastCause();
-    }
+    //    bool isEven = !(frameNo&0x1);
+    //    int frm = frameNo>>1;
+    //    if(isEven){
+    //        //1.向客户端请求本地CMD,和上一帧输入共识
+    //        //packer.frame = frm;
+    //        //TODO: 输入共识：if(consensus)
+    //        //ipc.Send("CAU",consensus.ReachCauseConsensus(););
+    //        SendLocalMsg("REQ",frameString(frm));
+    //    }else{
+    //        //BroadcastCause();
+    //    }
+#ifndef ONN
+    SendLocalMsg("REQ",frameString(frm));
+#endif
 }
 
 #define CMDSIZE 3
 void NClientInterface::OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort)
 {
-    //qDebug()<<__FUNCTION__<<msg;
     CHECK_RETURN(msg.size()<CMDSIZE);
     auto cmd = msg.left(CMDSIZE);
     auto data = msg.mid(CMDSIZE);
-
     if(cmd == "CAU")RcvLocalCause(data);
     //if(cmd == "RES")RcvLocalResult(data);
     //if(cmd == "FIN"){//TODO:report result to main network}
@@ -137,9 +143,21 @@ static QString JsonPackCmd(QString data){
 void NClientInterface::RcvLocalCause(QString data)
 {
     //2.broadcast local cause input
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
 #ifdef ONN
     emit OnnPlaySign(data);
 #else
+
+#ifndef ONN
+    auto obj = STRING2JSON(data);
+    QJsonArray array;
+    array.append(obj);
+    QJsonObject pack;
+    pack.insert("msg",array);
+    auto JsonPackCmdString = JSON2STRING(pack);
+    SendLocalMsg("CAU",JsonPackCmdString);
+#endif
+
     //    auto obj = QJsonDocument::fromJson(data).object();
     //    QJsonArray array;
     //    array.append(obj);
@@ -170,15 +188,17 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
 {
     auto memberArray = QJsonDocument::fromJson(jsonArrayMembers.toLatin1()).array();
     QJsonObject obj;
-    obj["locID"] = crypto.getEthAddr();
+    obj["locID"] = getID();
     obj["members"] = memberArray;
     auto initString = JSON2STRING(obj);
     qDebug()<<__FUNCTION__<<__LINE__<<initString;
-    SendGameInitInfo(initString);
+    SendLocalMsg("INI", initString);
 
+#ifdef ONN
     //for ONN
     onnFrame = 1;
     onnTimer.start(200);
+#endif
 }
 
 void NClientInterface::SendLocalMsg(QString cmd, QString msg)
@@ -190,9 +210,11 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
     ipc.Send(cmd+msg);
 }
 
-void NClientInterface::SendGameInitInfo(QString data)
+void NClientInterface::StartTestTick()
 {
-    SendLocalMsg("INI", data);
+#ifndef ONN
+    timeSync.StartTestSync(1000);
+#endif
 }
 
 //void NClientInterface::RcvLocalResult(QString data)

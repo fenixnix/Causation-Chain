@@ -33,6 +33,8 @@ private slots:
 
     void on_tickBtn_clicked();
 
+    void on_tstTickBtn_clicked();
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;

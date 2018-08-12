@@ -21,3 +21,6 @@ SOURCES += \
     $$PWD/utility.cpp \
     $$PWD/nwitnessnetwork.cpp \
     $$PWD/ncausepacker.cpp
+
+DISTFILES += \
+    $$PWD/GameInterface.js

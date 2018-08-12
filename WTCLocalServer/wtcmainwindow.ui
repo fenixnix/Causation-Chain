@@ -40,6 +40,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="tstTickBtn">
+        <property name="text">
+         <string>Start Test Tick</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
