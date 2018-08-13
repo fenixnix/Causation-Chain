@@ -36,7 +36,7 @@ bool NQDatabase::open(QString dbName, QString user, QString pwd, QString host, i
   db.setPort(port);
   if (!db.open())
     {
-      qDebug() << "Error: Failed to connect database." << db.lastError();
+      qWarning() << "Error: Failed to connect database." << db.lastError();
       return false;
     }
   qDebug()<< "database open";
@@ -59,7 +59,7 @@ bool NQDatabase::exec(QString sql)
   sqlQuery->prepare(sql);
   if(!sqlQuery->exec())
     {
-      qDebug() << sqlQuery->lastError();
+      qWarning() << sqlQuery->lastError();
       return false;
     }
 
