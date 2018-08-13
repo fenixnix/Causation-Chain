@@ -1,0 +1,7 @@
+INCLUDEPATH += $$PWD/
+
+DISTFILES += 
+
+HEADERS += 
+
+SOURCES += 

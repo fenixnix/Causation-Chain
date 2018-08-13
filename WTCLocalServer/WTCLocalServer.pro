@@ -35,9 +35,10 @@ HEADERS += \
 FORMS += \
         wtcmainwindow.ui
 
-include("../ClientInterface/ClientInterface.pri")
-include("../consensus/NConsensus.pri")
-include("../Crypto/EmccSDK/nemcc/nemcc.pri")
-include("../p2psrc/np2p.pri")
-include("../Network/network.pri")
-include("../Persistent/persistent.pri")
+include("../src/ClientInterface/ClientInterface.pri")
+include("../src/consensus/NConsensus.pri")
+include("../src/Crypto/EmccSDK/nemcc/nemcc.pri")
+include("../src/p2p/np2p.pri")
+include("../src/Network/network.pri")
+include("../src/Persistent/persistent.pri")
+include("../src/utility/utility.pri")

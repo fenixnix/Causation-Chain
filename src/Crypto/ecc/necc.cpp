@@ -150,5 +150,4 @@ void NEcc::SelfTest()
     auto res = ecc.Verify(ecc.pubKey,dat,eccSign);
     qWarning()<<sw.Count()<<"ms";
     qDebug()<<"Verify:"<<res;
-
 }
