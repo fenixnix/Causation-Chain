@@ -5,6 +5,8 @@
 #include <QSqlDatabase>
 #include <QDebug>
 
+#define DATABASEDRIVER "QSQLITE"
+
 class NQDatabase : public QObject
 {
   Q_OBJECT
@@ -12,6 +14,7 @@ public:
   explicit NQDatabase(QObject *parent = nullptr);
   static QStringList getSupportDatabase();
 
+  bool InitSQLite();
   void setDatabase(QString dbType);
   QSqlDatabase get();
   QSqlDatabase* set();
@@ -27,6 +30,7 @@ public slots:
 private:
   QSqlDatabase db;
   QSqlQuery* sqlQuery;
+  QStringList driverList;
 };
 
 #endif // NQDATABASE_H

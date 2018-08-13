@@ -1,8 +1,10 @@
 INCLUDEPATH += \
     $$PWD/
 
-HEADERS +=
+HEADERS += \
+    $$PWD/ndatastore.h
 
-SOURCES +=
+SOURCES += \
+    $$PWD/ndatastore.cpp
 
 include("./database/database.pri")

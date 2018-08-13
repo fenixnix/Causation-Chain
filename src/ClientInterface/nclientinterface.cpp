@@ -1,6 +1,7 @@
 #include "nclientinterface.h"
 #include "wtccmddefine.h"
 #include "nhttprequest.h"
+#include "ndatastore.h"
 
 #define ONN
 
@@ -8,6 +9,7 @@ QString sendBuffer;
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
+    NDataStore::SelfTest();
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
