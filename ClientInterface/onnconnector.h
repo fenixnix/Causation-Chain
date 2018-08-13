@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QTimer>
 #include "onnrequest.h"
-#include "NetRequest.h"
 #include "nhttprequest.h"
 
 class OnnConnector : public QThread
@@ -24,9 +23,11 @@ signals:
 public slots:
     void GetTick(int frame);//null or JsonArray for inputs;
     void Init(QByteArray secKey, QByteArray pubKey);
+
+    void Post(QString cmdMsg, QString arg = "null");
     void JoinGame();
+    void CloseGame();
     void PlayGame(QString msg);
-    void StopGame();
 
 private slots:
     void OnTime();

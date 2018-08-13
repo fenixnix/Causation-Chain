@@ -11,11 +11,13 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
+
     connect(&onn, &OnnConnector::Tick, this, &NClientInterface::OnOnnTick);
     connect(&onn, &OnnConnector::LoopTick, this, &NClientInterface::OnLoopTick);
     connect(this, &NClientInterface::TrigOnnTick, &onn, &OnnConnector::GetTick,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnInitSign, &onn, &OnnConnector::Init,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
+    connect(this, &NClientInterface::OnnCloseSign, &onn, &OnnConnector::CloseGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
 
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
@@ -77,6 +79,11 @@ QString NClientInterface::getID()
 void NClientInterface::JoinTank()
 {
     emit OnnJoinSign();
+}
+
+void NClientInterface::CloseTank()
+{
+    emit OnnCloseSign();
 }
 
 void NClientInterface::OnnInputs(int frame, QString msg)
@@ -193,7 +200,7 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
 
 #ifdef ONN
     //for ONN
-    emit TrigOnnTick(10);//start tick
+    emit TrigOnnTick(1);//start tick
 #endif
 }
 

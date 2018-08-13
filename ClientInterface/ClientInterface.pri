@@ -10,8 +10,7 @@ HEADERS += \
     $$PWD/onnrequest.h \
     $$PWD/utility.h \
     $$PWD/nwitnessnetwork.h \
-    $$PWD/ncausepacker.h \
-    $$PWD/NetRequest.h
+    $$PWD/ncausepacker.h
 
 SOURCES += \
     $$PWD/nclientinterface.cpp \

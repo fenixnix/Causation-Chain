@@ -65,6 +65,8 @@
      <string>File</string>
     </property>
     <addaction name="actionInit_Game"/>
+    <addaction name="actionJoin_Game"/>
+    <addaction name="actionClose_Game"/>
    </widget>
    <widget class="QMenu" name="menuTest">
     <property name="title">
@@ -75,7 +77,6 @@
     <addaction name="separator"/>
     <addaction name="actionEnter_Lobby"/>
     <addaction name="actionStart_Solo"/>
-    <addaction name="actionJoin_Tank"/>
    </widget>
    <widget class="QMenu" name="menuRefresh">
     <property name="title">
@@ -121,14 +122,19 @@
     <string>Start Solo</string>
    </property>
   </action>
-  <action name="actionJoin_Tank">
-   <property name="text">
-    <string>Join Tank</string>
-   </property>
-  </action>
   <action name="actionInit_Game">
    <property name="text">
     <string>Init Game</string>
+   </property>
+  </action>
+  <action name="actionJoin_Game">
+   <property name="text">
+    <string>Join Game</string>
+   </property>
+  </action>
+  <action name="actionClose_Game">
+   <property name="text">
+    <string>Close Game</string>
    </property>
   </action>
  </widget>

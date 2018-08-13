@@ -24,6 +24,7 @@ public:
     void StartTestTick();
     //Onn Test Code
     void JoinTank();
+    void CloseTank();
     void OnnInputs(int frame, QString msg);
 
 signals:
@@ -32,6 +33,7 @@ signals:
 
     void OnnInitSign(QByteArray secKey, QByteArray pubKey);
     void OnnJoinSign();
+    void OnnCloseSign();
     void OnnPlaySign(QString dat);
 
 public slots:

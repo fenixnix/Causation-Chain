@@ -27,13 +27,15 @@ private slots:
 
     void onP2pMsg(QString addr, QString msg);
 
-    void on_actionJoin_Tank_triggered();
-
     void on_actionInit_Game_triggered();
 
     void on_tickBtn_clicked();
 
     void on_tstTickBtn_clicked();
+
+    void on_actionJoin_Game_triggered();
+
+    void on_actionClose_Game_triggered();
 
 private:
     Ui::WTCMainWindow *ui;

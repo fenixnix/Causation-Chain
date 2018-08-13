@@ -42,11 +42,6 @@ void WTCMainWindow::onP2pMsg(QString addr, QString msg)
     ui->plainTextEdit->appendPlainText(addr + ":" + msg);
 }
 
-void WTCMainWindow::on_actionJoin_Tank_triggered()
-{
-    interface.JoinTank();
-}
-
 void WTCMainWindow::on_actionInit_Game_triggered()
 {
     interface.OnStartGame("[\"P1\",\"P2\"]");
@@ -62,4 +57,14 @@ void WTCMainWindow::on_tickBtn_clicked()
 void WTCMainWindow::on_tstTickBtn_clicked()
 {
     interface.StartTestTick();
+}
+
+void WTCMainWindow::on_actionJoin_Game_triggered()
+{
+    interface.JoinTank();
+}
+
+void WTCMainWindow::on_actionClose_Game_triggered()
+{
+    interface.CloseTank();
 }

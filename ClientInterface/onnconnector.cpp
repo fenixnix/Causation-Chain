@@ -43,17 +43,27 @@ void OnnConnector::Init(QByteArray secKey, QByteArray pubKey)
     QObject::connect(timer, &QTimer::timeout, this, &OnnConnector::OnTime, Qt::QueuedConnection);
 }
 
+void OnnConnector::Post(QString cmdMsg, QString arg)
+{
+    http->Post(onnReq.Url, onnReq.Post(cmdMsg, arg).toLatin1());
+}
+
 void OnnConnector::JoinGame()
 {
-    http->Post(onnReq.Url,onnReq.Post("joinGame").toLatin1());
+    Post("joinGame");
     timer->start(500);
 }
 
 void OnnConnector::PlayGame(QString msg)
 {
     //StopWatch sw;
-    http->Post(onnReq.Url,onnReq.Post("play",msg.toLatin1().toHex()).toLatin1());
+    http->Post(onnReq.Url, onnReq.Post("play",msg.toLatin1().toHex()).toLatin1());
     //qDebug()<<__FUNCTION__<<sw.Count();
+}
+
+void OnnConnector::CloseGame()
+{
+    Post("closeGame");
 }
 
 void OnnConnector::GetState()
@@ -65,11 +75,6 @@ void OnnConnector::GetTick(int frame)
 {
     //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<frame;
     http->Get(onnReq.Get("getTick",QString::number(frame).toLatin1().toHex()));
-}
-
-void OnnConnector::StopGame()
-{
-    timer->stop();
 }
 
 void OnnConnector::OnTime()
