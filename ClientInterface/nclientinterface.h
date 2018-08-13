@@ -36,21 +36,17 @@ signals:
 
 public slots:
     void OnStartGame(QString jsonArrayMembers);
+    void OnLoopTick(int frm);
     void OnTick(int frm);//Tick
     void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
 
 private slots:
     void OnGameTick(QString dat);
-    void OnOnnTimer();
     void OnOnnTick(int frame, QString msg);
 
 private:
     void RcvLocalCause(QString data);
-
     OnnConnector onn;
-    QTimer onnTimer;
-    int onnFrame = 1;
-
     NCryptoMsg crypto;
 
     UdpNetwork ipc;

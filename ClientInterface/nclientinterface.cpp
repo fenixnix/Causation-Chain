@@ -2,7 +2,9 @@
 #include "wtccmddefine.h"
 #include "nhttprequest.h"
 
-//#define ONN
+#define ONN
+
+QString sendBuffer;
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -10,7 +12,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
     connect(&onn, &OnnConnector::Tick, this, &NClientInterface::OnOnnTick);
-    connect(&onnTimer, &QTimer::timeout, this, &NClientInterface::OnOnnTimer);
+    connect(&onn, &OnnConnector::LoopTick, this, &NClientInterface::OnLoopTick);
     connect(this, &NClientInterface::TrigOnnTick, &onn, &OnnConnector::GetTick,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnInitSign, &onn, &OnnConnector::Init,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
@@ -67,7 +69,7 @@ QString frameString(int frm){
 QString NClientInterface::getID()
 {
 #ifdef ONN
-    return crypto.getAddr();
+    return crypto.getEthAddr();
 #endif
     return "P1";
 }
@@ -79,6 +81,7 @@ void NClientInterface::JoinTank()
 
 void NClientInterface::OnnInputs(int frame, QString msg)
 {
+    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<msg;
     QJsonObject timeOutObj;
     QJsonArray srcArray = QJsonDocument::fromJson(msg.toLatin1()).array();
     QJsonArray dstArray;
@@ -87,9 +90,11 @@ void NClientInterface::OnnInputs(int frame, QString msg)
     }
     timeOutObj["msg"] = dstArray;
     QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
-    //qDebug()<<__FUNCTION__<<__LINE__<<jsonMsg;
+    //qDebug()<<__FUNCTION__<<__LINE__<<frame;
+
+    sendBuffer = jsonMsg;
     SendLocalMsg("CAU", jsonMsg);
-    SendLocalMsg("REQ",frameString(frame));
+    //SendLocalMsg("REQ",frameString(frame));
     //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
@@ -107,7 +112,8 @@ void NClientInterface::OnTick(int frm)
     //        //BroadcastCause();
     //    }
 #ifndef ONN
-    SendLocalMsg("REQ",frameString(frm));
+    SendLocalMsg("CAU",sendBuffer);
+    //SendLocalMsg("REQ",frameString(frm));
 #endif
 }
 
@@ -143,7 +149,7 @@ static QString JsonPackCmd(QString data){
 void NClientInterface::RcvLocalCause(QString data)
 {
     //2.broadcast local cause input
-    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
+    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
 #ifdef ONN
     emit OnnPlaySign(data);
 #else
@@ -155,7 +161,7 @@ void NClientInterface::RcvLocalCause(QString data)
     QJsonObject pack;
     pack.insert("msg",array);
     auto JsonPackCmdString = JSON2STRING(pack);
-    SendLocalMsg("CAU",JsonPackCmdString);
+    sendBuffer = JsonPackCmdString;
 #endif
 
     //    auto obj = QJsonDocument::fromJson(data).object();
@@ -168,19 +174,10 @@ void NClientInterface::RcvLocalCause(QString data)
 #endif
 }
 
-void NClientInterface::OnOnnTimer()
-{
-    //onn.GetTick(onnFrame);
-    emit TrigOnnTick(onnFrame);
-}
-
 void NClientInterface::OnOnnTick(int frame, QString msg)
 {
     //qDebug()<<__FUNCTION__<<__LINE__<<frame;
-    OnnInputs(frame,msg);
-    if(frame == onnFrame){
-        onnFrame++;
-    }
+    OnnInputs(frame,msg); 
     //qDebug()<<__FUNCTION__<<__LINE__<<msg;
 }
 
@@ -196,9 +193,14 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
 
 #ifdef ONN
     //for ONN
-    onnFrame = 1;
-    onnTimer.start(200);
+    emit TrigOnnTick(10);//start tick
 #endif
+}
+
+void NClientInterface::OnLoopTick(int frm)
+{
+    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<frm;
+    emit TrigOnnTick(frm);
 }
 
 void NClientInterface::SendLocalMsg(QString cmd, QString msg)

@@ -51,13 +51,9 @@ void OnnConnector::JoinGame()
 
 void OnnConnector::PlayGame(QString msg)
 {
-    StopWatch sw;
-    http->Post(onnReq.Url,onnReq.Post("Play",msg.toLatin1().toHex()).toLatin1());
-    qDebug()<<__FUNCTION__<<sw.Count();
-    //auto lastUpdateTime = steady_clock::now();
-    //auto difT = lastUpdateTime - tp;
-    //auto ping = difT.count();
-    //qDebug()<<"ping:"<<(float)ping/1000000.0f<<"ms";
+    //StopWatch sw;
+    http->Post(onnReq.Url,onnReq.Post("play",msg.toLatin1().toHex()).toLatin1());
+    //qDebug()<<__FUNCTION__<<sw.Count();
 }
 
 void OnnConnector::GetState()
@@ -67,7 +63,8 @@ void OnnConnector::GetState()
 
 void OnnConnector::GetTick(int frame)
 {
-    http->Get(onnReq.Get("getStat"));
+    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<frame;
+    http->Get(onnReq.Get("getTick",QString::number(frame).toLatin1().toHex()));
 }
 
 void OnnConnector::StopGame()
@@ -83,26 +80,32 @@ void OnnConnector::OnTime()
 void OnnConnector::OnRcvHttpGet(QString msg)
 {
     //qDebug()<<__FUNCTION__<<__LINE__<<msg;
-    if((msg == "null")||(msg.isEmpty())){
-        return;
-    }
-
+    if(msg.isEmpty())return;
     auto obj = QJsonDocument::fromJson(msg.toLatin1()).object();
     auto method = obj["method"];
 
     if(method == "getStat"){
         //qDebug()<<__FUNCTION__<<__LINE__;
+        if(!obj.contains("data"))return;
         auto array = obj["data"].toArray();
         auto jsonString = JSON2STRING(array);
         emit StartGame(jsonString);
+        qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
         timer->stop();
     }
 
     if(method == "getTick"){
         auto tick  = obj["index"].toInt();
-        auto array = obj["data"].toArray();
-        auto jsonString = JSON2STRING(array);
-        emit Tick(tick, jsonString);
-        //qDebug()<<__FUNCTION__<<__LINE__<<jsonString;
+        if(obj.contains("data")){
+            auto array = obj["data"].toArray();
+            auto jsonString = JSON2STRING(array);
+            emit Tick(tick, jsonString);
+            //qDebug()<<__FUNCTION__<<__LINE__<<jsonString;
+            ++tick;
+        }else{
+            //qDebug()<<__FUNCTION__<<__LINE__<<tick;
+        }
+        emit LoopTick(tick);
+        //qDebug()<<__FUNCTION__<<__LINE__<<tick;
     }
 }

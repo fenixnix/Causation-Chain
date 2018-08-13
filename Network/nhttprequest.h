@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 class NHttpRequest : public QObject
 {
@@ -22,6 +24,7 @@ public slots:
 private slots:
     void OnFinish();
     void OnReadReady();
+    void OnFinished(QNetworkReply* reply);
 
 private:
     QNetworkAccessManager qnam;

@@ -17,9 +17,14 @@ WTCMainWindow::~WTCMainWindow()
     delete ui;
 }
 
+NHttpRequest req;
 void WTCMainWindow::on_actionSend_Causue_triggered()
 {
 
+    //while(true){
+    //    req.Get("http://47.75.190.195:3000/TANK10$getTick$3134$C7F836DC6145EA4A96A67B13EA0B5F2B10DD70544A69BCB565991F3BB5019CC7114EF777CCA2C36DEF0364D2EF733770FA72B389D3C348FDA7D98A7A7A5CF384");
+        //QThread::sleep(1);
+    //}
 }
 
 void WTCMainWindow::on_actionSend_Result_triggered()
