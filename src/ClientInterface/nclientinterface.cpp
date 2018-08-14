@@ -8,10 +8,12 @@
 
 QString sendBuffer;
 
+NDataStore ds;
+
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
     NSimpleStore::SelfTest();
-    NDataStore::SelfTest();
+    //NDataStore::SelfTest();
 
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 

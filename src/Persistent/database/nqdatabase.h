@@ -12,6 +12,7 @@ class NQDatabase : public QObject
   Q_OBJECT
 public:
   explicit NQDatabase(QObject *parent = nullptr);
+  ~NQDatabase();
   static QStringList getSupportDatabase();
 
   bool InitSQLite();

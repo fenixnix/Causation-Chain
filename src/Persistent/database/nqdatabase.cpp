@@ -8,6 +8,11 @@ NQDatabase::NQDatabase(QObject *parent) : QObject(parent)
     qDebug()<<driverList;
 }
 
+NQDatabase::~NQDatabase()
+{
+    db.close();
+}
+
 QStringList NQDatabase::getSupportDatabase()
 {
     return QSqlDatabase::drivers();
@@ -20,19 +25,35 @@ bool NQDatabase::InitSQLite()
         return false;
     }
     db = QSqlDatabase::addDatabase(DATABASEDRIVER, "causation");
-    db.setDatabaseName(".//causation.db");
-    if( !db.open())
+    if( !open(".//causation.db"))
     {
         qWarning() << "Can`t open database";
         return false;
     }
 
-    exec("create table cause(id int primary key,attribute varchar,"
-         "type varchar,kind varchar,nation int,carnumber int,elevaltor int,"
-         "distance int,oil int,temperature int)");
-    exec("create table result(id int primary key,attribute varchar,"
-         "type varchar,kind varchar,nation int,carnumber int,elevaltor int,"
-         "distance int,oil int,temperature int)");
+//    exec("create table cause1 (id int primary key, data text)");
+    //exec("create table result(id int primary key, data text);");
+
+//    exec("insert into cause1 (id, data) values(1,'data')");
+//    exec("insert into cause1 (id, data) values(2,'data1')");
+//    exec("insert into cause1 (id, data) values(3,'data2')");
+
+    QString select_all_sql = "select * from cause1";
+    sqlQuery->prepare(select_all_sql);
+    if(!sqlQuery->exec())
+    {
+        qDebug()<<sqlQuery->lastError();
+    }
+    else
+    {
+        while(sqlQuery->next())
+        {
+            int id = sqlQuery->value(0).toInt();
+            QString data = sqlQuery->value(1).toString();
+            qDebug()<<QString("id:%1    data:%2").arg(id).arg(data);
+        }
+    }
+
     return true;
 }
 
