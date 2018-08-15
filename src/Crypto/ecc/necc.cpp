@@ -143,11 +143,17 @@ void NEcc::SelfTest()
 
     sw.Start();
     auto eccSign = ecc.Sign(dat);
+    for(int i = 0;i<9;i++){
+        ecc.Sign(dat);
+    }
     qWarning()<<sw.Count()<<"ms";
-    qDebug()<<"Sign:"<<eccSign.toHex();
+    qDebug()<<"Sign 10times:"<<eccSign.toHex();
 
     sw.Start();
     auto res = ecc.Verify(ecc.pubKey,dat,eccSign);
+    for(int i = 0;i<9;i++){
+        ecc.Verify(ecc.pubKey,dat,eccSign);
+    }
     qWarning()<<sw.Count()<<"ms";
-    qDebug()<<"Verify:"<<res;
+    qDebug()<<"Verify 10times:"<<res;
 }
