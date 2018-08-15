@@ -2,7 +2,6 @@
 #include "wtccmddefine.h"
 #include "nhttprequest.h"
 #include "ndatastore.h"
-#include "nsimplestore.h"
 
 #define ONN
 
@@ -12,9 +11,6 @@ NDataStore ds;
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
-    NSimpleStore::SelfTest();
-    //NDataStore::SelfTest();
-
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
@@ -57,6 +53,9 @@ void NClientInterface::Init()
     onn.start();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 #endif
+
+    causeStore.Init("cause.dat");
+    resultStore.Init("result.dat");
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -93,25 +92,6 @@ void NClientInterface::CloseTank()
     emit OnnCloseSign();
 }
 
-void NClientInterface::OnnInputs(int frame, QString msg)
-{
-    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<msg;
-    QJsonObject timeOutObj;
-    QJsonArray srcArray = QJsonDocument::fromJson(msg.toLatin1()).array();
-    QJsonArray dstArray;
-    for(int i = 0;i<srcArray.size();i++){
-        dstArray.append(QJsonDocument::fromJson(srcArray[i].toString().toLatin1()).object());
-    }
-    timeOutObj["msg"] = dstArray;
-    QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
-    //qDebug()<<__FUNCTION__<<__LINE__<<frame;
-
-    sendBuffer = jsonMsg;
-    SendLocalMsg("CAU", jsonMsg);
-    //SendLocalMsg("REQ",frameString(frame));
-    //qDebug()<<__FUNCTION__<<__LINE__;
-}
-
 void NClientInterface::OnTick(int frm)
 {
     //    bool isEven = !(frameNo&0x1);
@@ -138,7 +118,7 @@ void NClientInterface::OnRcvLocal(QString msg, QHostAddress senderIP, quint16 se
     auto cmd = msg.left(CMDSIZE);
     auto data = msg.mid(CMDSIZE);
     if(cmd == "CAU")RcvLocalCause(data);
-    //if(cmd == "RES")RcvLocalResult(data);
+    if(cmd == "RES")RcvLocalResult(data);
     //if(cmd == "FIN"){//TODO:report result to main network}
 }
 
@@ -190,9 +170,21 @@ void NClientInterface::RcvLocalCause(QString data)
 
 void NClientInterface::OnOnnTick(int frame, QString msg)
 {
+    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<msg;
+    QJsonObject timeOutObj;
+    QJsonArray srcArray = QJsonDocument::fromJson(msg.toLatin1()).array();
+    QJsonArray dstArray;
+    for(int i = 0;i<srcArray.size();i++){
+        dstArray.append(QJsonDocument::fromJson(srcArray[i].toString().toLatin1()).object());
+    }
+    timeOutObj["msg"] = dstArray;
+    QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
     //qDebug()<<__FUNCTION__<<__LINE__<<frame;
-    OnnInputs(frame,msg); 
-    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
+
+    sendBuffer = jsonMsg;
+    SendLocalMsg("CAU", jsonMsg);
+    //SendLocalMsg("REQ",frameString(frame));
+    //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
@@ -233,11 +225,11 @@ void NClientInterface::StartTestTick()
 #endif
 }
 
-//void NClientInterface::RcvLocalResult(QString data)
-//{
-//    //6.接收本地执行结果，并广播
-//    packer.Clear();//删除控制命令
-//    qDebug()<<__FUNCTION__<<data;
+void NClientInterface::RcvLocalResult(QString data)
+{
+    //6.接收本地执行结果，并广播
+    qDebug()<<__FUNCTION__<<data;
+    resultStore.Push(data);
 //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
 //    quint64 frame = obj["frame"].toDouble();
 //    QString dataString = obj["data"].toString();
@@ -249,7 +241,7 @@ void NClientInterface::StartTestTick()
 //    sobj.insert("cmd","result");
 //    sobj.insert("data",dataString);
 //    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
-//}
+}
 
 //void NClientInterface::RcvNetResult(quint64 frame, QString addr, QString data)
 //{

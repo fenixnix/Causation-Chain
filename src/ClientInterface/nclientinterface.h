@@ -7,6 +7,7 @@
 #include "utility.h"
 #include "ncryptomsg.h"
 #include "ntimesync.h"
+#include "nsimplestore.h"
 
 #define StartPort 8890
 
@@ -25,7 +26,6 @@ public:
     //Onn Test Code
     void JoinTank();
     void CloseTank();
-    void OnnInputs(int frame, QString msg);
 
 signals:
     void RcvMsg(QString id, QString msg);
@@ -48,12 +48,16 @@ private slots:
 
 private:
     void RcvLocalCause(QString data);
+    void RcvLocalResult(QString data);
     OnnConnector onn;
     NCryptoMsg crypto;
 
     UdpNetwork ipc;
 
     NTimeSync timeSync;
+
+    NSimpleStore causeStore;
+    NSimpleStore resultStore;
 };
 
 #endif // NCLIENTINTERFACE_H
