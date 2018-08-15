@@ -20,6 +20,8 @@ public:
     void Init();
     void Init(QString secKey, QString pubKey);
     QString getID();
+    QString GetUrl();
+    QString GetContract();
     void SendLocalMsg(QString cmd, QString msg);
 
     void StartTestTick();

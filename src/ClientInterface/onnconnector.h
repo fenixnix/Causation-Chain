@@ -13,6 +13,8 @@ public:
     explicit OnnConnector(QThread *parent = nullptr);
     ~OnnConnector();
     static void GenerateDefaultConfigFile();
+    QString GetUrl();
+    QString GetContract();
 
 signals:
     void StartGame(QString membersJsonString);

@@ -3,7 +3,7 @@
 #include "nhttprequest.h"
 #include "ndatastore.h"
 
-#define ONN
+//#define ONN
 
 QString sendBuffer;
 
@@ -81,6 +81,9 @@ QString NClientInterface::getID()
 #endif
     return "P1";
 }
+
+QString NClientInterface::GetUrl(){return onn.GetUrl();}
+QString NClientInterface::GetContract(){return onn.GetContract();}
 
 void NClientInterface::JoinTank()
 {
@@ -183,6 +186,7 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
 
     sendBuffer = jsonMsg;
     SendLocalMsg("CAU", jsonMsg);
+    causeStore.Push(msg);
     //SendLocalMsg("REQ",frameString(frame));
     //qDebug()<<__FUNCTION__<<__LINE__;
 }
@@ -228,7 +232,7 @@ void NClientInterface::StartTestTick()
 void NClientInterface::RcvLocalResult(QString data)
 {
     //6.接收本地执行结果，并广播
-    qDebug()<<__FUNCTION__<<data;
+    //qDebug()<<__FUNCTION__<<data;
     resultStore.Push(data);
 //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
 //    quint64 frame = obj["frame"].toDouble();

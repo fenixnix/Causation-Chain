@@ -9,17 +9,15 @@ class OnnRequest
 public:
     OnnRequest();
     void Init(QString secKey, QString pubKey);
-    void SetUrlContract(QString Url, QString contract);
+    void SetUrlContract(QString Url, QString Contract);
 
     QString Get(QString method, QString arg = "null");
     QString Post(QString method, QString arg = "null");
 
     QString Url;
-
+    QString Contract;
 private:
     NEmcc ecc;
-
-    QString contract;
     QString urlContract;
 };
 

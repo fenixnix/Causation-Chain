@@ -10,6 +10,7 @@ WTCMainWindow::WTCMainWindow(QWidget *parent) :
     //NCmdPacker::SelfTest();
     //ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
     QObject::connect(&interface, &NClientInterface::RcvMsg, this, &WTCMainWindow::onP2pMsg);
+    setWindowTitle(interface.getID()+ " " +interface.GetContract() + " " + interface.GetUrl());
 }
 
 WTCMainWindow::~WTCMainWindow()

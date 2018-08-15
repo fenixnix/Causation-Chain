@@ -26,6 +26,9 @@ void OnnConnector::GenerateDefaultConfigFile()
     onnCfg.sync();
 }
 
+QString OnnConnector::GetUrl(){return onnReq.Url;}
+QString OnnConnector::GetContract(){return onnReq.Contract;}
+
 void OnnConnector::Init(QByteArray secKey, QByteArray pubKey)
 {
     if(!QFile(cfg).exists()){
