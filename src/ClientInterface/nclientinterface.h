@@ -2,6 +2,7 @@
 #define NCLIENTINTERFACE_H
 
 #include <QObject>
+#include <QTimer>
 #include "udpnetwork.h"
 #include "onnconnector.h"
 #include "utility.h"
@@ -19,7 +20,7 @@ public:
     ~NClientInterface();
     void Init();
     void Init(QString secKey, QString pubKey);
-    QString getID();
+    QString GetID();
     QString GetUrl();
     QString GetContract();
     void SendLocalMsg(QString cmd, QString msg);
@@ -28,6 +29,7 @@ public:
     //Onn Test Code
     void JoinTank();
     void CloseTank();
+    void LoadTank();
 
 signals:
     void RcvMsg(QString id, QString msg);
@@ -51,6 +53,7 @@ private slots:
 private:
     void RcvLocalCause(QString data);
     void RcvLocalResult(QString data);
+    void OnLoad();
     OnnConnector onn;
     NCryptoMsg crypto;
 
@@ -60,6 +63,8 @@ private:
 
     NSimpleStore causeStore;
     NSimpleStore resultStore;
+
+    QTimer loadTimer;
 };
 
 #endif // NCLIENTINTERFACE_H

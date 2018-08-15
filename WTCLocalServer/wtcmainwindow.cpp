@@ -10,7 +10,7 @@ WTCMainWindow::WTCMainWindow(QWidget *parent) :
     //NCmdPacker::SelfTest();
     //ui->plainTextEdit->appendPlainText(NCausationConsensus::SelfTest());
     QObject::connect(&interface, &NClientInterface::RcvMsg, this, &WTCMainWindow::onP2pMsg);
-    setWindowTitle(interface.getID()+ " " +interface.GetContract() + " " + interface.GetUrl());
+    setWindowTitle(interface.GetID()+ " " +interface.GetContract() + " " + interface.GetUrl());
 }
 
 WTCMainWindow::~WTCMainWindow()
@@ -35,7 +35,7 @@ void WTCMainWindow::on_actionSend_Result_triggered()
 
 void WTCMainWindow::on_actionRefresh_triggered()
 {
-    this->setWindowTitle(interface.getID());
+    this->setWindowTitle(interface.GetID());
 }
 
 void WTCMainWindow::onP2pMsg(QString addr, QString msg)
@@ -68,4 +68,9 @@ void WTCMainWindow::on_actionJoin_Game_triggered()
 void WTCMainWindow::on_actionClose_Game_triggered()
 {
     interface.CloseTank();
+}
+
+void WTCMainWindow::on_actionLoad_Game_triggered()
+{
+    interface.LoadTank();
 }

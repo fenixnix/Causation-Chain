@@ -9,9 +9,14 @@ QString sendBuffer;
 
 NDataStore ds;
 
+#define TICKINTERVAL 150
+
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
+    NSimpleStore::SelfTest();
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
+    connect(&loadTimer, &QTimer::timeout, this, &NClientInterface::OnLoad);
+
 
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
 
@@ -53,7 +58,6 @@ void NClientInterface::Init()
     onn.start();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 #endif
-
     causeStore.Init("cause.dat");
     resultStore.Init("result.dat");
 }
@@ -74,7 +78,7 @@ QString frameString(int frm){
     return JSON2STRING(obj);
 }
 
-QString NClientInterface::getID()
+QString NClientInterface::GetID()
 {
 #ifdef ONN
     return crypto.getEthAddr();
@@ -95,6 +99,14 @@ void NClientInterface::CloseTank()
     emit OnnCloseSign();
 }
 
+void NClientInterface::LoadTank()
+{
+    causeStore.Load("cause.dat");
+#ifndef ONN
+    loadTimer.start(TICKINTERVAL);
+#endif
+}
+
 void NClientInterface::OnTick(int frm)
 {
     //    bool isEven = !(frameNo&0x1);
@@ -109,8 +121,11 @@ void NClientInterface::OnTick(int frm)
     //        //BroadcastCause();
     //    }
 #ifndef ONN
-    SendLocalMsg("CAU",sendBuffer);
-    //SendLocalMsg("REQ",frameString(frm));
+    auto obj = STRING2JSON(sendBuffer);
+    obj["frm"] = frm;
+    auto JsonPackCmdString = JSON2STRING(obj);
+    SendLocalMsg("CAU",JsonPackCmdString);
+    causeStore.Push(JsonPackCmdString);
 #endif
 }
 
@@ -149,14 +164,15 @@ void NClientInterface::RcvLocalCause(QString data)
     //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
 #ifdef ONN
     emit OnnPlaySign(data);
-#else
+#endif
 
 #ifndef ONN
     auto obj = STRING2JSON(data);
     QJsonArray array;
     array.append(obj);
     QJsonObject pack;
-    pack.insert("msg",array);
+    //pack["frm"] = 0;
+    pack["msg"] = array;
     auto JsonPackCmdString = JSON2STRING(pack);
     sendBuffer = JsonPackCmdString;
 #endif
@@ -168,7 +184,6 @@ void NClientInterface::RcvLocalCause(QString data)
     //    auto jsonMsg = QString(QJsonDocument(jobj).toJson());
     //    SendLocalMsg("CAU", jsonMsg);
     //    SendLocalMsg("REQ","";
-#endif
 }
 
 void NClientInterface::OnOnnTick(int frame, QString msg)
@@ -180,22 +195,23 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
     for(int i = 0;i<srcArray.size();i++){
         dstArray.append(QJsonDocument::fromJson(srcArray[i].toString().toLatin1()).object());
     }
+    timeOutObj["frm"] = frame;
     timeOutObj["msg"] = dstArray;
     QString jsonMsg = QString(QJsonDocument(timeOutObj).toJson(QJsonDocument::Compact));
     //qDebug()<<__FUNCTION__<<__LINE__<<frame;
 
-    sendBuffer = jsonMsg;
     SendLocalMsg("CAU", jsonMsg);
-    causeStore.Push(msg);
+    causeStore.Push(jsonMsg);
     //SendLocalMsg("REQ",frameString(frame));
     //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
 {
+    //causeStore.Push(jsonArrayMembers);
     auto memberArray = QJsonDocument::fromJson(jsonArrayMembers.toLatin1()).array();
     QJsonObject obj;
-    obj["locID"] = getID();
+    obj["locID"] = GetID();
     obj["members"] = memberArray;
     auto initString = JSON2STRING(obj);
     qDebug()<<__FUNCTION__<<__LINE__<<initString;
@@ -225,7 +241,7 @@ void NClientInterface::SendLocalMsg(QString cmd, QString msg)
 void NClientInterface::StartTestTick()
 {
 #ifndef ONN
-    timeSync.StartTestSync(1000);
+    timeSync.StartTestSync(TICKINTERVAL);
 #endif
 }
 
@@ -244,7 +260,12 @@ void NClientInterface::RcvLocalResult(QString data)
 //    sobj.insert("addr",getID());
 //    sobj.insert("cmd","result");
 //    sobj.insert("data",dataString);
-//    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
+    //    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
+}
+
+void NClientInterface::OnLoad()
+{
+    SendLocalMsg("CAU",causeStore.Read());
 }
 
 //void NClientInterface::RcvNetResult(quint64 frame, QString addr, QString data)

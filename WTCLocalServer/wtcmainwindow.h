@@ -37,6 +37,8 @@ private slots:
 
     void on_actionClose_Game_triggered();
 
+    void on_actionLoad_Game_triggered();
+
 private:
     Ui::WTCMainWindow *ui;
     NClientInterface interface;
