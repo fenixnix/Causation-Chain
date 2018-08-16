@@ -49,7 +49,7 @@ bool UdpNetwork::Send(QString msg)
     //qDebug()<<__FUNCTION__<<msg;
     auto res = udp.writeDatagram(msg.toLatin1(),sendAddr,sendPort);
     if(res == -1){
-        qDebug()<<udp.errorString();
+        qDebug()<<sendAddr<<sendPort<<udp.errorString()<<msg;
         return false;
     }
     return true;
@@ -59,7 +59,7 @@ bool UdpNetwork::Send(QHostAddress addr, quint16 port, QString msg)
 {
     auto res = udp.writeDatagram(msg.toLatin1(),addr,port);
     if(res == -1){
-        qDebug()<<udp.errorString();
+        qDebug()<<sendAddr<<sendPort<<udp.errorString()<<msg;
         return false;
     }
     return true;
