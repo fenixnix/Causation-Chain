@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QFileDialog>
 #include "ntimesync.h"
 #include "nclientinterface.h"
 
@@ -38,6 +39,10 @@ private slots:
     void on_actionClose_Game_triggered();
 
     void on_actionLoad_Game_triggered();
+
+    void on_actionStart_Game_triggered();
+
+    void on_StepBtn_clicked();
 
 private:
     Ui::WTCMainWindow *ui;

@@ -7,7 +7,8 @@ QString sendBuffer;
 
 NDataStore ds;
 
-#define TICKINTERVAL 150
+//#define ONN
+#define TICKINTERVAL 200
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -57,8 +58,6 @@ void NClientInterface::Init()
     onn.start();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 #endif
-    causeStore.Init("cause.dat");
-    resultStore.Init("result.dat");
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -82,7 +81,7 @@ QString NClientInterface::GetID()
 #ifdef ONN
     return crypto.getEthAddr();
 #endif
-    return "P1";
+    return "cc48ce1703f45d6aab4877659c55036edeaeb404";
 }
 
 QString NClientInterface::GetUrl(){
@@ -111,9 +110,13 @@ void NClientInterface::CloseTank()
     emit OnnCloseSign();
 }
 
-void NClientInterface::LoadTank()
+void NClientInterface::LoadTank(QString fileName)
 {
-    causeStore.Load("cause.dat");
+    causeStore.Load(fileName);
+}
+
+void NClientInterface::StartTank()
+{
 #ifndef ONN
     loadTimer.start(TICKINTERVAL);
 #endif
@@ -221,9 +224,18 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
 {
     //causeStore.Push(jsonArrayMembers);
+    auto causeFileName = QTime::currentTime().toString("hh_mm_ss") + ".cau";
+    auto resultFileName = QTime::currentTime().toString("hh_mm_ss") + ".res";
+    qDebug()<<"InitFile:"<<causeFileName<<resultFileName;
+    causeStore.Init(causeFileName);
+    resultStore.Init(resultFileName);
     auto memberArray = QJsonDocument::fromJson(jsonArrayMembers.toLatin1()).array();
     QJsonObject obj;
-    obj["locID"] = GetID();
+
+    bool isObserver = false;
+    if(!isObserver){
+        obj["locID"] = GetID();
+    }
     obj["members"] = memberArray;
     auto initString = JSON2STRING(obj);
     qDebug()<<__FUNCTION__<<__LINE__<<initString;
@@ -260,7 +272,7 @@ void NClientInterface::StartTestTick()
 void NClientInterface::RcvLocalResult(QString data)
 {
     //6.接收本地执行结果，并广播
-    //qDebug()<<__FUNCTION__<<data;
+    qDebug()<<__FUNCTION__<<data;
     resultStore.Push(data);
     //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
     //    quint64 frame = obj["frame"].toDouble();
@@ -277,7 +289,12 @@ void NClientInterface::RcvLocalResult(QString data)
 
 void NClientInterface::OnLoad()
 {
-    SendLocalMsg("CAU",causeStore.Read());
+    auto res = causeStore.Read();
+    if(res != ""){
+        SendLocalMsg("CAU", res);
+    }else{
+        loadTimer.stop();
+    }
 }
 
 //void NClientInterface::RcvNetResult(quint64 frame, QString addr, QString data)

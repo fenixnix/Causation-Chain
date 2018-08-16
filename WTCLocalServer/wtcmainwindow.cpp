@@ -45,7 +45,8 @@ void WTCMainWindow::onP2pMsg(QString addr, QString msg)
 
 void WTCMainWindow::on_actionInit_Game_triggered()
 {
-    interface.OnStartGame("[\"P1\",\"P2\"]");
+    interface.OnStartGame("[\"cc48ce1703f45d6aab4877659c55036edeaeb404\","
+                          "\"b61f3107c1e8dd5940c35ff679ac8db91eb17704\"]");
 }
 
 int frm = 0;
@@ -72,5 +73,16 @@ void WTCMainWindow::on_actionClose_Game_triggered()
 
 void WTCMainWindow::on_actionLoad_Game_triggered()
 {
-    interface.LoadTank();
+    QString fileName = QFileDialog::getOpenFileName();
+    interface.LoadTank(fileName);
+}
+
+void WTCMainWindow::on_actionStart_Game_triggered()
+{
+    interface.StartTank();
+}
+
+void WTCMainWindow::on_StepBtn_clicked()
+{
+    interface.OnLoad();
 }

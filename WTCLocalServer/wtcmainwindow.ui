@@ -47,6 +47,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="StepBtn">
+        <property name="text">
+         <string>Step</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -64,26 +71,27 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionInit_Game"/>
     <addaction name="actionJoin_Game"/>
     <addaction name="actionClose_Game"/>
-    <addaction name="actionLoad_Game"/>
    </widget>
    <widget class="QMenu" name="menuTest">
     <property name="title">
      <string>Test</string>
     </property>
-    <addaction name="actionSend_Causue"/>
-    <addaction name="actionSend_Result"/>
     <addaction name="separator"/>
-    <addaction name="actionEnter_Lobby"/>
-    <addaction name="actionStart_Solo"/>
+    <addaction name="actionInit_Game"/>
+    <addaction name="actionLoad_Game"/>
+    <addaction name="actionStart_Game"/>
    </widget>
    <widget class="QMenu" name="menuRefresh">
     <property name="title">
      <string>Refresh</string>
     </property>
     <addaction name="actionRefresh"/>
+    <addaction name="actionSend_Causue"/>
+    <addaction name="actionSend_Result"/>
+    <addaction name="actionEnter_Lobby"/>
+    <addaction name="actionStart_Solo"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTest"/>
@@ -141,6 +149,11 @@
   <action name="actionLoad_Game">
    <property name="text">
     <string>Load Game</string>
+   </property>
+  </action>
+  <action name="actionStart_Game">
+   <property name="text">
+    <string>Start Game</string>
    </property>
   </action>
  </widget>

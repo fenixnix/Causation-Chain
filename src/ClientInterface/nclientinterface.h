@@ -30,7 +30,8 @@ public:
     //Onn Test Code
     void JoinTank();
     void CloseTank();
-    void LoadTank();
+    void LoadTank(QString fileName);
+    void StartTank();
 
 signals:
     void RcvMsg(QString id, QString msg);
@@ -46,6 +47,7 @@ public slots:
     void OnLoopTick(int frm);
     void OnTick(int frm);//Tick
     void OnRcvLocal(QString msg, QHostAddress senderIP, quint16 senderPort);
+    void OnLoad();
 
 private slots:
     void OnGameTick(QString dat);
@@ -54,21 +56,16 @@ private slots:
 private:
     void RcvLocalCause(QString data);
     void RcvLocalResult(QString data);
-    void OnLoad();
 
 #ifdef ONN
     OnnConnector onn;
 #endif
 
     NCryptoMsg crypto;
-
     UdpNetwork ipc;
-
     NTimeSync timeSync;
-
     NSimpleStore causeStore;
     NSimpleStore resultStore;
-
     QTimer loadTimer;
 };
 
