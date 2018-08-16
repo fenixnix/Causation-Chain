@@ -19,5 +19,5 @@ SOURCES += \
 
 HEADERS +=
 
-include("../p2psrc/np2p.pri")
-include("../Network/network.pri")
+include("../src/p2p/np2p.pri")
+include("../src/Network/network.pri")

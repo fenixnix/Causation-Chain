@@ -12,14 +12,13 @@ MainNetServer::MainNetServer(QObject *parent) : QObject(parent)
 
 void MainNetServer::Init(QString addrID)
 {
-    QString addr = addrID;
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     QIPEndPoint p2pServer(p2pSetting.value("P2PServer").toString());
     qDebug()<<__FUNCTION__<<natServer.ToString()<<p2pServer.ToString();
     interface.Init(local,p2pServer);
-    p2p.Init(addr,natServer,local);
+    p2p.Init(addrID,natServer,local);
 }
 
 void MainNetServer::Init()
