@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include "mainnetserver.h"
-//#include "netsync.h"
+#include "netsync.h"
 
 namespace Ui {
   class MainWindow;
@@ -40,7 +40,7 @@ private slots:
 private:
   Ui::MainWindow *ui;
   MainNetServer node;
-  //NetSync sync;
+  NetSync sync;
 };
 
 #endif // MAINWINDOW_H

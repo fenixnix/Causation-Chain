@@ -9,7 +9,6 @@
 
 using namespace std::chrono;
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -21,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(&node,&MainNetServer::RcvMsg,
                      this,&MainWindow::on_RcvMessage);
     qDebug()<<IPClassify::getLocalIP();
+    sync.SelfTest();
 }
 
 MainWindow::~MainWindow()
