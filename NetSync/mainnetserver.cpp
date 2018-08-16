@@ -1,7 +1,6 @@
 #include "mainnetserver.h"
 #include "npeerdata.h"
 #include "messageprotocol.h"
-#include "nemcc.h"
 
 MainNetServer::MainNetServer(QObject *parent) : QObject(parent)
 {
@@ -25,20 +24,8 @@ void MainNetServer::Init(QString addrID)
 
 void MainNetServer::Init()
 {
-    NEmcc ecc;
-    const QString cryptoFileName = "crypto.cfg";
-    QSettings cryptoSetting(cryptoFileName, QSettings::IniFormat);
-    if(!QFile(cryptoFileName).exists()){
-        qDebug()<<"Not find crypto.cfg, generate new keyPair!!";
-        ecc.GenerateKeyPair();
-        cryptoSetting.setValue("SecKey", ecc.privateKeyString);
-        cryptoSetting.setValue("PubKey", ecc.publicKeyString);
-        cryptoSetting.sync();
-    }
-
-    QString secKey = cryptoSetting.value("SecKey").toString();
-    QString pubKey = cryptoSetting.value("PubKey").toString();
-    Init(ecc.address);
+    auto id = QCryptographicHash::hash(QTime::currentTime().toString().toLatin1(),QCryptographicHash::Sha256);
+    Init(QString(id).left(8));
 }
 
 QString MainNetServer::getID()

@@ -36,7 +36,6 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-include("../src/Crypto/EmccSDK/nemcc/nemcc.pri")
 include("../src/p2p/np2p.pri")
 include("../src/Network/network.pri")
 include("../NetSync/netsync.pri")
