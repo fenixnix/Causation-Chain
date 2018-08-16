@@ -27,7 +27,7 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 #endif
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
 
-    //Init();
+    Init();
 }
 
 NClientInterface::~NClientInterface()

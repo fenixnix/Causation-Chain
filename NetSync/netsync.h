@@ -30,6 +30,9 @@ signals:
     void doRcvRequire(QString contractID, QString addr, QString data);
 
 public slots:
+    void onEnterSubNet(QString contractID);
+    void onQuitSubNet(QString contractID);
+
     void onGetBossAddr(QByteArrayList bossList);//implement by routing
     void onQueuePeerStatebyAddr(QByteArrayList peerList);
     void onOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data);

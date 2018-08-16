@@ -81,6 +81,16 @@ void NetSync::SelfTest()
     //    RcvP2pMsg(msg2);
 }
 
+void NetSync::onEnterSubNet(QString contractID)
+{
+
+}
+
+void NetSync::onQuitSubNet(QString contractID)
+{
+
+}
+
 void NetSync::onGetBossAddr(QByteArrayList bossList)
 {
     //p2p.RequireNatbyAddr(bossList);
