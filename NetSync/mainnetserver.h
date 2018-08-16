@@ -10,7 +10,7 @@ class MainNetServer : public QObject
     Q_OBJECT
 public:
     explicit MainNetServer(QObject *parent = nullptr);
-    void Init(QString secKey, QString pubKey);
+    void Init(QString addrID);
     void Init();
     QString getID();
     void RequireJoin();

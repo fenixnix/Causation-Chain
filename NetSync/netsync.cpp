@@ -7,15 +7,15 @@ NetSync::NetSync(QObject *parent) : QObject(parent)
     connect(&p2p,&MainNetServer::RcvMsg,this,&NetSync::RcvP2pMsg);
 }
 
-void NetSync::Init(QString secKey, QString pubKey, QString addrID)
+void NetSync::Init(QString addrID)
 {
-    p2p.Init(secKey, pubKey);
-    localAddrID = addrID;
+    p2p.Init(addrID);
 }
 
 QStringList NetSync::neighbourPeerList()
 {
-    return CheckEthAddrList(p2p.getNeighbourList());
+    return p2p.getNeighbourList();
+    //return CheckEthAddrList(p2p.getNeighbourList());
 }
 
 bool NetSync::PeerIsNeighbour(QString peerAddress)
@@ -69,7 +69,7 @@ QString NetSync::PackCMD(QString contractID, QString cmd, QString data)
 {
     QJsonObject obj;
     obj["ID"] = contractID;
-    obj["Addr"] = localAddrID;
+    obj["Addr"] = p2p.getID();
     obj["CMD"] = cmd;
     obj["Dat"] = data;
     QJsonDocument jdom(obj);
@@ -98,7 +98,8 @@ void NetSync::PeerListUpdate(QStringList list)
         prevAllPeerList.removeAll(l);
     }
 
-    emit doUpdatePeerList(CheckEthAddrList(list),prevAllPeerList,newComerList);
+    //emit doUpdatePeerList(CheckEthAddrList(list),prevAllPeerList,newComerList);
+    emit doUpdatePeerList(list,prevAllPeerList,newComerList);
     prevAllPeerList = list;
 }
 
@@ -116,13 +117,13 @@ void NetSync::PeerListUpdate(QStringList list)
 //    return jsonString;
 //}
 
-QStringList NetSync::CheckEthAddrList(QStringList list)
-{
-    QStringList result;
-    foreach(auto l, list){
-        if(NEmcc::CheckEthAddr(l)){
-            result.append(l);
-        }
-    }
-    return result;
-}
+//QStringList NetSync::CheckEthAddrList(QStringList list)
+//{
+//    QStringList result;
+//    foreach(auto l, list){
+//        if(NEmcc::CheckEthAddr(l)){
+//            result.append(l);
+//        }
+//    }
+//    return result;
+//}

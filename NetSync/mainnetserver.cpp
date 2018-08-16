@@ -11,13 +11,9 @@ MainNetServer::MainNetServer(QObject *parent) : QObject(parent)
     Init();
 }
 
-void MainNetServer::Init(QString secKey, QString pubKey)
+void MainNetServer::Init(QString addrID)
 {
-    NEmcc emcc;
-    emcc.SetSecKey(secKey);
-    emcc.SetPubKey(pubKey);
-    QString addr = emcc.ethAddr;
-
+    QString addr = addrID;
     QSettings p2pSetting("p2p.cfg",QSettings::IniFormat);
     QIPEndPoint local(p2pSetting.value("Local").toString());
     QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
@@ -29,11 +25,11 @@ void MainNetServer::Init(QString secKey, QString pubKey)
 
 void MainNetServer::Init()
 {
+    NEmcc ecc;
     const QString cryptoFileName = "crypto.cfg";
     QSettings cryptoSetting(cryptoFileName, QSettings::IniFormat);
     if(!QFile(cryptoFileName).exists()){
         qDebug()<<"Not find crypto.cfg, generate new keyPair!!";
-        NEmcc ecc;
         ecc.GenerateKeyPair();
         cryptoSetting.setValue("SecKey", ecc.privateKeyString);
         cryptoSetting.setValue("PubKey", ecc.publicKeyString);
@@ -42,7 +38,7 @@ void MainNetServer::Init()
 
     QString secKey = cryptoSetting.value("SecKey").toString();
     QString pubKey = cryptoSetting.value("PubKey").toString();
-    Init(secKey, pubKey);
+    Init(ecc.address);
 }
 
 QString MainNetServer::getID()

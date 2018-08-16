@@ -10,7 +10,7 @@ class NetSync : public QObject
     Q_OBJECT
 public:
     explicit NetSync(QObject *parent = nullptr);
-    void Init(QString secKey, QString pubKey, QString addrID);
+    void Init(QString addrID);
     bool PeerIsNeighbour(QString peerAddress);
     QStringList neighbourPeerList();
 
@@ -30,20 +30,15 @@ public slots:
     void onOnnRequire(QString contractID, QByteArray addr, QString cmd, QString data);
     void onOnnBroadcast(QString contractID, QString cmd, QString data);
 
-
-
 private slots:
     void RcvP2pMsg(QString msg);
     void PeerListUpdate(QStringList list);
 
 private:
     QString PackCMD(QString contractID, QString cmd, QString data);
-    QStringList CheckEthAddrList(QStringList list);
-
+    //QStringList CheckEthAddrList(QStringList list);
     QStringList prevAllPeerList;
-
     MainNetServer p2p;
-    QString localAddrID;
 };
 
 #endif // NETSYNC_H
