@@ -9,9 +9,9 @@ OnnConnector::OnnConnector(QThread *parent) : QThread(parent)
 
 OnnConnector::~OnnConnector()
 {
-    http->deleteLater();
     timer->stop();
-    timer->deleteLater();
+//    timer->deleteLater();
+//    http->deleteLater();
 }
 
 const QString cfg = "onn.cfg";

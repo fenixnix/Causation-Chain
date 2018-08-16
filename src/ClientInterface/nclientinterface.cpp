@@ -3,8 +3,6 @@
 #include "nhttprequest.h"
 #include "ndatastore.h"
 
-//#define ONN
-
 QString sendBuffer;
 
 NDataStore ds;
@@ -17,9 +15,8 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(&ipc, &UdpNetwork::Rcv, this, &NClientInterface::OnRcvLocal);
     connect(&loadTimer, &QTimer::timeout, this, &NClientInterface::OnLoad);
 
-
+#ifdef ONN
     connect(&onn, &OnnConnector::StartGame, this, &NClientInterface::OnStartGame);
-
     connect(&onn, &OnnConnector::Tick, this, &NClientInterface::OnOnnTick);
     connect(&onn, &OnnConnector::LoopTick, this, &NClientInterface::OnLoopTick);
     connect(this, &NClientInterface::TrigOnnTick, &onn, &OnnConnector::GetTick,Qt::QueuedConnection);
@@ -27,15 +24,17 @@ NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
     connect(this, &NClientInterface::OnnJoinSign, &onn, &OnnConnector::JoinGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnCloseSign, &onn, &OnnConnector::CloseGame,Qt::QueuedConnection);
     connect(this, &NClientInterface::OnnPlaySign, &onn, &OnnConnector::PlayGame,Qt::QueuedConnection);
-
+#endif
     connect(&timeSync, &NTimeSync::Tick, this, &NClientInterface::OnTick);
 
-    Init();
+    //Init();
 }
 
 NClientInterface::~NClientInterface()
 {
+#ifdef ONN
     onn.terminate();
+#endif
 }
 
 void NClientInterface::Init()
@@ -86,8 +85,21 @@ QString NClientInterface::GetID()
     return "P1";
 }
 
-QString NClientInterface::GetUrl(){return onn.GetUrl();}
-QString NClientInterface::GetContract(){return onn.GetContract();}
+QString NClientInterface::GetUrl(){
+#ifdef ONN
+    return onn.GetUrl();
+#else
+    return "";
+#endif
+}
+
+QString NClientInterface::GetContract(){
+#ifdef ONN
+    return onn.GetContract();
+#else
+    return "";
+#endif
+}
 
 void NClientInterface::JoinTank()
 {
@@ -250,16 +262,16 @@ void NClientInterface::RcvLocalResult(QString data)
     //6.接收本地执行结果，并广播
     //qDebug()<<__FUNCTION__<<data;
     resultStore.Push(data);
-//    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
-//    quint64 frame = obj["frame"].toDouble();
-//    QString dataString = obj["data"].toString();
-//    consensus.RcvResult(frame, getID(),dataString);
+    //    QJsonObject obj = QJsonDocument::fromJson(data.toLatin1()).object();
+    //    quint64 frame = obj["frame"].toDouble();
+    //    QString dataString = obj["data"].toString();
+    //    consensus.RcvResult(frame, getID(),dataString);
 
-//    QJsonObject sobj;
-//    sobj.insert("frame",(int)frame);
-//    sobj.insert("addr",getID());
-//    sobj.insert("cmd","result");
-//    sobj.insert("data",dataString);
+    //    QJsonObject sobj;
+    //    sobj.insert("frame",(int)frame);
+    //    sobj.insert("addr",getID());
+    //    sobj.insert("cmd","result");
+    //    sobj.insert("data",dataString);
     //    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
 }
 

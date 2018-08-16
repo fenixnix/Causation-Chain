@@ -4,13 +4,14 @@
 #include <QObject>
 #include <QTimer>
 #include "udpnetwork.h"
-#include "onnconnector.h"
 #include "utility.h"
 #include "ncryptomsg.h"
 #include "ntimesync.h"
 #include "nsimplestore.h"
+#include "onnconnector.h"
 
 #define StartPort 8890
+//#define ONN
 
 class NClientInterface : public QObject
 {
@@ -54,7 +55,11 @@ private:
     void RcvLocalCause(QString data);
     void RcvLocalResult(QString data);
     void OnLoad();
+
+#ifdef ONN
     OnnConnector onn;
+#endif
+
     NCryptoMsg crypto;
 
     UdpNetwork ipc;
