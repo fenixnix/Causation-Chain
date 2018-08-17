@@ -11,7 +11,7 @@
 #include "onnconnector.h"
 
 #define StartPort 8890
-//#define ONN
+#define ONN
 
 class NClientInterface : public QObject
 {

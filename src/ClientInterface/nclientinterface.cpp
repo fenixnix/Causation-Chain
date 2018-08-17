@@ -7,8 +7,8 @@ QString sendBuffer;
 
 NDataStore ds;
 
-//#define ONN
-#define TICKINTERVAL 200
+#define ONN
+#define TICKINTERVAL 150
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -224,8 +224,10 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
 {
     //causeStore.Push(jsonArrayMembers);
-    auto causeFileName = QTime::currentTime().toString("hh_mm_ss") + ".cau";
-    auto resultFileName = QTime::currentTime().toString("hh_mm_ss") + ".res";
+    QString replayPath = "./Replay/";
+    QString timeString = QTime::currentTime().toString("hh_mm_ss");
+    auto causeFileName =  replayPath + timeString + ".cau";
+    auto resultFileName = replayPath + timeString + ".res";
     qDebug()<<"InitFile:"<<causeFileName<<resultFileName;
     causeStore.Init(causeFileName);
     resultStore.Init(resultFileName);
