@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QProcess>
 #include "udpnetwork.h"
 #include "utility.h"
 #include "ncryptomsg.h"
@@ -56,6 +57,7 @@ private slots:
 private:
     void RcvLocalCause(QString data);
     void RcvLocalResult(QString data);
+    void RcvLocalOpr(QString data);
 
 #ifdef ONN
     OnnConnector onn;
@@ -67,6 +69,7 @@ private:
     NSimpleStore causeStore;
     NSimpleStore resultStore;
     QTimer loadTimer;
+    QProcess process;
 };
 
 #endif // NCLIENTINTERFACE_H

@@ -58,6 +58,7 @@ void NClientInterface::Init()
     onn.start();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 #endif
+    process.start("TankReleaseWin/tank.exe");
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -102,11 +103,13 @@ QString NClientInterface::GetContract(){
 
 void NClientInterface::JoinTank()
 {
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
     emit OnnJoinSign();
 }
 
 void NClientInterface::CloseTank()
 {
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
     emit OnnCloseSign();
 }
 
@@ -152,6 +155,7 @@ void NClientInterface::OnRcvLocal(QString msg, QHostAddress senderIP, quint16 se
     auto data = msg.mid(CMDSIZE);
     if(cmd == "CAU")RcvLocalCause(data);
     if(cmd == "RES")RcvLocalResult(data);
+    if(cmd == "OPR")RcvLocalOpr(data);
     //if(cmd == "FIN"){//TODO:report result to main network}
 }
 
@@ -287,6 +291,17 @@ void NClientInterface::RcvLocalResult(QString data)
     //    sobj.insert("cmd","result");
     //    sobj.insert("data",dataString);
     //    CryptoBroadcast(QString(QJsonDocument(sobj).toJson()));//广播本地结果
+}
+
+void NClientInterface::RcvLocalOpr(QString data)
+{
+    auto obj = STRING2JSON(data);
+    if(obj["cmd"] == "JoinGame"){
+        JoinTank();
+    }
+    if(obj["cmd"] == "CloseGame"){
+        CloseTank();
+    }
 }
 
 void NClientInterface::OnLoad()
