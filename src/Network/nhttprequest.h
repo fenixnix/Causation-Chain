@@ -24,7 +24,7 @@ public slots:
 private slots:
     void OnFinish();
     void OnReadReady();
-    void OnFinished(QNetworkReply* reply);
+    //void OnFinished(QNetworkReply* reply);
 
 private:
     QNetworkAccessManager qnam;

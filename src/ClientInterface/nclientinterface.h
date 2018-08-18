@@ -66,12 +66,12 @@ private:
     NCryptoMsg crypto;
     UdpNetwork ipc;
     NTimeSync timeSync;
+    StopWatch sw;
+
     NSimpleStore causeStore;
     NSimpleStore resultStore;
     QTimer loadTimer;
     QProcess process;
-
-    StopWatch sw;
 };
 
 #endif // NCLIENTINTERFACE_H
