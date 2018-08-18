@@ -70,6 +70,8 @@ private:
     NSimpleStore resultStore;
     QTimer loadTimer;
     QProcess process;
+
+    StopWatch sw;
 };
 
 #endif // NCLIENTINTERFACE_H

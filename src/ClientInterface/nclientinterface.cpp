@@ -8,7 +8,7 @@ QString sendBuffer;
 NDataStore ds;
 
 #define ONN
-#define TICKINTERVAL 150
+#define TICKINTERVAL 125
 
 NClientInterface::NClientInterface(QObject *parent) : QObject(parent)
 {
@@ -145,6 +145,7 @@ void NClientInterface::OnTick(int frm)
     SendLocalMsg("CAU",JsonPackCmdString);
     causeStore.Push(JsonPackCmdString);
 #endif
+    sw.Tick();
 }
 
 #define CMDSIZE 3
@@ -228,7 +229,12 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
 void NClientInterface::OnStartGame(QString jsonArrayMembers)
 {
     //causeStore.Push(jsonArrayMembers);
-    QString replayPath = "./Replay/";
+    QString replayPath = QDir::currentPath()+"/Replay/";
+    QDir dir = QDir(replayPath);
+    if(!dir.exists()){
+        qDebug()<<"Replay Path:"<<dir.absolutePath();
+        dir.mkdir(replayPath);
+    }
     QString timeString = QTime::currentTime().toString("hh_mm_ss");
     auto causeFileName =  replayPath + timeString + ".cau";
     auto resultFileName = replayPath + timeString + ".res";
@@ -251,6 +257,8 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
     //for ONN
     emit TrigOnnTick(1);//start tick
 #endif
+
+    sw.Reset();
 }
 
 void NClientInterface::OnLoopTick(int frm)

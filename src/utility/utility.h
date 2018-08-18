@@ -20,11 +20,11 @@ public:
     void Print();
     float RecentlyMean();
 private:
-    float toMs(auto input);
+    float toMs(steady_clock::duration input);
     time_point<steady_clock> startTime;
     time_point<steady_clock> lastUpdateTime;
     std::list<float> intervals;
-    std::queue<float> recentlyIntervals;
+    std::list<float> recentlyIntervals;
     int recentCount = 10;
     float intervalSum = 0;
 };
