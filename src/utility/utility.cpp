@@ -13,6 +13,7 @@ void StopWatch::Reset()
 {
     startTime = steady_clock::now();
     intervals.clear();
+    recentlyIntervals.clear();
     intervalSum = 0;
 }
 
