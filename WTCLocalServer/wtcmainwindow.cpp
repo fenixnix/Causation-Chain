@@ -18,7 +18,6 @@ WTCMainWindow::~WTCMainWindow()
     delete ui;
 }
 
-NHttpRequest req;
 void WTCMainWindow::on_actionSend_Causue_triggered()
 {
 

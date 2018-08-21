@@ -22,6 +22,7 @@ public:
     ~NClientInterface();
     void Init();
     void Init(QString secKey, QString pubKey);
+    void Close();
     QString GetID();
     QString GetUrl();
     QString GetContract();

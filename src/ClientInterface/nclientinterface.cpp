@@ -2,6 +2,7 @@
 #include "wtccmddefine.h"
 #include "nhttprequest.h"
 #include "ndatastore.h"
+#include "QApplication"
 
 QString sendBuffer;
 
@@ -69,6 +70,11 @@ void NClientInterface::Init(QString secKey, QString pubKey)
     //QIPEndPoint natServer(p2pSetting.value("NATServer").toString());
     //p2p.Init(crypto.getAddr(),natServer,local);
     ipc.SetIPCPort(StartPort);
+}
+
+void NClientInterface::Close()
+{
+    QApplication::closeAllWindows();
 }
 
 QString frameString(int frm){

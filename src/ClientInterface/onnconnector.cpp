@@ -60,7 +60,7 @@ void OnnConnector::JoinGame()
 void OnnConnector::PlayGame(QString msg)
 {
     //StopWatch sw;
-    http->Post(onnReq.Url, onnReq.Post("play",msg.toLatin1().toHex()).toLatin1());
+    http->Get(onnReq.Get("getPlay",msg.toLatin1().toHex()).toLatin1());
     //qDebug()<<__FUNCTION__<<sw.Count();
 }
 
