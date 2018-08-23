@@ -59,7 +59,7 @@ void NClientInterface::Init()
     onn.start();
     emit OnnInitSign(crypto.getSecKey().toHex().toUpper(),crypto.getPubKey().toHex().toUpper());
 #endif
-    process.start("TankReleaseWin/tank.exe");
+    //process.start("TankReleaseWin/tank.exe");
 }
 
 void NClientInterface::Init(QString secKey, QString pubKey)
@@ -107,10 +107,19 @@ QString NClientInterface::GetContract(){
 #endif
 }
 
-void NClientInterface::JoinTank()
+void NClientInterface::JoinTank(QString jsonArgs)
 {
     qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
-    emit OnnJoinSign();
+    auto srcObj = STRING2JSON(jsonArgs);
+    QStringList sendList;
+    sendList<<srcObj["Name"].toString()
+            <<srcObj["MapID"].toSting()
+            <<srcObj["GameType"].toString()
+            <<srcObj["TankType"].toString()
+            <<jsonArgs;
+    QString sendString = sendList.join("?");
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<sendString;
+    emit OnnJoinSign(sendString);
 }
 
 void NClientInterface::CloseTank()
@@ -119,7 +128,7 @@ void NClientInterface::CloseTank()
     emit OnnCloseSign();
 }
 
-void NClientInterface::LoadTank(QString fileName)
+void NClientInterface::LoadTankReplay(QString fileName)
 {
     causeStore.Load(fileName);
 }
@@ -232,9 +241,8 @@ void NClientInterface::OnOnnTick(int frame, QString msg)
     //qDebug()<<__FUNCTION__<<__LINE__;
 }
 
-void NClientInterface::OnStartGame(QString jsonArrayMembers)
+void NClientInterface::InitDataStorage()
 {
-    //causeStore.Push(jsonArrayMembers);
     QString replayPath = QDir::currentPath()+"/Replay/";
     QDir dir = QDir(replayPath);
     if(!dir.exists()){
@@ -247,14 +255,33 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
     qDebug()<<"InitFile:"<<causeFileName<<resultFileName;
     causeStore.Init(causeFileName);
     resultStore.Init(resultFileName);
-    auto memberArray = QJsonDocument::fromJson(jsonArrayMembers.toLatin1()).array();
-    QJsonObject obj;
+}
 
+void NClientInterface::OnStartGame(QString jsonArrayMembers)
+{
+    //causeStore.Push(jsonArrayMembers);
+    InitDataStorage();
+    auto memberDataArraySrc = QJsonDocument::fromJson(jsonArrayMembers.toLatin1()).array();
+    auto firstMember = memberDataArraySrc.at(0).toObject();
+
+    auto map = firstMember["MapID"];
+    auto gameType = firstMember["GameType"];
+    QJsonArray memberDataArray;
+    foreach(var memberSrc, memberDataArraySrc){
+        QJsonObject o;
+        o["Name"] = memberSrc["Name"];
+        o["TankType"] = memberSrc["TankType"];
+        memberDataArray.append(o);
+    }
+
+    QJsonObject obj;
     bool isObserver = false;
     if(!isObserver){
         obj["locID"] = GetID();
     }
-    obj["members"] = memberArray;
+    obj["Map"] = map;
+    obj["GameType"] = gameType;
+    obj["members"] = memberDataArray;
     auto initString = JSON2STRING(obj);
     qDebug()<<__FUNCTION__<<__LINE__<<initString;
     SendLocalMsg("INI", initString);
@@ -263,7 +290,6 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
     //for ONN
     emit TrigOnnTick(1);//start tick
 #endif
-
     sw.Reset();
 }
 
@@ -309,11 +335,15 @@ void NClientInterface::RcvLocalResult(QString data)
 
 void NClientInterface::RcvLocalOpr(QString data)
 {
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
     auto obj = STRING2JSON(data);
-    if(obj["cmd"] == "JoinGame"){
-        JoinTank();
+    auto cmd = obj["cmd"].toString();
+    auto arg = obj["arg"].toString();
+
+    if(cmd == "JoinGame"){
+        JoinTank(arg);
     }
-    if(obj["cmd"] == "CloseGame"){
+    if(cmd == "CloseGame"){
         CloseTank();
     }
 }

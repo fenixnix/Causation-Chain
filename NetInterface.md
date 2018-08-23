@@ -42,7 +42,13 @@ Commands:
  - OPR: local instruction
  ```json
  {
-     "cmd":"joinGame",
+    "cmd":"JoinGame",
+    "arg":{
+       "Name":"User Name",//1
+       "MapID":"map",//2
+       "GameType":"team",//3
+       "TankType":"naive"//4
+    }
  }
  ```
  ---
@@ -82,13 +88,15 @@ Commands:
         "locID": "addrID",
         "members:
         [
-            "P1",
-            "P2",
-            "P3"
+            {
+                "ID":"P1",
+                "TankType":"naive",
+                "localAddr":"192.168.1.2-3000",
+                "NAT":"192.168.1.3-4000"
+            },
+            {"ID":"P2","TankType":"naive"},
+            {"ID":"P3","TankType":"naive"}
         ]
     }
 ```
 ---
-
-
-

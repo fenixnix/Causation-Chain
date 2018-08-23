@@ -27,7 +27,7 @@ public slots:
     void Init(QByteArray secKey, QByteArray pubKey);
 
     void Post(QString cmdMsg, QString arg = "null");
-    void JoinGame();
+    void JoinGame(QString jsonArgs);
     void CloseGame();
     void PlayGame(QString msg);
 

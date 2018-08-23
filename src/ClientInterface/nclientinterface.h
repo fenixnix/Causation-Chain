@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include <QProcess>
+//#include <QProcess>
 #include "udpnetwork.h"
 #include "utility.h"
 #include "ncryptomsg.h"
@@ -30,9 +30,9 @@ public:
 
     void StartTestTick();
     //Onn Test Code
-    void JoinTank();
+    void JoinTank(QString jsonArgs);
     void CloseTank();
-    void LoadTank(QString fileName);
+    void LoadTankReplay(QString fileName);
     void StartTank();
 
 signals:
@@ -40,7 +40,7 @@ signals:
     void TrigOnnTick(int frame);
 
     void OnnInitSign(QByteArray secKey, QByteArray pubKey);
-    void OnnJoinSign();
+    void OnnJoinSign(QString jsonArgs);
     void OnnCloseSign();
     void OnnPlaySign(QString dat);
 
@@ -72,7 +72,8 @@ private:
     NSimpleStore causeStore;
     NSimpleStore resultStore;
     QTimer loadTimer;
-    QProcess process;
+    //QProcess process;
+    void InitDataStorage();
 };
 
 #endif // NCLIENTINTERFACE_H

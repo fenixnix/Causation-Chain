@@ -21,7 +21,7 @@ void OnnConnector::GenerateDefaultConfigFile()
     qDebug()<<__FUNCTION__<<__LINE__;
     QSettings onnCfg(cfg,QSettings::IniFormat);
     onnCfg.clear();
-    onnCfg.setValue("Contract","TANK9");
+    onnCfg.setValue("Contract","TANK");
     onnCfg.setValue("Http","http://47.75.190.195:3000");
     onnCfg.sync();
 }
@@ -51,9 +51,9 @@ void OnnConnector::Post(QString cmdMsg, QString arg)
     http->Post(onnReq.Url, onnReq.Post(cmdMsg, arg).toLatin1());
 }
 
-void OnnConnector::JoinGame()
+void OnnConnector::JoinGame(QString jsonArgs)
 {
-    Post("joinGame");
+    Post("joinGame",jsonArgs);
     timer->start(500);
 }
 

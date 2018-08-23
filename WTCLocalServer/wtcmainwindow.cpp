@@ -62,7 +62,7 @@ void WTCMainWindow::on_tstTickBtn_clicked()
 
 void WTCMainWindow::on_actionJoin_Game_triggered()
 {
-    interface.JoinTank();
+    //interface.JoinTank();
 }
 
 void WTCMainWindow::on_actionClose_Game_triggered()
@@ -73,7 +73,7 @@ void WTCMainWindow::on_actionClose_Game_triggered()
 void WTCMainWindow::on_actionLoad_Game_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName();
-    interface.LoadTank(fileName);
+    interface.LoadTankReplay(fileName);
 }
 
 void WTCMainWindow::on_actionStart_Game_triggered()
