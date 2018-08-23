@@ -277,11 +277,11 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
     QJsonObject obj;
     bool isObserver = false;
     if(!isObserver){
-        obj["locID"] = GetID();
+        obj["LocID"] = GetID();
     }
     obj["Map"] = map;
     obj["GameType"] = gameType;
-    obj["members"] = memberDataArray;
+    obj["Members"] = memberDataArray;
     auto initString = JSON2STRING(obj);
     qDebug()<<__FUNCTION__<<__LINE__<<initString;
     SendLocalMsg("INI", initString);
