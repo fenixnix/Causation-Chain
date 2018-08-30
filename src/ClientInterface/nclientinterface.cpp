@@ -109,11 +109,12 @@ QString NClientInterface::GetContract(){
 
 void NClientInterface::JoinTank(QString jsonArgs)
 {
-    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
+    qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<jsonArgs;
     auto srcObj = STRING2JSON(jsonArgs);
+    localNickName = srcObj["Name"].toString();
     QStringList sendList;
     sendList<<srcObj["Name"].toString()
-            <<srcObj["MapID"].toSting()
+            //<<srcObj["MapID"].toString()
             <<srcObj["GameType"].toString()
             <<srcObj["TankType"].toString()
             <<jsonArgs;
@@ -160,7 +161,7 @@ void NClientInterface::OnTick(int frm)
     SendLocalMsg("CAU",JsonPackCmdString);
     causeStore.Push(JsonPackCmdString);
 #endif
-    sw.Tick();
+
 }
 
 #define CMDSIZE 3
@@ -223,6 +224,7 @@ void NClientInterface::RcvLocalCause(QString data)
 
 void NClientInterface::OnOnnTick(int frame, QString msg)
 {
+    qDebug()<<__FUNCTION__<<sw.Tick();
     //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<msg;
     QJsonObject timeOutObj;
     QJsonArray srcArray = QJsonDocument::fromJson(msg.toLatin1()).array();
@@ -267,17 +269,19 @@ void NClientInterface::OnStartGame(QString jsonArrayMembers)
     auto map = firstMember["MapID"];
     auto gameType = firstMember["GameType"];
     QJsonArray memberDataArray;
-    foreach(var memberSrc, memberDataArraySrc){
+    foreach(auto memberSrc, memberDataArraySrc){
         QJsonObject o;
-        o["Name"] = memberSrc["Name"];
-        o["TankType"] = memberSrc["TankType"];
+        auto srcObj = STRING2JSON(memberSrc.toString());
+        o["Name"] = srcObj["Name"].toString();
+        o["TankType"] = srcObj["TankType"].toString();
         memberDataArray.append(o);
     }
 
     QJsonObject obj;
     bool isObserver = false;
     if(!isObserver){
-        obj["LocID"] = GetID();
+        //obj["LocID"] = GetID();
+        obj["LocID"] = localNickName;
     }
     obj["Map"] = map;
     obj["GameType"] = gameType;
@@ -338,7 +342,7 @@ void NClientInterface::RcvLocalOpr(QString data)
     qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<data;
     auto obj = STRING2JSON(data);
     auto cmd = obj["cmd"].toString();
-    auto arg = obj["arg"].toString();
+    auto arg = JSON2STRING(obj["arg"].toObject());
 
     if(cmd == "JoinGame"){
         JoinTank(arg);

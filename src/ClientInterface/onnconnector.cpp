@@ -10,8 +10,8 @@ OnnConnector::OnnConnector(QThread *parent) : QThread(parent)
 OnnConnector::~OnnConnector()
 {
     timer->stop();
-//    timer->deleteLater();
-//    http->deleteLater();
+    //    timer->deleteLater();
+    //    http->deleteLater();
 }
 
 const QString cfg = "onn.cfg";
@@ -31,13 +31,15 @@ QString OnnConnector::GetContract(){return onnReq.Contract;}
 
 void OnnConnector::Init(QByteArray secKey, QByteArray pubKey)
 {
-    if(!QFile(cfg).exists()){
-        qDebug()<<"Not find: "<<cfg<<" !!";
+    auto filePath = QDir::currentPath() + "/" + cfg;
+    if(!QFile(filePath).exists()){
+        qDebug()<<"Not find: "<<filePath<<" !!";
         GenerateDefaultConfigFile();
     }
-    QSettings onnCfg(cfg,QSettings::IniFormat);
+    QSettings onnCfg(filePath,QSettings::IniFormat);
     QString contractStr = onnCfg.value("Contract").toString();
     QString httpStr = onnCfg.value("Http").toString();
+    qDebug()<<"Contract:"<<contractStr<<" http:"<<httpStr;
     http = new NHttpRequest();
     QObject::connect(http, &NHttpRequest::RcvMsg, this, &OnnConnector::OnRcvHttpGet, Qt::QueuedConnection);
     onnReq.Init(secKey,pubKey);
@@ -53,7 +55,7 @@ void OnnConnector::Post(QString cmdMsg, QString arg)
 
 void OnnConnector::JoinGame(QString jsonArgs)
 {
-    Post("joinGame",jsonArgs);
+    Post("joinGame",jsonArgs.toLatin1().toHex());
     timer->start(500);
 }
 
@@ -87,19 +89,21 @@ void OnnConnector::OnTime()
 
 void OnnConnector::OnRcvHttpGet(QString msg)
 {
-    //qDebug()<<__FUNCTION__<<__LINE__<<msg;
+    qDebug()<<__FUNCTION__<<__LINE__<<msg;
     if(msg.isEmpty())return;
     auto obj = QJsonDocument::fromJson(msg.toLatin1()).object();
     auto method = obj["method"];
 
     if(method == "getStat"){
         //qDebug()<<__FUNCTION__<<__LINE__;
-        if(!obj.contains("data"))return;
-        auto array = obj["data"].toArray();
-        auto jsonString = JSON2STRING(array);
-        emit StartGame(jsonString);
-        qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
-        timer->stop();
+        if(obj["stat"] == "start"){
+            if(!obj.contains("data"))return;
+            auto array = obj["data"].toArray();
+            auto jsonString = JSON2STRING(array);
+            qDebug()<<__FILE__<<__FUNCTION__<<__LINE__<<jsonString;
+            emit StartGame(jsonString);
+            timer->stop();
+        }
     }
 
     if(method == "getTick"){

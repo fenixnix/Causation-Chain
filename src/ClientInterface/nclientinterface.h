@@ -63,7 +63,7 @@ private:
 #ifdef ONN
     OnnConnector onn;
 #endif
-
+    QString localNickName;
     NCryptoMsg crypto;
     UdpNetwork ipc;
     NTimeSync timeSync;

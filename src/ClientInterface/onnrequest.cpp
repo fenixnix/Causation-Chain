@@ -23,7 +23,7 @@ QString OnnRequest::Get(QString method, QString arg)
 {
     QStringList ls;
     ls<<urlContract;
-    ls<<method<<arg<<ecc.publicKeyString;
+    ls<<method<<arg<<ecc.ethAddr;
     return ls.join("$");
 }
 
