@@ -2,7 +2,7 @@
 #define ONNREQUEST_H
 
 #include <QString>
-#include "nemcc.h"
+#include "necc.h"
 
 class OnnRequest
 {
@@ -17,8 +17,9 @@ public:
     QString Url;
     QString Contract;
 private:
-    NEmcc ecc;
+    NEcc ecc;
     QString urlContract;
+    QString ethAddr;
 };
 
 #endif // ONNREQUEST_H

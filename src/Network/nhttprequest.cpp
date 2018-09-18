@@ -36,20 +36,8 @@ void NHttpRequest::OnReadReady()
     emit RcvMsg(QString(data));
 }
 
-//#include <iostream>
-//using namespace std;
-//void NHttpRequest::OnFinished(QNetworkReply *reply)
-//{
-//    QByteArray data = reply->readAll();
-//    //qDebug() << QTime::currentTime().toString("ss zzz") << " : "<<data;
-//    emit RcvMsg(QString(data));
-//    reply->deleteLater();
-//}
-
 void NHttpRequest::OnFinish()
 {
-    //qDebug()<<__FILE__<<__FUNCTION__<<__LINE__;
-
     auto re = (QNetworkReply*)this->sender();
     re->deleteLater();
 }

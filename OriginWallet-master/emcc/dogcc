@@ -1,0 +1,2 @@
+gcc -c -o uECC.o -fPIC uECC.c
+gcc -shared -fPIC -o libuECC.so uECC.c

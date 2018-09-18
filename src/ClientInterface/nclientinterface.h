@@ -6,8 +6,7 @@
 //#include <QProcess>
 #include "udpnetwork.h"
 #include "utility.h"
-#include "ncryptomsg.h"
-#include "ntimesync.h"
+//#include "ntimesync.h"
 #include "nsimplestore.h"
 #include "onnconnector.h"
 

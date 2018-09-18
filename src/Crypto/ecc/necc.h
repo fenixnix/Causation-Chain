@@ -17,6 +17,7 @@ public:
     QString GetSecKeyStr();
     QString GetPubKeyStr();
     QString GetCmpKeyStr();
+    QString GetEthAddrStr();
 
     static bool VerifyCompressKeyHash(QString compressPubKey, QString datStr, QString signStr);
     static bool VerifyHash(QString pubKeyStr, QString datStr, QString signStr);
@@ -24,6 +25,8 @@ public:
 
     static QByteArray Compress(QByteArray pubKey);
     static QByteArray DeCompress(QByteArray cmpPubKey);
+
+    static QByteArray CalcETHAddr(QByteArray pub);
 
     static void SelfTest();
 

@@ -1,14 +1,15 @@
 #include "necc.h"
 #include "uECC.h"
+#include <QtCore>
 #include <QCryptographicHash>
 #include <QDebug>
 #include "utility.h"
 
 #define PRINTDATAARRAY(X) {qDebug()<<QByteArray::fromRawData((char*)X,sizeof(X)).toHex();}
-uECC_Curve curve = uECC_secp160r1();
-#define KEYSIZE 21
-//uECC_Curve curve = uECC_secp256k1();
-//#define KEYSIZE 32
+//uECC_Curve curve = uECC_secp160r1();
+//#define KEYSIZE 21
+uECC_Curve curve = uECC_secp256k1();
+#define KEYSIZE 32
 
 NEcc::NEcc()
 {
@@ -37,6 +38,11 @@ QString NEcc::GetCmpKeyStr()
     return QString(cmpKey.toHex());
 }
 
+QString NEcc::GetEthAddrStr()
+{
+    return CalcETHAddr(pubKey).toHex();
+}
+
 bool NEcc::VerifyCompressKeyHash(QString compressPubKey, QString datStr, QString signStr)
 {
     auto pubKey = DeCompress(QByteArray::fromHex(compressPubKey.toLatin1()));
@@ -60,9 +66,9 @@ bool NEcc::Verify(QByteArray pubKey, QByteArray dat, QByteArray sign)
 
 QByteArray NEcc::Compress(QByteArray pubKey)
 {
-    uint8_t cmpPubKey[KEYSIZE] = {0};
+    uint8_t cmpPubKey[KEYSIZE+1] = {0};
     uECC_compress((uint8_t*)pubKey.data(),cmpPubKey,curve);
-    return QByteArray((char*)cmpPubKey,sizeof(cmpPubKey));
+    return QByteArray((char*)cmpPubKey,KEYSIZE+1);
 }
 
 QByteArray NEcc::DeCompress(QByteArray cmpPubKey)
@@ -72,6 +78,11 @@ QByteArray NEcc::DeCompress(QByteArray cmpPubKey)
     return QByteArray((char*)pubKey,sizeof(pubKey));
 }
 
+QByteArray NEcc::CalcETHAddr(QByteArray pub)
+{
+    return QCryptographicHash::hash(pub,QCryptographicHash::Keccak_256).right(20);
+}
+
 void NEcc::Generate()
 {
     qDebug()<<__FUNCTION__;
@@ -79,6 +90,7 @@ void NEcc::Generate()
     uint8_t pubKey[KEYSIZE*2] = {0};
     uECC_make_key(pubKey,secKey,curve);
     this->cmpKey = Compress(this->pubKey);
+    qDebug()<<this->cmpKey.toHex();
     SetKey(QByteArray((char*)secKey,KEYSIZE),
            QByteArray((char*)pubKey,KEYSIZE*2));
 }
@@ -96,7 +108,7 @@ void NEcc::SetKey(QByteArray secKey, QByteArray pubKey)
     qDebug()<<"SecKey:"<<this->secKey.toHex();
     qDebug()<<"PubKey:"<<this->pubKey.toHex();
     this->cmpKey = Compress(this->pubKey);
-    qDebug()<<"CmpKey:"<<this->cmpKey.toHex();
+    //qDebug()<<"CmpKey:"<<this->cmpKey.toHex();
 }
 
 QString NEcc::SignHash(QString msg)
@@ -133,7 +145,7 @@ void NEcc::SelfTest()
     ecc.Generate();
     qWarning()<<sw.Count()<<"ms";
 
-    sw.Start();
+    sw.Reset();
     auto deCmpKey = DeCompress(ecc.cmpKey);
     qWarning()<<sw.Count()<<"ms";
     qDebug()<<"DeCompress Key"<<deCmpKey.toHex();
@@ -141,7 +153,7 @@ void NEcc::SelfTest()
     QString message = "Hello world";
     QByteArray dat = message.toLatin1();
 
-    sw.Start();
+    sw.Reset();
     auto eccSign = ecc.Sign(dat);
     for(int i = 0;i<9;i++){
         ecc.Sign(dat);
@@ -149,7 +161,7 @@ void NEcc::SelfTest()
     qWarning()<<sw.Count()<<"ms";
     qDebug()<<"Sign 10times:"<<eccSign.toHex();
 
-    sw.Start();
+    sw.Reset();
     auto res = ecc.Verify(ecc.pubKey,dat,eccSign);
     for(int i = 0;i<9;i++){
         ecc.Verify(ecc.pubKey,dat,eccSign);
