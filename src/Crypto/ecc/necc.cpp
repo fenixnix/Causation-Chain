@@ -51,7 +51,7 @@ bool NEcc::VerifyCompressKeyHash(QString compressPubKey, QString datStr, QString
 
 bool NEcc::VerifyHash(QString pubKeyStr, QString datStr, QString signStr)
 {
-    auto hash = QCryptographicHash::hash(datStr.toLatin1(), QCryptographicHash::Sha1);
+    auto hash = QCryptographicHash::hash(datStr.toLatin1(), QCryptographicHash::Sha256);
     return Verify(QByteArray::fromHex(pubKeyStr.toLatin1()),hash,
                   QByteArray::fromHex(signStr.toLatin1()));
 }
